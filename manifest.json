@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "SignalBrief",
+  "short_name": "SignalBrief",
+  "description": "Source-bounded research intelligence. Separates what a source supports from what it merely suggests.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#E9ECEF",
+  "theme_color": "#E9ECEF",
+  "orientation": "any",
+  "categories": ["productivity", "education"],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

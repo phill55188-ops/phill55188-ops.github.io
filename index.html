@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E9ECEF">
+<meta name="description" content="SignalBrief: source-bounded research intelligence that separates what a source supports from what it merely suggests.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SignalBrief">
+<title>SignalBrief v0.2.1</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="./icon-192.png">
+</head>
+<body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap');
+
+#sb {
+  --bg: #E9ECEF;
+  --surface: #FFFFFF;
+  --surface-sunk: #F3F5F7;
+  --ink: #1B2430;
+  --ink-soft: #4A5563;
+  --muted: #737F8C;
+  --rule: #D5DBE1;
+  --rule-soft: #E4E8EC;
+
+  --source: #1B5E4B;
+  --source-bg: #E4EFEA;
+  --inference: #2A5486;
+  --inference-bg: #E3EAF3;
+  --opinion: #8A5514;
+  --opinion-bg: #F4EADC;
+  --unknown: #656E79;
+  --unknown-bg: #E8EAED;
+
+  --pos: #1B5E4B;
+  --neg: #8E3434;
+  --neg-bg: #F5E5E5;
+  --mix: #8A5514;
+
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.55;
+  font-size: 15px;
+  padding: 18px;
+  box-sizing: border-box;
+}
+#sb *, #sb *::before, #sb *::after { box-sizing: border-box; }
+#sb p { margin: 0 0 10px; }
+#sb p:last-child { margin-bottom: 0; }
+
+#sb .masthead {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  padding-bottom: 14px; border-bottom: 2px solid var(--ink); margin-bottom: 20px;
+}
+#sb .wordmark { font-size: 25px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+#sb .version {
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  border: 1px solid var(--rule); border-radius: 2px; padding: 1px 6px;
+}
+#sb .tagline { color: var(--muted); font-size: 13.5px; }
+
+#sb .layout { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 940px) {
+  #sb .layout { grid-template-columns: 372px 1fr; align-items: start; }
+  #sb .console { position: sticky; top: 18px; max-height: calc(100vh - 36px); overflow-y: auto; }
+}
+
+#sb .console {
+  background: var(--surface); border: 1px solid var(--rule);
+  border-radius: 3px; padding: 18px;
+}
+#sb .field { margin-bottom: 15px; }
+#sb label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+#sb .hint { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 7px; }
+#sb input[type=text], #sb input[type=url], #sb textarea {
+  width: 100%; font-family: inherit; font-size: 14px; color: var(--ink);
+  background: var(--surface-sunk); border: 1px solid var(--rule);
+  border-radius: 2px; padding: 9px 10px; resize: vertical;
+}
+#sb textarea { min-height: 175px; line-height: 1.5; }
+#sb textarea.small { min-height: 82px; }
+#sb input:focus, #sb textarea:focus { outline: 2px solid var(--inference); outline-offset: -1px; background: var(--surface); }
+#sb .counter { font-size: 12px; color: var(--muted); text-align: right; margin-top: 4px; }
+#sb .counter.over { color: var(--neg); font-weight: 500; }
+
+#sb .seg { display: flex; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; margin-bottom: 8px; }
+#sb .seg button {
+  flex: 1; border: 0; border-radius: 0; background: var(--surface-sunk);
+  color: var(--ink-soft); font-size: 13px; font-weight: 500; padding: 7px 6px; cursor: pointer;
+}
+#sb .seg button + button { border-left: 1px solid var(--rule); }
+#sb .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+#sb .modebox { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 12px; margin-bottom: 15px; background: var(--surface-sunk); }
+#sb .modebox .seg { margin-bottom: 7px; background: var(--surface); }
+#sb .modenote { font-size: 12.5px; color: var(--muted); }
+
+#sb .support-row { border: 1px solid var(--rule-soft); border-radius: 2px; padding: 10px 11px; margin-bottom: 8px; background: var(--surface-sunk); }
+#sb .support-row .rowhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+#sb .support-row .rowhead b { font-size: 12.5px; font-weight: 600; }
+#sb .linkbtn { background: none; border: 0; color: var(--muted); font-size: 12.5px; cursor: pointer; padding: 0; text-decoration: underline; }
+#sb .linkbtn:hover { color: var(--neg); }
+#sb .support-row input { margin-bottom: 6px; }
+
+#sb .buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+#sb button.act {
+  font-family: inherit; font-size: 14px; font-weight: 500; padding: 10px 16px;
+  border-radius: 2px; border: 1px solid var(--ink); background: var(--surface); color: var(--ink); cursor: pointer;
+}
+#sb button.act:focus-visible { outline: 2px solid var(--inference); outline-offset: 2px; }
+#sb button.primary { background: var(--ink); color: #fff; flex: 1; min-width: 150px; }
+#sb button.primary:disabled { background: var(--muted); border-color: var(--muted); cursor: progress; }
+#sb button.quiet { border-color: var(--rule); color: var(--ink-soft); }
+#sb button.quiet:hover { border-color: var(--ink); color: var(--ink); }
+
+#sb .notice {
+  margin-top: 14px; padding: 10px 12px; border-left: 3px solid var(--mix);
+  background: var(--opinion-bg); font-size: 13.5px; border-radius: 0 2px 2px 0;
+}
+#sb .notice.error { border-left-color: var(--neg); background: var(--neg-bg); }
+#sb .notice.ok { border-left-color: var(--source); background: var(--source-bg); }
+
+#sb .results { min-width: 0; }
+#sb .empty {
+  background: var(--surface); border: 1px dashed var(--rule); border-radius: 3px;
+  padding: 40px 26px; color: var(--ink-soft); max-width: 62ch;
+}
+#sb .empty h2 { font-size: 17px; margin: 0 0 8px; }
+
+#sb .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 3px; padding: 18px 20px; margin-bottom: 14px; }
+#sb .card > h2 {
+  font-size: 12.5px; font-weight: 600; color: var(--muted);
+  margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--rule-soft);
+}
+#sb .card .body { max-width: 74ch; }
+
+#sb .mismatch { border: 2px solid var(--mix); }
+#sb .mismatch > h2 { color: var(--mix); font-size: 13.5px; }
+
+#sb .brief { border: 2px solid var(--ink); padding: 20px 22px; }
+#sb .brief > h2 { color: var(--ink); font-size: 13.5px; border-bottom-color: var(--rule); }
+#sb .brief dl { margin: 0; font-family: 'IBM Plex Serif', Georgia, serif; }
+#sb .brief dt { font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 2px; }
+#sb .brief dd { margin: 0 0 14px; font-size: 15.5px; line-height: 1.6; max-width: 68ch; }
+#sb .brief dd:last-child { margin-bottom: 0; }
+
+#sb .pending { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 13.5px; }
+#sb .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--inference); animation: sbpulse 1.1s ease-in-out infinite; }
+@keyframes sbpulse { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { #sb .dot { animation: none; opacity: .6 } }
+
+#sb .ledger { margin-bottom: 6px; }
+#sb .ledger-bar { display: flex; height: 8px; border-radius: 1px; overflow: hidden; background: var(--surface-sunk); margin-bottom: 8px; }
+#sb .ledger-seg { height: 100%; }
+#sb .ledger-key { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink-soft); }
+#sb .ledger-key span { display: flex; align-items: center; gap: 5px; }
+#sb .swatch { width: 9px; height: 9px; border-radius: 1px; display: inline-block; }
+#sb .legend-note {
+  font-size: 12.5px; color: var(--muted); border-left: 3px solid var(--rule);
+  padding-left: 10px; margin: 12px 0 14px; max-width: 70ch;
+}
+
+#sb .claim { border: 1px solid var(--rule-soft); border-left-width: 4px; border-radius: 2px; padding: 13px 15px; margin-bottom: 10px; background: var(--surface); }
+#sb .claim:last-child { margin-bottom: 0; }
+#sb .claim-text { font-weight: 500; margin-bottom: 9px; max-width: 70ch; }
+#sb .claim-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
+#sb .badge { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 2px; }
+#sb .prov { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 2px; background: var(--surface-sunk); color: var(--ink-soft); border: 1px solid var(--rule); }
+#sb .meter { display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-soft); }
+#sb .meter-bars { display: flex; gap: 2px; }
+#sb .meter-bar { width: 4px; height: 11px; border-radius: 1px; background: var(--rule); }
+#sb .meter-bar.on { background: var(--ink-soft); }
+#sb .claim-row { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 5px; max-width: 72ch; }
+#sb .claim-row:last-child { margin-bottom: 0; }
+#sb .claim-row b { color: var(--ink); font-weight: 600; }
+
+#sb .xsource { margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--rule); }
+#sb .xrow { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; margin-bottom: 5px; }
+#sb .xrow:last-child { margin-bottom: 0; }
+#sb .xstat { font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 2px; white-space: nowrap; flex-shrink: 0; }
+#sb .xtext { color: var(--ink-soft); }
+
+#sb .split { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 620px) { #sb .split { grid-template-columns: repeat(3, 1fr); } }
+#sb .split-col h3, #sb .group h3 { font-size: 13.5px; font-weight: 600; margin: 0 0 7px; }
+#sb ul { margin: 0; padding-left: 17px; }
+#sb li { margin-bottom: 7px; font-size: 14px; }
+#sb li:last-child { margin-bottom: 0; }
+#sb .group { margin-bottom: 15px; }
+#sb .group:last-child { margin-bottom: 0; }
+#sb .basis {
+  display: inline-block; font-size: 11.5px; font-weight: 600;
+  padding: 0 6px; border-radius: 2px; margin-left: 6px; vertical-align: 1px; white-space: nowrap;
+}
+
+#sb .chain { background: var(--surface-sunk); border: 1px solid var(--rule-soft); border-radius: 2px; padding: 12px 14px; margin-bottom: 10px; }
+#sb .chain:last-child { margin-bottom: 0; }
+#sb .chain-links { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 9px; }
+#sb .link { background: var(--surface); border: 1px solid var(--rule); border-radius: 2px; padding: 4px 9px; font-size: 13.5px; font-weight: 500; }
+#sb .rel { color: var(--inference); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+#sb .chain-note { font-size: 13.5px; color: var(--ink-soft); max-width: 72ch; margin-bottom: 7px; }
+#sb .chain-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+#sb .verdict { display: inline-block; font-weight: 600; font-size: 13.5px; padding: 3px 10px; border-radius: 2px; margin-bottom: 9px; }
+#sb .incentive { font-size: 13.5px; color: var(--ink-soft); border-left: 3px solid var(--rule); padding-left: 11px; margin-top: 12px; max-width: 72ch; }
+#sb .incentive .claim-meta { margin: 7px 0 0; }
+#sb .meta-strip { font-size: 12.5px; color: var(--muted); margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--rule-soft); }
+
+#sb .qlist { counter-reset: q; list-style: none; padding-left: 0; }
+#sb .qlist li { counter-increment: q; padding-left: 28px; position: relative; margin-bottom: 9px; max-width: 72ch; }
+#sb .qlist li::before {
+  content: counter(q); position: absolute; left: 0; top: 1px;
+  width: 19px; height: 19px; border: 1px solid var(--rule); border-radius: 50%;
+  font-size: 11.5px; color: var(--muted); display: flex; align-items: center; justify-content: center;
+}
+#sb .foot { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+#sb .runtimebox {
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  background: var(--surface-sunk);
+}
+#sb .runtime-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+#sb .runtime-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+#sb .runtimebox details { margin-top: 8px; }
+#sb .runtimebox summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+#sb .runtimebox .runtime-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 7px 0;
+}
+#sb .runtimebox input[type=password] {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 8px 9px;
+}
+#sb #sb-install {
+  display: none;
+  padding: 6px 10px;
+  font-size: 12.5px;
+}
+
+</style>
+
+<div id="sb">
+  <div class="masthead">
+    <h1 class="wordmark">SignalBrief</h1>
+    <span class="version">v0.2.1</span>
+    <span class="tagline">Separates what a source supports from what it merely suggests</span>
+  </div>
+
+  <div class="layout">
+    <div class="console">
+
+      <div class="runtimebox">
+        <div class="runtime-head">
+          <span class="runtime-title">Standalone app runtime</span>
+          <button type="button" class="act quiet" id="sb-install">Install SignalBrief</button>
+        </div>
+        <details>
+          <summary>Local API / BYOK</summary>
+          <div class="runtime-note">
+            Controlled personal testing only. Your Anthropic API key is used only for this browser session,
+            is not stored by SignalBrief, and should not be used on a shared device. A public production
+            deployment should use a secure server-side proxy instead.
+          </div>
+          <input type="password" id="sb-api-key" placeholder="Anthropic API key" autocomplete="off">
+        </details>
+      </div>
+
+      <div class="modebox">
+        <div class="seg" role="group" aria-label="Analysis mode">
+          <button type="button" id="sb-mode-source" aria-pressed="true">Source analysis</button>
+          <button type="button" id="sb-mode-evidence" aria-pressed="false">Evidence check</button>
+        </div>
+        <div class="modenote" id="sb-modenote">Examines only the primary material you supply. No outside research.</div>
+      </div>
+
+      <div class="field">
+        <label for="sb-subject">Research subject</label>
+        <span class="hint">The company, technology, or event under examination</span>
+        <input type="text" id="sb-subject" placeholder="Meridian Grid Systems" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label>Primary source</label>
+        <span class="hint">The material whose claims are being examined</span>
+        <div class="seg" role="group" aria-label="Source input method">
+          <button type="button" id="sb-in-text" aria-pressed="true">Paste text</button>
+          <button type="button" id="sb-in-url" aria-pressed="false">Enter URL</button>
+        </div>
+        <div id="sb-url-wrap" style="display:none">
+          <input type="url" id="sb-url" placeholder="https://example.com/article" autocomplete="off">
+          <div class="hint" style="margin:6px 0 0">Retrieval is attempted directly. Most publishers block it, in which case you will be asked to paste the text.</div>
+          <button type="button" class="act quiet" id="sb-retrieve" style="margin-top:8px;padding:7px 12px;font-size:13px">Retrieve source</button>
+        </div>
+        <textarea id="sb-source" placeholder="Paste the text you want examined…"></textarea>
+        <div class="counter" id="sb-counter">0 characters</div>
+      </div>
+
+      <div class="field" id="sb-support-field" style="display:none">
+        <label>Supporting evidence</label>
+        <span class="hint">Used to test the primary source's claims, not summarized on its own</span>
+        <div id="sb-support-list"></div>
+        <button type="button" class="act quiet" id="sb-add-support" style="padding:7px 12px;font-size:13px">Add a source</button>
+      </div>
+
+      <div class="field">
+        <label for="sb-thesis">Thesis or question <span style="font-weight:400;color:var(--muted)">— optional</span></label>
+        <span class="hint">A claim to test against the supplied evidence</span>
+        <input type="text" id="sb-thesis" placeholder="Does this strengthen their competitive position?" autocomplete="off">
+      </div>
+
+      <div class="buttons">
+        <button class="act primary" id="sb-run">Analyze research</button>
+        <button class="act quiet" id="sb-example">Load example</button>
+        <button class="act quiet" id="sb-clear">Clear</button>
+      </div>
+
+      <div id="sb-notice"></div>
+    </div>
+
+    <div class="results" id="sb-results">
+      <div class="empty">
+        <h2>Nothing analyzed yet</h2>
+        <p>SignalBrief reads only what you provide. It does not search, retrieve, or fill gaps with outside knowledge.</p>
+        <p>Every claim is labeled by what the supplied evidence actually establishes — source-supported, inferred, opinion, or unsupported. A source-supported label means the source states it, not that it is independently verified.</p>
+        <p style="margin-bottom:0">Load the example to see it work.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const subjectEl = $('sb-subject'), sourceEl = $('sb-source'), thesisEl = $('sb-thesis'), urlEl = $('sb-url');
+  const runBtn = $('sb-run'), exampleBtn = $('sb-example'), clearBtn = $('sb-clear');
+  const noticeEl = $('sb-notice'), resultsEl = $('sb-results'), counterEl = $('sb-counter');
+
+  const apiKeyEl = $('sb-api-key'), installBtn = $('sb-install');
+  let deferredInstallPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (installBtn) installBtn.style.display = 'inline-block';
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    if (installBtn) installBtn.style.display = 'none';
+  });
+
+  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+    if (installBtn) installBtn.style.display = 'none';
+  }
+
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!deferredInstallPrompt) {
+        notice('If your browser does not show an install prompt, use its menu and choose Install app or Add to Home screen.');
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      try { await deferredInstallPrompt.userChoice; } catch (e) {}
+      deferredInstallPrompt = null;
+      installBtn.style.display = 'none';
+    });
+  }
+
+  const MAX = 45000, MIN = 150, MAX_SUPPORT = 3;
+  let busy = false;
+  let mode = 'source';          // 'source' | 'evidence'
+  let inputMode = 'text';       // 'text' | 'url'
+  let sourceMeta = null;        // populated only on successful retrieval
+  let supportCount = 0;
+
+  const esc = s => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const arr = v => Array.isArray(v) ? v.filter(x => x != null && x !== '') : [];
+
+  // ---------- Epistemic vocabulary ----------
+
+  const CLASSES = {
+    Source:      { label: 'Source-supported',    c: 'var(--source)',    bg: 'var(--source-bg)' },
+    Inference:   { label: 'Inference',           c: 'var(--inference)', bg: 'var(--inference-bg)' },
+    Opinion:     { label: 'Opinion',             c: 'var(--opinion)',   bg: 'var(--opinion-bg)' },
+    Unsupported: { label: 'Unsupported / Unknown', c: 'var(--unknown)', bg: 'var(--unknown-bg)' }
+  };
+  const normClass = v => {
+    const s = String(v || '').toLowerCase();
+    if (s.startsWith('source') || s.startsWith('fact')) return 'Source';
+    if (s.startsWith('infer')) return 'Inference';
+    if (s.startsWith('opin')) return 'Opinion';
+    return 'Unsupported';
+  };
+  const normConf = v => {
+    const s = String(v || '').toLowerCase();
+    if (s.startsWith('h')) return 'High';
+    if (s.startsWith('m')) return 'Medium';
+    return 'Low';
+  };
+  const XSTAT = {
+    Corroborates:            { c: 'var(--source)',    bg: 'var(--source-bg)' },
+    'Partially corroborates':{ c: 'var(--source)',    bg: 'var(--source-bg)' },
+    Qualifies:               { c: 'var(--opinion)',   bg: 'var(--opinion-bg)' },
+    Contradicts:             { c: 'var(--neg)',       bg: 'var(--neg-bg)' },
+    'Does not address':      { c: 'var(--unknown)',   bg: 'var(--unknown-bg)' }
+  };
+  const normX = v => {
+    const s = String(v || '').toLowerCase();
+    if (s.startsWith('corrob')) return 'Corroborates';
+    if (s.startsWith('partial')) return 'Partially corroborates';
+    if (s.startsWith('qual')) return 'Qualifies';
+    if (s.startsWith('contra')) return 'Contradicts';
+    return 'Does not address';
+  };
+
+  // Small badge marking whether an item is stated by the source or produced by SignalBrief.
+  function basisBadge(v) {
+    const s = String(v || '').toLowerCase();
+    let key = 'Unsupported';
+    if (s.startsWith('source')) key = 'Source';
+    else if (s.startsWith('infer')) key = 'Inference';
+    else if (s.startsWith('opin')) key = 'Opinion';
+    const short = key === 'Source' ? 'Source-supported'
+                : key === 'Inference' ? 'Inferred'
+                : key === 'Opinion' ? 'Opinion' : 'Unsupported';
+    return '<span class="basis" style="color:' + CLASSES[key].c + ';background:' + CLASSES[key].bg + '">' + short + '</span>';
+  }
+
+  function notice(msg, kind) {
+    noticeEl.innerHTML = msg
+      ? '<div class="notice' + (kind ? ' ' + kind : '') + '">' + msg + '</div>'
+      : '';
+  }
+
+  sourceEl.addEventListener('input', () => {
+    const n = sourceEl.value.length;
+    counterEl.textContent = n.toLocaleString() + ' characters';
+    counterEl.className = 'counter' + (n > MAX ? ' over' : '');
+  });
+
+  // ---------- Mode and input toggles ----------
+
+  function setMode(m) {
+    mode = m;
+    $('sb-mode-source').setAttribute('aria-pressed', String(m === 'source'));
+    $('sb-mode-evidence').setAttribute('aria-pressed', String(m === 'evidence'));
+    $('sb-modenote').textContent = m === 'source'
+      ? 'Examines only the primary material you supply. No outside research.'
+      : 'Tests the primary source\u2019s claims against the supporting evidence you supply. Still no outside research.';
+    $('sb-support-field').style.display = m === 'evidence' ? '' : 'none';
+    if (m === 'evidence' && supportCount === 0) addSupport();
+  }
+  $('sb-mode-source').addEventListener('click', () => setMode('source'));
+  $('sb-mode-evidence').addEventListener('click', () => setMode('evidence'));
+
+  function setInputMode(m) {
+    inputMode = m;
+    $('sb-in-text').setAttribute('aria-pressed', String(m === 'text'));
+    $('sb-in-url').setAttribute('aria-pressed', String(m === 'url'));
+    $('sb-url-wrap').style.display = m === 'url' ? '' : 'none';
+  }
+  $('sb-in-text').addEventListener('click', () => setInputMode('text'));
+  $('sb-in-url').addEventListener('click', () => setInputMode('url'));
+
+  function addSupport() {
+    if (supportCount >= MAX_SUPPORT) {
+      notice('Up to ' + MAX_SUPPORT + ' supporting sources. Beyond that the comparison loses precision.');
+      return;
+    }
+    supportCount++;
+    const n = supportCount;
+    const row = document.createElement('div');
+    row.className = 'support-row';
+    row.dataset.idx = n;
+    row.innerHTML =
+      '<div class="rowhead"><b>Supporting source ' + n + '</b>' +
+      '<button type="button" class="linkbtn" data-remove="' + n + '">Remove</button></div>' +
+      '<input type="url" class="sb-sup-url" placeholder="https://example.com/article (optional label)" autocomplete="off">' +
+      '<textarea class="sb-sup-text small" placeholder="Paste this source\u2019s text here"></textarea>';
+    $('sb-support-list').appendChild(row);
+    row.querySelector('[data-remove]').addEventListener('click', () => {
+      row.remove();
+      supportCount--;
+      renumber();
+    });
+  }
+  function renumber() {
+    [...$('sb-support-list').children].forEach((row, i) => {
+      row.querySelector('b').textContent = 'Supporting source ' + (i + 1);
+    });
+  }
+  $('sb-add-support').addEventListener('click', addSupport);
+
+  function collectSupport() {
+    return [...document.querySelectorAll('#sb-support-list .support-row')].map((row, i) => ({
+      label: row.querySelector('.sb-sup-url').value.trim() || ('Supporting source ' + (i + 1)),
+      text: row.querySelector('.sb-sup-text').value.trim()
+    })).filter(s => s.text.length > 40);
+  }
+
+  // ---------- URL retrieval (attempted honestly, fails honestly) ----------
+
+  $('sb-retrieve').addEventListener('click', async () => {
+    const url = urlEl.value.trim();
+    if (!url) { notice('Enter a URL first.', 'error'); return; }
+    notice('Attempting retrieval\u2026');
+    const btn = $('sb-retrieve');
+    btn.disabled = true;
+    const result = await tryFetchURL(url);
+    btn.disabled = false;
+    if (result.ok) {
+      sourceEl.value = result.text;
+      sourceEl.dispatchEvent(new Event('input'));
+      sourceMeta = result.meta;
+      notice('Retrieved ' + result.text.length.toLocaleString() + ' characters from ' +
+             esc(result.meta.domain) + '. Check that the text below is the article body before analyzing.', 'ok');
+    } else {
+      sourceMeta = { url: url, domain: domainOf(url), retrieved: new Date().toISOString().slice(0, 10), retrievalFailed: true };
+      notice('SignalBrief could not retrieve this source automatically. Paste the source text below to continue. ' +
+             'The URL has been kept as metadata.', 'error');
+      sourceEl.focus();
+    }
+  });
+
+  function domainOf(u) {
+    try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return u; }
+  }
+
+  async function tryFetchURL(url) {
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) return { ok: false };
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      doc.querySelectorAll('script,style,nav,header,footer,aside,noscript,form').forEach(n => n.remove());
+      const body = doc.querySelector('article') || doc.querySelector('main') || doc.body;
+      const text = (body ? body.textContent : '').replace(/\s+\n/g, '\n').replace(/\n{3,}/g, '\n\n').replace(/[ \t]{2,}/g, ' ').trim();
+      if (text.length < 400) return { ok: false };
+      const meta = k => { const el = doc.querySelector(k); return el ? (el.getAttribute('content') || el.textContent || '').trim() : ''; };
+      return {
+        ok: true,
+        text: text.slice(0, MAX),
+        meta: {
+          title: meta('meta[property="og:title"]') || (doc.title || '').trim(),
+          publisher: meta('meta[property="og:site_name"]') || domainOf(url),
+          author: meta('meta[name="author"]') || meta('meta[property="article:author"]'),
+          published: meta('meta[property="article:published_time"]') || meta('meta[name="date"]'),
+          url: url,
+          domain: domainOf(url),
+          retrieved: new Date().toISOString().slice(0, 10)
+        }
+      };
+    } catch (e) {
+      return { ok: false };
+    }
+  }
+
+  // ---------- API ----------
+
+  const SHARED_RULES = `You are the reasoning engine behind SignalBrief v0.2, a source-bounded research intelligence tool.
+
+THE EPISTEMIC BOUNDARY — THIS IS THE POINT OF THE TOOL
+You have NOT independently verified anything. You are reporting what the SUPPLIED material does and does not establish.
+- Analyze ONLY the material supplied in this request. Never introduce outside facts, figures, events, dates, quotations, or sources from your own knowledge.
+- Never imply a claim is objectively true. The most you can say is that the supplied source supports it.
+- If the supplied material does not establish something, say so plainly rather than filling the gap.
+
+CLASSIFICATION — apply to claims and to your own analytical output
+- "Source-supported": explicitly stated or demonstrated in the supplied material. This means the source supports it. It does NOT mean it is verified as true.
+- "Inference": reasonably follows from the supplied material but is not explicitly stated. This is YOUR conclusion, not the source's.
+- "Opinion": a judgment, prediction, recommendation, characterization, promotional statement, or subjective interpretation — whether the source's or a person quoted in it.
+- "Unsupported": raised or implied but left insufficient, absent, contradictory, or unresolved by the supplied material.
+
+CONFIDENCE — strength of the EVIDENCE RELATIONSHIP, never truth
+Confidence answers: "How confidently can I say the supplied evidence supports this classification?"
+It never answers: "How likely is this to be true in the real world?"
+- High: the supplied material states or demonstrates this clearly, and nothing in it cuts against.
+- Medium: stated once, hedged by the source, or resting on a single passage.
+- Low: requires an interpretive leap, or the supplied material is ambiguous on the point.
+
+LABELING YOUR OWN OUTPUT
+Anything you produce that the source did not state — inferred motives, implications, risks, dependencies — must carry its own epistemic basis. Never present your inference as the source's statement.
+
+STYLE
+Concise, analytical, skeptical, plain English.
+
+OUTPUT
+Return ONLY valid JSON matching the requested shape. No markdown fences, no preamble, no commentary.`;
+
+  function closersFor(s) {
+    const st = [];
+    let inStr = false, escaped = false;
+    for (let i = 0; i < s.length; i++) {
+      const ch = s[i];
+      if (inStr) {
+        if (escaped) escaped = false;
+        else if (ch === '\\') escaped = true;
+        else if (ch === '"') inStr = false;
+        continue;
+      }
+      if (ch === '"') inStr = true;
+      else if (ch === '{') st.push('}');
+      else if (ch === '[') st.push(']');
+      else if (ch === '}' || ch === ']') st.pop();
+    }
+    return inStr ? null : st.reverse().join('');
+  }
+
+  function repairJSON(t) {
+    let attempts = 0;
+    for (let i = t.length - 1; i >= 0 && attempts < 500; i--) {
+      const ch = t[i];
+      if (ch !== '}' && ch !== ']' && ch !== '"') continue;
+      attempts++;
+      const closers = closersFor(t.slice(0, i + 1));
+      if (closers === null) continue;
+      const candidate = t.slice(0, i + 1).replace(/,\s*$/, '') + closers;
+      try { return JSON.parse(candidate); } catch (e) {}
+    }
+    return null;
+  }
+
+  function parseJSON(text) {
+    let t = text.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+    try { return JSON.parse(t); } catch (e) {}
+    const start = t.indexOf('{'), end = t.lastIndexOf('}');
+    if (start > -1 && end > start) {
+      try { return JSON.parse(t.slice(start, end + 1)); } catch (e) {}
+    }
+    if (start > -1) {
+      const salvaged = repairJSON(t.slice(start));
+      if (salvaged) return salvaged;
+    }
+    throw new Error('The response could not be read, even partially.');
+  }
+
+  async function callOnce(instructions, payload) {
+    const apiKey = apiKeyEl ? apiKeyEl.value.trim() : '';
+    const headers = { 'Content-Type': 'application/json' };
+
+    if (apiKey) {
+      headers['x-api-key'] = apiKey;
+      headers['anthropic-version'] = '2023-06-01';
+      headers['anthropic-dangerous-direct-browser-access'] = 'true';
+    }
+
+    let res;
+    try {
+      res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          system: SHARED_RULES + '\n\n' + instructions,
+          messages: [{ role: 'user', content: payload }]
+        })
+      });
+    } catch (e) {
+      if (!apiKey) {
+        throw new Error(
+          'NO API ACCESS IN THIS ENVIRONMENT. The interface is working, but this standalone copy has no authenticated analysis service. ' +
+          'Open SignalBrief inside its supported hosted runtime or enter a personal Anthropic API key under Local API / BYOK for controlled testing.'
+        );
+      }
+      throw new Error(
+        'SignalBrief could not reach the Anthropic API from this browser. The key was not stored. ' +
+        'Browser/API security policy may be blocking the request.'
+      );
+    }
+
+    if (!res.ok) {
+      if (!apiKey && (res.status === 401 || res.status === 403)) {
+        throw new Error(
+          'NO API ACCESS IN THIS ENVIRONMENT. This standalone copy is not authenticated. ' +
+          'Use Local API / BYOK for controlled testing or connect a secure server-side API proxy.'
+        );
+      }
+      throw new Error('The analysis service returned status ' + res.status + '.');
+    }
+
+    const data = await res.json();
+    const text = (data.content || []).map(b => b.text || '').join('').trim();
+    if (!text) throw new Error('The analysis came back empty.');
+    return parseJSON(text);
+  }
+
+  async function callClaude(instructions, payload) {
+    try { return await callOnce(instructions, payload); }
+    catch (first) {
+      try { return await callOnce(instructions, payload); }
+      catch (second) { throw new Error(second.message + ' This stage was attempted twice.'); }
+    }
+  }
+
+  // ---------- Stage instructions ----------
+
+  const RELEVANCE = `Judge only whether the supplied source material substantially addresses the stated research subject.
+
+Return JSON:
+{
+  "related": true or false,
+  "reason": "at most 35 words. If false, name what the source is actually about and what it does not cover.",
+  "actualFocus": "at most 12 words naming the source's real subject"
+}
+
+Set "related" to true if the source addresses the subject even partially or indirectly. Set it to false only when the material is substantially about something else. Do not reinterpret the subject to fit the source.`;
+
+  const PASS_SUMMARY = `Perform this stage: what the source says, its framing, and signal versus noise.
+
+Return JSON:
+{
+  "usable": true or false,
+  "unusableReason": "if usable is false, one sentence on why this cannot be read as research material",
+  "sourceType": "e.g. press release, earnings commentary, news article, personal notes",
+  "incentive": {
+    "text": "at most 35 words on who produced this and what they may benefit from the reader believing",
+    "classification": "Inference | Opinion | Source-supported | Unsupported",
+    "confidence": "High | Medium | Low",
+    "basis": "at most 20 words on what in the source supports this reading"
+  },
+  "summary": "at most 60 words, plain English, on what the source actually says",
+  "signal": ["material information — at most 15 words each"],
+  "context": ["useful but not decisive background — at most 15 words each"],
+  "noise": ["promotional language, speculation, repetition, filler — at most 15 words each"]
+}
+
+The "incentive" field is almost always an inference. Do not state a motive as established fact. If the source gives no basis for reading incentive, say so and mark it Unsupported.
+
+HARD LIMITS — exceeding them truncates the response and loses everything:
+- At most 4 entries each in signal, context, and noise.`;
+
+  const PASS_CLAIMS = `Perform this stage: extract the consequential claims with provenance.
+
+Return JSON:
+{
+  "claims": [
+    {
+      "claim": "at most 25 words",
+      "evidence": "at most 25 words describing what in the supplied material supports it",
+      "classification": "Source-supported | Inference | Opinion | Unsupported",
+      "confidence": "High | Medium | Low",
+      "provenance": "Primary source | Inference from supplied evidence | Unsupported",
+      "why": "at most 20 words on why it matters"
+    }
+  ]
+}
+
+Provenance records where the evidence came from, not whether the claim is true. Use "Primary source" when the supplied primary material states it. Use "Inference from supplied evidence" when you derived it. Use "Unsupported" when nothing supplied establishes it.
+
+HARD LIMITS — exceeding them truncates the response and loses everything:
+- Between 3 and 6 claims, prioritizing the most consequential.`;
+
+  const PASS_CROSS = `Perform this stage: evaluate the primary source's claims against the supporting material supplied.
+
+You are given numbered primary claims and one or more supporting sources. For each claim, state what each supporting source does to it.
+
+Return JSON:
+{
+  "checks": [
+    {
+      "claimIndex": 0,
+      "sourceLabel": "the label of the supporting source",
+      "status": "Corroborates | Partially corroborates | Qualifies | Contradicts | Does not address",
+      "note": "at most 25 words on what specifically in that source does this"
+    }
+  ]
+}
+
+Do not summarize the supporting sources on their own. Use them only as evidence about the primary claims.
+Corroboration by multiple sources does not make a claim true — it means more supplied material points the same way. Never say or imply otherwise.
+Omit entries where a source does not address a claim, unless that absence is itself notable.
+
+HARD LIMITS: at most 12 check entries total.`;
+
+  const PASS_DEPS = `Perform this stage: typed directional relationships and implications.
+
+Return JSON:
+{
+  "dependencies": [
+    {
+      "nodes": ["A", "B", "C"],
+      "relations": ["affects", "constrains"],
+      "consequence": "at most 25 words on what follows if a downstream item changes",
+      "classification": "Source-supported | Inference | Unsupported",
+      "confidence": "High | Medium | Low",
+      "basis": "at most 15 words on what supports this relationship"
+    }
+  ],
+  "implications": {
+    "positive": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
+    "negative": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
+    "mixed": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
+    "unknown": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }]
+  }
+}
+
+RELATIONSHIP RULES — this is where the previous version failed
+- "relations" must have exactly one fewer entry than "nodes". Each relation connects the node before it to the node after it.
+- Choose from: depends on, supports, affects, threatens, increases, reduces, constrains, enables.
+- Each relation is DIRECTIONAL. Before emitting one, read it aloud as a sentence: "NODE_A [relation] NODE_B." If that sentence is causally or logically backwards, reverse the nodes or choose a different relation.
+- Do not default to "depends on". Use the relation that actually describes the link.
+- Do not emit a tidy chain whose direction you cannot justify. Fewer, correct relationships beat more, neat ones.
+- If the supplied material does not establish a relationship, mark it "Inference" with honest confidence, or omit it.
+
+HARD LIMITS — exceeding them truncates the response and loses everything:
+- At most 3 dependencies. Nodes are 2 to 4 items, each at most 6 words.
+- At most 2 entries per implication category.`;
+
+  const PASS_RISKS = `Perform this stage: catalysts, risks, and unresolved assumptions.
+
+Return JSON:
+{
+  "catalysts": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
+  "risks": [{ "type": "Execution | Competitive | Financial | Regulatory | Technology", "detail": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
+  "assumptions": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }]
+}
+
+Mark "Source-supported" only when the supplied material names the risk or catalyst itself. When you identified it by reasoning over the material, mark it "Inferred".
+
+HARD LIMITS: at most 4 catalysts, 5 risks, 4 assumptions. Only include risk types the material speaks to. Leave arrays empty rather than padding them.`;
+
+  const PASS_BRIEF = `Perform the final stage: open questions, thesis verdict, and the executive brief.
+
+You are given the findings of the earlier stages. Synthesize them. Do not introduce new claims that no earlier stage or the source supports.
+
+Return JSON:
+{
+  "questions": ["specific, decision-oriented unanswered questions — at most 20 words each"],
+  "thesis": {
+    "verdict": "Supported by supplied evidence | Partially supported | Not supported | Insufficient evidence",
+    "reasoning": "at most 45 words tying the verdict to specific supplied evidence"
+  },
+  "brief": {
+    "mainConclusion": "at most 35 words",
+    "supportingEvidence": "at most 30 words on the best-supported point and what supports it",
+    "counterEvidence": "at most 30 words on the most important counterevidence or risk",
+    "criticalUnknowns": "at most 30 words",
+    "whatWouldChangeIt": "at most 30 words on what evidence would most change the conclusion"
+  }
+}
+
+Set "thesis" to null if no thesis was supplied.
+Questions must be specific to this material and answerable in principle. No generic prompts like "what are the risks?".
+Do not manufacture certainty to give a decisive answer. If the supplied evidence is insufficient, say that plainly — "Insufficient evidence" is a legitimate and often correct verdict.
+
+HARD LIMITS: at most 5 questions.`;
+
+  // ---------- Payload assembly ----------
+
+  function sourceBlock(subject, source, thesis) {
+    let meta = '';
+    if (sourceMeta && !sourceMeta.retrievalFailed) {
+      meta = '\nSOURCE METADATA (retrieved): ' + JSON.stringify({
+        title: sourceMeta.title, publisher: sourceMeta.publisher,
+        author: sourceMeta.author, published: sourceMeta.published, url: sourceMeta.url
+      }) + '\n';
+    } else if (sourceMeta && sourceMeta.retrievalFailed) {
+      meta = '\nNOTE: A URL was supplied (' + sourceMeta.url + ') but could not be retrieved. ' +
+             'The text below was pasted by the user. Do not assume it matches the URL.\n';
+    }
+    return 'RESEARCH SUBJECT: ' + (subject || '(not specified)') + '\n' +
+      (thesis ? 'THESIS UNDER TEST: ' + thesis + '\n' : '') + meta +
+      '\nPRIMARY SOURCE MATERIAL:\n"""\n' + source + '\n"""';
+  }
+
+  // ---------- Rendering ----------
+
+  function shell(evidenceMode) {
+    resultsEl.innerHTML =
+      '<div class="card brief" id="sb-brief"><h2>Executive brief</h2>' +
+        '<div class="pending"><span class="dot"></span>Written last, from the completed analysis below</div></div>' +
+      '<div class="card" id="sb-s1"><h2>1 — What happened</h2>' +
+        '<div class="pending"><span class="dot"></span>Reading the source</div></div>' +
+      '<div class="card" id="sb-s2"><h2>2 — Claims and evidence</h2>' +
+        '<div class="pending"><span class="dot"></span>Extracting claims</div></div>' +
+      '<div class="card" id="sb-s3"><h2>3 — Signal and noise</h2>' +
+        '<div class="pending"><span class="dot"></span>Sorting material from filler</div></div>' +
+      '<div class="card" id="sb-s4"><h2>4 — Dependency map</h2>' +
+        '<div class="pending"><span class="dot"></span>Waiting</div></div>' +
+      '<div class="card" id="sb-s5"><h2>5 — Implications</h2>' +
+        '<div class="pending"><span class="dot"></span>Waiting</div></div>' +
+      '<div class="card" id="sb-s6"><h2>6 — Risks and catalysts</h2>' +
+        '<div class="pending"><span class="dot"></span>Waiting</div></div>' +
+      '<div class="card" id="sb-s7"><h2>7 — Open questions</h2>' +
+        '<div class="pending"><span class="dot"></span>Waiting</div></div>';
+  }
+
+  const fill = (id, heading, html) => {
+    const el = $(id);
+    if (el) el.innerHTML = '<h2>' + heading + '</h2><div class="body">' + html + '</div>';
+  };
+  const fail = (id, heading, msg) => fill(id, heading, '<p style="color:var(--muted)">' + esc(msg) + '</p>');
+
+  function meterHTML(conf) {
+    const lit = conf === 'High' ? 3 : conf === 'Medium' ? 2 : 1;
+    let bars = '';
+    for (let i = 1; i <= 3; i++) bars += '<span class="meter-bar' + (i <= lit ? ' on' : '') + '"></span>';
+    return '<span class="meter"><span class="meter-bars">' + bars + '</span>' + conf + ' evidence strength</span>';
+  }
+
+  function renderLedger(claims) {
+    const counts = { Source: 0, Inference: 0, Opinion: 0, Unsupported: 0 };
+    claims.forEach(c => counts[normClass(c.classification)]++);
+    const total = claims.length || 1;
+    let bar = '', key = '';
+    Object.keys(counts).forEach(k => {
+      if (!counts[k]) return;
+      bar += '<div class="ledger-seg" style="width:' + (counts[k] / total * 100) + '%;background:' + CLASSES[k].c + '"></div>';
+      key += '<span><i class="swatch" style="background:' + CLASSES[k].c + '"></i>' + counts[k] + ' ' + esc(CLASSES[k].label.toLowerCase()) + '</span>';
+    });
+    return '<div class="ledger"><div class="ledger-bar">' + bar + '</div><div class="ledger-key">' + key + '</div></div>';
+  }
+
+  function renderClaim(c, idx, checks) {
+    const cls = normClass(c.classification), conf = normConf(c.confidence);
+    const mine = checks.filter(x => Number(x.claimIndex) === idx);
+    let xs = '';
+    if (mine.length) {
+      xs = '<div class="xsource">' + mine.map(x => {
+        const st = normX(x.status);
+        return '<div class="xrow">' +
+          '<span class="xstat" style="color:' + XSTAT[st].c + ';background:' + XSTAT[st].bg + '">' + st + '</span>' +
+          '<span class="xtext"><b>' + esc(x.sourceLabel || 'Supporting source') + '</b> — ' + esc(x.note) + '</span>' +
+        '</div>';
+      }).join('') + '</div>';
+    }
+    return '<div class="claim" style="border-left-color:' + CLASSES[cls].c + '">' +
+      '<div class="claim-text">' + esc(c.claim) + '</div>' +
+      '<div class="claim-meta">' +
+        '<span class="badge" style="color:' + CLASSES[cls].c + ';background:' + CLASSES[cls].bg + '">' + CLASSES[cls].label + '</span>' +
+        meterHTML(conf) +
+        (c.provenance ? '<span class="prov">' + esc(c.provenance) + '</span>' : '') +
+      '</div>' +
+      (c.evidence ? '<div class="claim-row"><b>Evidence:</b> ' + esc(c.evidence) + '</div>' : '') +
+      (c.why ? '<div class="claim-row"><b>Why it matters:</b> ' + esc(c.why) + '</div>' : '') +
+      xs +
+    '</div>';
+  }
+
+  // Items may be plain strings (older shape) or {text, basis} objects.
+  function listWithBasis(items) {
+    const a = arr(items);
+    if (!a.length) return '<p style="color:var(--muted);font-size:13.5px">Nothing in this category.</p>';
+    return '<ul>' + a.map(i => {
+      if (typeof i === 'string') return '<li>' + esc(i) + '</li>';
+      return '<li>' + esc(i.text) + (i.basis ? basisBadge(i.basis) : '') + '</li>';
+    }).join('') + '</ul>';
+  }
+  const plainList = items => arr(items).length
+    ? '<ul>' + arr(items).map(i => '<li>' + esc(typeof i === 'string' ? i : i.text) + '</li>').join('') + '</ul>'
+    : '<p style="color:var(--muted);font-size:13.5px">Nothing in this category.</p>';
+
+  function renderSummary(d) {
+    let inc = '';
+    if (d.incentive && d.incentive.text) {
+      const cls = normClass(d.incentive.classification), conf = normConf(d.incentive.confidence);
+      inc = '<div class="incentive">' +
+        '<b>Possible source incentive / framing</b><br>' + esc(d.incentive.text) +
+        '<div class="claim-meta">' +
+          '<span class="badge" style="color:' + CLASSES[cls].c + ';background:' + CLASSES[cls].bg + '">' + CLASSES[cls].label + '</span>' +
+          meterHTML(conf) +
+        '</div>' +
+        (d.incentive.basis ? '<div class="claim-row" style="margin-top:6px"><b>Evidence basis:</b> ' + esc(d.incentive.basis) + '</div>' : '') +
+      '</div>';
+    }
+    let metaStrip = '';
+    if (sourceMeta) {
+      const bits = [];
+      if (sourceMeta.title) bits.push(esc(sourceMeta.title));
+      if (sourceMeta.publisher) bits.push(esc(sourceMeta.publisher));
+      if (sourceMeta.author) bits.push('by ' + esc(sourceMeta.author));
+      if (sourceMeta.published) bits.push(esc(String(sourceMeta.published).slice(0, 10)));
+      bits.push(sourceMeta.retrievalFailed ? 'URL supplied, retrieval failed, text pasted' : 'retrieved ' + esc(sourceMeta.retrieved));
+      if (sourceMeta.url) bits.push(esc(sourceMeta.url));
+      metaStrip = '<div class="meta-strip">' + bits.join(' &middot; ') + '</div>';
+    }
+    fill('sb-s1', '1 — What happened',
+      '<p>' + esc(d.summary) + '</p>' +
+      '<div class="claim-row" style="margin-top:8px"><b>Source type:</b> ' + esc(d.sourceType || 'unclear') + '</div>' +
+      inc + metaStrip);
+
+    fill('sb-s3', '3 — Signal and noise',
+      '<div class="split">' +
+        '<div class="split-col"><h3 style="color:var(--source)">Material</h3>' + plainList(d.signal) + '</div>' +
+        '<div class="split-col"><h3 style="color:var(--inference)">Context</h3>' + plainList(d.context) + '</div>' +
+        '<div class="split-col"><h3 style="color:var(--muted)">Noise</h3>' + plainList(d.noise) + '</div>' +
+      '</div>');
+  }
+
+  function renderClaims(claims, checks) {
+    const note = '<div class="legend-note">Confidence measures how strongly the supplied material supports the label — not whether the claim is true. ' +
+      '“Source-supported” means the source states it, not that SignalBrief verified it.</div>';
+    fill('sb-s2', '2 — Claims and evidence',
+      claims.length
+        ? renderLedger(claims) + note + claims.map((c, i) => renderClaim(c, i, checks)).join('')
+        : '<p style="color:var(--muted)">No distinct claims could be extracted from this source.</p>');
+  }
+
+  function renderDeps(d) {
+    const deps = arr(d.dependencies);
+    fill('sb-s4', '4 — Dependency map',
+      deps.length
+        ? deps.map(dep => {
+            const nodes = arr(dep.nodes), rels = arr(dep.relations);
+            const cls = normClass(dep.classification), conf = normConf(dep.confidence);
+            let chain = '';
+            nodes.forEach((n, i) => {
+              chain += '<span class="link">' + esc(n) + '</span>';
+              if (i < nodes.length - 1) {
+                chain += '<span class="rel">— ' + esc(rels[i] || 'affects') + ' →</span>';
+              }
+            });
+            return '<div class="chain"><div class="chain-links">' + chain + '</div>' +
+              '<div class="chain-note">' + esc(dep.consequence) + '</div>' +
+              '<div class="chain-meta">' +
+                '<span class="badge" style="color:' + CLASSES[cls].c + ';background:' + CLASSES[cls].bg + '">' + CLASSES[cls].label + '</span>' +
+                meterHTML(conf) +
+              '</div>' +
+              (dep.basis ? '<div class="claim-row" style="margin-top:7px"><b>Basis:</b> ' + esc(dep.basis) + '</div>' : '') +
+            '</div>';
+          }).join('')
+        : '<p style="color:var(--muted)">The supplied material does not establish relationships clearly enough to map without speculating.</p>');
+
+    const im = d.implications || {};
+    const group = (title, color, items) =>
+      '<div class="group"><h3 style="color:' + color + '">' + title + '</h3>' + listWithBasis(items) + '</div>';
+    fill('sb-s5', '5 — Implications',
+      '<div class="legend-note">Implications are produced by SignalBrief, not stated by the source, unless marked source-supported.</div>' +
+      group('Positive', 'var(--pos)', im.positive) +
+      group('Negative', 'var(--neg)', im.negative) +
+      group('Mixed', 'var(--mix)', im.mixed) +
+      group('Unknown', 'var(--muted)', im.unknown));
+  }
+
+  function renderRisks(d) {
+    const risks = arr(d.risks);
+    fill('sb-s6', '6 — Risks and catalysts',
+      '<div class="group"><h3>Catalysts</h3>' + listWithBasis(d.catalysts) + '</div>' +
+      '<div class="group"><h3>Risks</h3>' +
+        (risks.length
+          ? '<ul>' + risks.map(r => '<li><b>' + esc(r.type || 'Risk') + ':</b> ' + esc(r.detail) + (r.basis ? basisBadge(r.basis) : '') + '</li>').join('') + '</ul>'
+          : '<p style="color:var(--muted);font-size:13.5px">Nothing in this category.</p>') +
+      '</div>' +
+      '<div class="group"><h3>Unresolved assumptions</h3>' + listWithBasis(d.assumptions) + '</div>');
+  }
+
+  function renderBrief(d, hasThesis) {
+    const qs = arr(d.questions);
+    fill('sb-s7', '7 — Open questions',
+      qs.length
+        ? '<ul class="qlist">' + qs.map(q => '<li>' + esc(typeof q === 'string' ? q : q.text) + '</li>').join('') + '</ul>'
+        : '<p style="color:var(--muted)">No further questions identified.</p>');
+
+    const b = d.brief || {};
+    const row = (t, v) => v ? '<dt>' + t + '</dt><dd>' + esc(v) + '</dd>' : '';
+    let thesisHTML = '';
+    if (hasThesis && d.thesis && d.thesis.verdict) {
+      const v = String(d.thesis.verdict).toLowerCase();
+      let color = 'var(--muted)', bg = 'var(--unknown-bg)';
+      if (v.startsWith('supported')) { color = 'var(--source)'; bg = 'var(--source-bg)'; }
+      else if (v.startsWith('partially')) { color = 'var(--opinion)'; bg = 'var(--opinion-bg)'; }
+      else if (v.startsWith('not supported')) { color = 'var(--neg)'; bg = 'var(--neg-bg)'; }
+      thesisHTML =
+        '<div class="card"><h2>Your thesis, tested against supplied evidence</h2><div class="body">' +
+        '<div class="verdict" style="color:' + color + ';background:' + bg + '">' + esc(d.thesis.verdict) + '</div>' +
+        '<p>' + esc(d.thesis.reasoning) + '</p></div></div>';
+    }
+
+    $('sb-brief').innerHTML =
+      '<h2>Executive brief</h2><dl>' +
+      row('Main conclusion', b.mainConclusion) +
+      row('Most important supporting evidence', b.supportingEvidence) +
+      row('Most important counterevidence or risk', b.counterEvidence) +
+      row('Critical unknowns', b.criticalUnknowns) +
+      row('What would most change this conclusion', b.whatWouldChangeIt) +
+      '</dl>' +
+      '<div class="foot"><span>Derived only from material you supplied. Nothing here is independently verified.</span>' +
+      '<button class="act quiet" id="sb-copy" style="padding:5px 12px;font-size:12.5px">Copy brief</button></div>';
+
+    if (thesisHTML) $('sb-brief').insertAdjacentHTML('afterend', thesisHTML);
+
+    const copyBtn = $('sb-copy');
+    if (copyBtn) copyBtn.addEventListener('click', () => {
+      const lines = [
+        'SIGNALBRIEF v0.2 — ' + (subjectEl.value.trim() || 'Executive brief'),
+        'Mode: ' + (mode === 'evidence' ? 'Evidence check' : 'Source analysis'),
+        'Based only on supplied material. Nothing independently verified.', '',
+        'MAIN CONCLUSION\n' + (b.mainConclusion || ''), '',
+        'MOST IMPORTANT SUPPORTING EVIDENCE\n' + (b.supportingEvidence || ''), '',
+        'MOST IMPORTANT COUNTEREVIDENCE OR RISK\n' + (b.counterEvidence || ''), '',
+        'CRITICAL UNKNOWNS\n' + (b.criticalUnknowns || ''), '',
+        'WHAT WOULD MOST CHANGE THIS CONCLUSION\n' + (b.whatWouldChangeIt || '')
+      ].join('\n');
+      navigator.clipboard.writeText(lines)
+        .then(() => { copyBtn.textContent = 'Copied'; setTimeout(() => copyBtn.textContent = 'Copy brief', 1600); })
+        .catch(() => { copyBtn.textContent = 'Copy failed'; setTimeout(() => copyBtn.textContent = 'Copy brief', 1600); });
+    });
+  }
+
+  // ---------- Orchestration ----------
+
+  function showMismatch(rel, subject) {
+    resultsEl.innerHTML =
+      '<div class="card mismatch"><h2>Source / subject mismatch</h2><div class="body">' +
+      '<p>The supplied material does not appear to substantially address the stated research subject.</p>' +
+      '<div class="claim-row"><b>Stated subject:</b> ' + esc(subject) + '</div>' +
+      '<div class="claim-row"><b>What the source appears to be about:</b> ' + esc(rel.actualFocus || 'something else') + '</div>' +
+      '<div class="claim-row" style="margin-bottom:14px"><b>Why this was flagged:</b> ' + esc(rel.reason || '') + '</div>' +
+      '<div class="buttons">' +
+        '<button class="act" id="sb-anyway">Analyze anyway</button>' +
+        '<button class="act quiet" id="sb-replace">Replace source</button>' +
+        '<button class="act quiet" id="sb-resubject">Change research subject</button>' +
+      '</div></div></div>';
+    $('sb-anyway').addEventListener('click', () => {
+      notice('Proceeding despite the mismatch. Findings may not bear on “' + esc(subject) + '”.');
+      run(true);
+    });
+    $('sb-replace').addEventListener('click', () => { sourceEl.focus(); sourceEl.select(); });
+    $('sb-resubject').addEventListener('click', () => { subjectEl.focus(); subjectEl.select(); });
+  }
+
+  async function run(skipRelevance) {
+    if (busy) return;
+    const subject = subjectEl.value.trim();
+    let source = sourceEl.value.trim();
+    const thesis = thesisEl.value.trim();
+    const support = mode === 'evidence' ? collectSupport() : [];
+
+    if (!source) {
+      notice('Add source material before running the analysis. SignalBrief works only from text you provide.', 'error');
+      sourceEl.focus();
+      return;
+    }
+    if (mode === 'evidence' && !support.length) {
+      notice('Evidence check needs at least one supporting source with pasted text. Add one, or switch to Source analysis.', 'error');
+      return;
+    }
+    if (source.length < MIN) notice('That source is very short. The analysis will run, but expect thin results.');
+    else notice('');
+
+    let trimmed = false;
+    if (source.length > MAX) { source = source.slice(0, MAX); trimmed = true; }
+
+    busy = true;
+    runBtn.disabled = true;
+    runBtn.textContent = 'Analyzing…';
+
+    const block = sourceBlock(subject, source, thesis);
+
+    // Stage 0 — relevance gate
+    if (!skipRelevance && subject) {
+      try {
+        const rel = await callClaude(RELEVANCE, block);
+        if (rel.related === false) {
+          showMismatch(rel, subject);
+          busy = false;
+          runBtn.disabled = false;
+          runBtn.textContent = 'Analyze research';
+          return;
+        }
+      } catch (e) {
+        // A failed relevance check should not block analysis.
+      }
+    }
+
+    shell();
+    let summary = null, claims = [], checks = [], deps = null, risks = null;
+
+    try {
+      summary = await callClaude(PASS_SUMMARY, block);
+      if (summary.usable === false) {
+        resultsEl.innerHTML = '<div class="empty"><h2>This does not look like research material</h2><p>' +
+          esc(summary.unusableReason || 'The text supplied could not be read as a source document.') +
+          '</p><p style="margin-bottom:0">Try pasting an article, filing, transcript, or set of notes.</p></div>';
+        busy = false; runBtn.disabled = false; runBtn.textContent = 'Analyze research';
+        return;
+      }
+      renderSummary(summary);
+    } catch (err) {
+      fail('sb-s1', '1 — What happened', err.message);
+      fail('sb-s3', '3 — Signal and noise', 'This stage did not complete.');
+    }
+
+    try {
+      const cl = await callClaude(PASS_CLAIMS, block);
+      claims = arr(cl.claims);
+      renderClaims(claims, []);
+    } catch (err) {
+      fail('sb-s2', '2 — Claims and evidence', err.message);
+    }
+
+    // Cross-source evaluation, evidence check mode only
+    if (mode === 'evidence' && claims.length && support.length) {
+      try {
+        const payload = block +
+          '\n\nPRIMARY CLAIMS (indexed):\n' +
+          claims.map((c, i) => i + ': ' + c.claim).join('\n') +
+          '\n\nSUPPORTING MATERIAL:\n' +
+          support.map(s => '--- ' + s.label + ' ---\n' + s.text.slice(0, 12000)).join('\n\n');
+        const x = await callClaude(PASS_CROSS, payload);
+        checks = arr(x.checks);
+        renderClaims(claims, checks);
+      } catch (err) {
+        renderClaims(claims, []);
+        notice('The cross-source comparison failed: ' + esc(err.message) + ' Primary analysis is unaffected.', 'error');
+      }
+    }
+
+    const carry = summary ? '\n\nEARLIER FINDINGS (context only — do not repeat):\n' +
+      JSON.stringify({ summary: summary.summary, signal: summary.signal, claims: claims.map(c => c.claim) }) : '';
+
+    try {
+      deps = await callClaude(PASS_DEPS, block + carry);
+      renderDeps(deps);
+    } catch (err) {
+      fail('sb-s4', '4 — Dependency map', err.message);
+      fail('sb-s5', '5 — Implications', 'This stage did not complete.');
+    }
+
+    try {
+      risks = await callClaude(PASS_RISKS, block + carry);
+      renderRisks(risks);
+    } catch (err) {
+      fail('sb-s6', '6 — Risks and catalysts', err.message);
+    }
+
+    const carry2 = carry +
+      (deps ? '\n\nRELATIONSHIPS:\n' + JSON.stringify(deps.dependencies || []) : '') +
+      (risks ? '\n\nRISKS AND ASSUMPTIONS:\n' + JSON.stringify({ risks: risks.risks, assumptions: risks.assumptions }) : '') +
+      (checks.length ? '\n\nCROSS-SOURCE CHECKS:\n' + JSON.stringify(checks) : '');
+
+    try {
+      const fin = await callClaude(PASS_BRIEF, block + carry2);
+      renderBrief(fin, !!thesis);
+    } catch (err) {
+      fail('sb-s7', '7 — Open questions', err.message);
+      fail('sb-brief', 'Executive brief', 'The brief could not be assembled. The sections above are unaffected.');
+    }
+
+    if (trimmed) notice('Source exceeded ' + MAX.toLocaleString() + ' characters. Only the first portion was analyzed.');
+    busy = false;
+    runBtn.disabled = false;
+    runBtn.textContent = 'Analyze research';
+  }
+
+  // ---------- Example ----------
+
+  const EXAMPLE = {
+    subject: 'Meridian Grid Systems',
+    thesis: 'Does this announcement strengthen Meridian\'s competitive position?',
+    source: `FOR IMMEDIATE RELEASE
+
+Meridian Grid Systems Announces Strategic Partnership with Halvorsen Energy to Deploy Next-Generation Storage Platform
+
+CEDAR FALLS — Meridian Grid Systems (MGS) today announced a transformative multi-year partnership with Halvorsen Energy, one of the region's leading utility operators, to deploy Meridian's Aurora-3 grid storage platform across Halvorsen's service territory beginning in the second half of next year.
+
+The agreement represents a significant validation of Meridian's technology and positions the company as a clear leader in the rapidly expanding grid storage market. Under the terms of the partnership, Halvorsen will deploy Aurora-3 units at up to twelve substation sites, with initial installations targeted at three pilot locations.
+
+"This partnership is a watershed moment for our company and for the future of grid resilience," said Dana Okonkwo, Chief Executive Officer of Meridian Grid Systems. "Halvorsen recognized what we've known all along — that Aurora-3 is simply the most advanced platform available anywhere in the market today."
+
+Aurora-3 builds on Meridian's second-generation architecture and incorporates a proprietary thermal management system that the company expects will deliver meaningful improvements in cycle life. Full-scale production of Aurora-3 units is scheduled to begin once Meridian completes the expansion of its Cedar Falls manufacturing facility, which remains on track.
+
+The expansion is being financed in part through a credit facility that Meridian is currently finalizing with its lending partners. The company anticipates closing the facility in the coming months.
+
+Deployment at all twelve sites remains subject to successful completion of the pilot phase and to approval by the state utility commission, which is expected to review Halvorsen's capital plan next year.
+
+Meridian has not disclosed the financial terms of the partnership.
+
+Industry observers have noted growing demand for grid-scale storage as utilities face increasing pressure to improve reliability. Meridian believes it is exceptionally well positioned to capture a substantial share of this growing market.
+
+About Meridian Grid Systems
+Meridian Grid Systems designs and manufactures grid-scale energy storage platforms for utility and industrial customers.`,
+    support: `HALVORSEN ENERGY — QUARTERLY CAPITAL PLANNING UPDATE (excerpt)
+
+Halvorsen Energy filed its updated capital plan this quarter. The plan includes provisional allocation for grid storage pilots at three substation sites, described in the filing as evaluation deployments.
+
+The filing states that any expansion beyond the initial pilot phase is contingent on performance results and has not been budgeted. Halvorsen also notes it is evaluating storage platforms from more than one vendor and has not committed to a single supplier for deployments beyond the pilot stage.
+
+Regarding the state utility commission review, the filing indicates that the timetable has not yet been set and that prior capital plan reviews in this jurisdiction have taken between nine and eighteen months.`
+  };
+
+  exampleBtn.addEventListener('click', () => {
+    subjectEl.value = EXAMPLE.subject;
+    sourceEl.value = EXAMPLE.source;
+    thesisEl.value = EXAMPLE.thesis;
+    sourceMeta = null;
+    sourceEl.dispatchEvent(new Event('input'));
+    if (mode === 'evidence') {
+      const first = document.querySelector('#sb-support-list .sb-sup-text');
+      const firstUrl = document.querySelector('#sb-support-list .sb-sup-url');
+      if (first) first.value = EXAMPLE.support;
+      if (firstUrl) firstUrl.value = 'Halvorsen Energy capital plan filing';
+      notice('Example loaded with a supporting source that partly contradicts the press release. Fictional material — none of these entities exist.');
+    } else {
+      notice('Example loaded. Fictional material written for demonstration — Meridian Grid Systems does not exist. Switch to Evidence check to load a conflicting second source.');
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    subjectEl.value = ''; sourceEl.value = ''; thesisEl.value = ''; urlEl.value = '';
+    sourceMeta = null;
+    $('sb-support-list').innerHTML = '';
+    supportCount = 0;
+    if (mode === 'evidence') addSupport();
+    sourceEl.dispatchEvent(new Event('input'));
+    notice('');
+    resultsEl.innerHTML = '<div class="empty"><h2>Cleared</h2><p>Paste new source material to run another analysis.</p></div>';
+  });
+
+  runBtn.addEventListener('click', () => run(false));
+})();
+</script>
+
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(err => console.warn('SignalBrief service worker registration failed:', err));
+  });
+}
+</script>
+
+</body>
+</html>
