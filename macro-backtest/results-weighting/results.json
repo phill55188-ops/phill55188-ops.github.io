@@ -1,0 +1,43 @@
+{
+  "test": "MACRO v08 weighting comparison",
+  "assumptions": {
+    "same_holdings": true,
+    "same_smart_refill": true,
+    "defensive_liquidity_sleeve": 0.19,
+    "initial_capital": 500,
+    "monthly_contribution": 200,
+    "months": 23
+  },
+  "definitions": {
+    "CURRENT_V08": "Current conviction targets from canon v08.",
+    "EQUAL_WEIGHT": "81% growth sleeve divided equally across all 16 growth holdings.",
+    "CAPPED_10": "Any growth holding above 10% capped at 10%; excess redistributed proportionally across remaining growth holdings.",
+    "DEPENDENCY_LAYER": "81% growth sleeve divided equally across seven dependency layers, then equally among holdings within each layer."
+  },
+  "dependency_layers": {
+    "materials_fuel": ["MP", "FCX", "LEU"],
+    "power_infrastructure": ["VRT", "BE", "GEV"],
+    "compute": ["NVDA", "QCOM"],
+    "memory": ["MU"],
+    "networking_optics": ["AAOI", "LITE", "MRVL"],
+    "cloud_edge": ["ORCL", "NBIS", "NET"],
+    "orchestration": ["PLTR"]
+  },
+  "results": [
+    {"strategy":"DEPENDENCY_LAYER","annualized_return":1.175550,"annualized_volatility":0.376740,"sharpe":2.300205,"sortino":5.948182,"max_drawdown":-0.132463,"worst_month":-0.119920,"ending_value":12400.457926,"composite_score":1.0000},
+    {"strategy":"EQUAL_WEIGHT","annualized_return":1.144735,"annualized_volatility":0.395801,"sharpe":2.167627,"sortino":4.949908,"max_drawdown":-0.150966,"worst_month":-0.129079,"ending_value":12145.040551,"composite_score":0.6875},
+    {"strategy":"CAPPED_10","annualized_return":1.002019,"annualized_volatility":0.392979,"sharpe":1.995139,"sortino":4.729504,"max_drawdown":-0.153316,"worst_month":-0.141764,"ending_value":11612.269877,"composite_score":0.3500},
+    {"strategy":"CURRENT_V08","annualized_return":0.958010,"annualized_volatility":0.379543,"sharpe":1.991637,"sortino":4.802259,"max_drawdown":-0.145490,"worst_month":-0.131701,"ending_value":11362.402281,"composite_score":0.4625}
+  ],
+  "winners": {
+    "highest_return": "DEPENDENCY_LAYER",
+    "best_sortino": "DEPENDENCY_LAYER",
+    "shallowest_drawdown": "DEPENDENCY_LAYER",
+    "best_composite": "DEPENDENCY_LAYER"
+  },
+  "limitations": [
+    "Current 2026 holdings are held fixed historically, so this tests weighting mechanics, not stock-selection foresight.",
+    "Smart refill uses lagged reported earnings/surprise and trailing historical P/E as the point-in-time proxy for the current forward-estimate ranking rule.",
+    "The common sample is constrained by the youngest current holding and is only 23 months."
+  ]
+}
