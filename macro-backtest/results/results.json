@@ -1,0 +1,79 @@
+{
+  "verdicts": {
+    "weighting": "NO",
+    "refill": "NO",
+    "defense": "YES"
+  },
+  "summary": [
+    {
+      "strategy": "V08_SMART",
+      "ann_return": 0.9580100770559647,
+      "ann_vol": 0.37954329742371384,
+      "sharpe": 1.9916371673723856,
+      "sortino": 4.802259923844733,
+      "max_drawdown": -0.14549049783561752,
+      "worst_month": -0.1317006407122293,
+      "ending_value": 11362.402260611274,
+      "months": 23
+    },
+    {
+      "strategy": "V08_PROPORTIONAL",
+      "ann_return": 0.9597106595041816,
+      "ann_vol": 0.3799785956299294,
+      "sharpe": 1.9921296508762094,
+      "sortino": 4.786874539283778,
+      "max_drawdown": -0.14540771889139992,
+      "worst_month": -0.13210475958656398,
+      "ending_value": 11373.281694636124,
+      "months": 23
+    },
+    {
+      "strategy": "EQUAL_GROWTH_SMART",
+      "ann_return": 1.1447348556220556,
+      "ann_vol": 0.39580118535092584,
+      "sharpe": 2.167627232790986,
+      "sortino": 4.949908228352979,
+      "max_drawdown": -0.15096621930532272,
+      "worst_month": -0.1290793218022661,
+      "ending_value": 12145.040515358327,
+      "months": 23
+    },
+    {
+      "strategy": "NO_DEFENSE_SMART",
+      "ann_return": 1.196482943251635,
+      "ann_vol": 0.46223558876558163,
+      "sharpe": 1.9653528541861751,
+      "sortino": 4.499739462913003,
+      "max_drawdown": -0.18005924699247344,
+      "worst_month": -0.16428921358709636,
+      "ending_value": 13294.26783619869,
+      "months": 23
+    },
+    {
+      "strategy": "SPY",
+      "ann_return": 0.2001048520656119,
+      "ann_vol": 0.12021190509291906,
+      "sharpe": 1.586277535766636,
+      "sortino": 2.9061904131823684,
+      "max_drawdown": -0.07578984416954626,
+      "worst_month": -0.05571920643497963,
+      "ending_value": 8817.773282995584,
+      "months": 32
+    },
+    {
+      "strategy": "QQQ",
+      "ann_return": 0.2311090495710706,
+      "ann_vol": 0.17204942992927583,
+      "sharpe": 1.2997972897519987,
+      "sortino": 2.566601709340373,
+      "max_drawdown": -0.10084578884487871,
+      "worst_month": -0.07586191333200998,
+      "ending_value": 9338.641578685747,
+      "months": 32
+    }
+  ],
+  "notes": [
+    "Universe held fixed to current v08 holdings; this tests mechanics, not historical stock selection.",
+    "Smart refill uses only earnings information available by each simulated month and trailing P/E from historical price / trailing reported EPS."
+  ]
+}
