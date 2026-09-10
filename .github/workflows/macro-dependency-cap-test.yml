@@ -1,0 +1,41 @@
+name: MACRO Dependency Cap Test
+
+on:
+  push:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/dependency_cap_test.py'
+      - '.github/workflows/macro-dependency-cap-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  dependency-cap-test:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: macro-backtest-v08
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r macro-backtest/requirements.txt
+      - name: Run dependency cap comparison
+        run: python macro-backtest/dependency_cap_test.py
+      - name: Save dependency cap results to branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add macro-backtest/results-dependency-caps
+          if git diff --cached --quiet; then
+            echo "No result changes"
+          else
+            git commit -m "Run dependency cap comparison"
+            git pull --rebase origin macro-backtest-v08
+            git push origin HEAD:macro-backtest-v08
+          fi
