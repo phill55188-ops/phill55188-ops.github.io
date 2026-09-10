@@ -1,0 +1,33 @@
+name: MACRO Brutality Test
+
+on:
+  push:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/brutality_test.py'
+      - '.github/workflows/macro-brutality-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  brutality-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: macro-backtest-v08
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r macro-backtest/requirements.txt
+      - name: Run PLTR/MU robustness test
+        run: python macro-backtest/brutality_test.py
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-brutality-results
+          path: macro-backtest/results-brutality/
