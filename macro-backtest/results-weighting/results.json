@@ -1,43 +1,188 @@
 {
-  "test": "MACRO v08 weighting comparison",
-  "assumptions": {
-    "same_holdings": true,
-    "same_smart_refill": true,
-    "defensive_liquidity_sleeve": 0.19,
-    "initial_capital": 500,
-    "monthly_contribution": 200,
-    "months": 23
-  },
+  "test_window_note": "All four portfolios use the same current v08 universe, same 19% defensive/liquidity sleeve, same smart refill logic, $500 initial capital, and $200 monthly contributions.",
   "definitions": {
     "CURRENT_V08": "Current conviction targets from canon v08.",
     "EQUAL_WEIGHT": "81% growth sleeve divided equally across all 16 growth holdings.",
-    "CAPPED_10": "Any growth holding above 10% capped at 10%; excess redistributed proportionally across remaining growth holdings.",
+    "CAPPED_10": "Current conviction weights, but any growth holding above 10% is capped at 10% and the excess is redistributed proportionally across the remaining growth holdings.",
     "DEPENDENCY_LAYER": "81% growth sleeve divided equally across seven dependency layers, then equally among holdings within each layer."
   },
-  "dependency_layers": {
-    "materials_fuel": ["MP", "FCX", "LEU"],
-    "power_infrastructure": ["VRT", "BE", "GEV"],
-    "compute": ["NVDA", "QCOM"],
-    "memory": ["MU"],
-    "networking_optics": ["AAOI", "LITE", "MRVL"],
-    "cloud_edge": ["ORCL", "NBIS", "NET"],
-    "orchestration": ["PLTR"]
+  "layers": {
+    "materials_fuel": [
+      "MP",
+      "FCX",
+      "LEU"
+    ],
+    "power_infrastructure": [
+      "VRT",
+      "BE",
+      "GEV"
+    ],
+    "compute": [
+      "NVDA",
+      "QCOM"
+    ],
+    "memory": [
+      "MU"
+    ],
+    "networking_optics": [
+      "AAOI",
+      "LITE",
+      "MRVL"
+    ],
+    "cloud_edge": [
+      "ORCL",
+      "NBIS",
+      "NET"
+    ],
+    "orchestration": [
+      "PLTR"
+    ]
   },
-  "results": [
-    {"strategy":"DEPENDENCY_LAYER","annualized_return":1.175550,"annualized_volatility":0.376740,"sharpe":2.300205,"sortino":5.948182,"max_drawdown":-0.132463,"worst_month":-0.119920,"ending_value":12400.457926,"composite_score":1.0000},
-    {"strategy":"EQUAL_WEIGHT","annualized_return":1.144735,"annualized_volatility":0.395801,"sharpe":2.167627,"sortino":4.949908,"max_drawdown":-0.150966,"worst_month":-0.129079,"ending_value":12145.040551,"composite_score":0.6875},
-    {"strategy":"CAPPED_10","annualized_return":1.002019,"annualized_volatility":0.392979,"sharpe":1.995139,"sortino":4.729504,"max_drawdown":-0.153316,"worst_month":-0.141764,"ending_value":11612.269877,"composite_score":0.3500},
-    {"strategy":"CURRENT_V08","annualized_return":0.958010,"annualized_volatility":0.379543,"sharpe":1.991637,"sortino":4.802259,"max_drawdown":-0.145490,"worst_month":-0.131701,"ending_value":11362.402281,"composite_score":0.4625}
-  ],
   "winners": {
     "highest_return": "DEPENDENCY_LAYER",
     "best_sortino": "DEPENDENCY_LAYER",
     "shallowest_drawdown": "DEPENDENCY_LAYER",
     "best_composite": "DEPENDENCY_LAYER"
   },
+  "summary": [
+    {
+      "strategy": "DEPENDENCY_LAYER",
+      "ann_return": 1.1755500482455177,
+      "ann_vol": 0.3767404640634054,
+      "sharpe": 2.3002052650727807,
+      "sortino": 5.9481819960995415,
+      "max_drawdown": -0.1324634108904733,
+      "worst_month": -0.11991980784371503,
+      "ending_value": 12400.457949131925,
+      "months": 23,
+      "composite_score": 1.0
+    },
+    {
+      "strategy": "EQUAL_WEIGHT",
+      "ann_return": 1.1447348461853584,
+      "ann_vol": 0.3958011660762572,
+      "sharpe": 2.1676273099401016,
+      "sortino": 4.949907753483906,
+      "max_drawdown": -0.15096620092035662,
+      "worst_month": -0.12907932180459303,
+      "ending_value": 12145.040504133309,
+      "months": 23,
+      "composite_score": 0.6875
+    },
+    {
+      "strategy": "CAPPED_10",
+      "ann_return": 1.0020190930696362,
+      "ann_vol": 0.39297897709210133,
+      "sharpe": 1.9951390766173838,
+      "sortino": 4.729504429204965,
+      "max_drawdown": -0.153315838686105,
+      "worst_month": -0.14176422056441051,
+      "ending_value": 11612.26988755011,
+      "months": 23,
+      "composite_score": 0.35
+    },
+    {
+      "strategy": "CURRENT_V08",
+      "ann_return": 0.9580100630143331,
+      "ann_vol": 0.3795432796618754,
+      "sharpe": 1.9916372250263594,
+      "sortino": 4.802259086733368,
+      "max_drawdown": -0.14549050556886112,
+      "worst_month": -0.13170064071258147,
+      "ending_value": 11362.40225668544,
+      "months": 23,
+      "composite_score": 0.4625
+    }
+  ],
+  "targets": {
+    "CURRENT_V08": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "NVDA": 0.155,
+      "ORCL": 0.05,
+      "AAOI": 0.05,
+      "LITE": 0.035,
+      "MU": 0.105,
+      "MRVL": 0.04,
+      "QCOM": 0.095,
+      "VRT": 0.05,
+      "NBIS": 0.04,
+      "BE": 0.025,
+      "GEV": 0.025,
+      "LEU": 0.03,
+      "MP": 0.03,
+      "FCX": 0.03,
+      "PLTR": 0.025,
+      "NET": 0.025
+    },
+    "EQUAL_WEIGHT": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "NVDA": 0.050625,
+      "ORCL": 0.050625,
+      "AAOI": 0.050625,
+      "LITE": 0.050625,
+      "MU": 0.050625,
+      "MRVL": 0.050625,
+      "QCOM": 0.050625,
+      "VRT": 0.050625,
+      "NBIS": 0.050625,
+      "BE": 0.050625,
+      "GEV": 0.050625,
+      "LEU": 0.050625,
+      "MP": 0.050625,
+      "FCX": 0.050625,
+      "PLTR": 0.050625,
+      "NET": 0.050625
+    },
+    "CAPPED_10": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "NVDA": 0.1,
+      "ORCL": 0.05545454545454546,
+      "AAOI": 0.05545454545454546,
+      "LITE": 0.03881818181818182,
+      "MU": 0.1,
+      "MRVL": 0.04436363636363636,
+      "QCOM": 0.10536363636363635,
+      "VRT": 0.05545454545454546,
+      "NBIS": 0.04436363636363636,
+      "BE": 0.02772727272727273,
+      "GEV": 0.02772727272727273,
+      "LEU": 0.03327272727272727,
+      "MP": 0.03327272727272727,
+      "FCX": 0.03327272727272727,
+      "PLTR": 0.02772727272727273,
+      "NET": 0.02772727272727273
+    },
+    "DEPENDENCY_LAYER": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "MP": 0.038571428571428576,
+      "FCX": 0.038571428571428576,
+      "LEU": 0.038571428571428576,
+      "VRT": 0.038571428571428576,
+      "BE": 0.038571428571428576,
+      "GEV": 0.038571428571428576,
+      "NVDA": 0.057857142857142864,
+      "QCOM": 0.057857142857142864,
+      "MU": 0.11571428571428573,
+      "AAOI": 0.038571428571428576,
+      "LITE": 0.038571428571428576,
+      "MRVL": 0.038571428571428576,
+      "ORCL": 0.038571428571428576,
+      "NBIS": 0.038571428571428576,
+      "NET": 0.038571428571428576,
+      "PLTR": 0.11571428571428573
+    }
+  },
   "limitations": [
     "Current 2026 holdings are held fixed historically, so this tests weighting mechanics, not stock-selection foresight.",
     "Smart refill uses lagged reported earnings/surprise and trailing historical P/E as the point-in-time proxy for the current forward-estimate ranking rule.",
-    "The common sample is constrained by the youngest current holding and is only 23 months."
+    "The common sample is constrained by the youngest current holding and is therefore short."
   ]
 }
