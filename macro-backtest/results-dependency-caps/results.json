@@ -1,0 +1,257 @@
+{
+  "test": "Dependency-layer weighting with single-stock caps",
+  "assumptions": {
+    "same_holdings": true,
+    "same_smart_refill": true,
+    "defensive_liquidity_sleeve": 0.19,
+    "initial_capital": 500,
+    "monthly_contribution": 200,
+    "caps_tested": [
+      0.065,
+      0.075,
+      0.085,
+      0.1
+    ]
+  },
+  "method": "Start with equal weight across seven dependency layers, equal within each layer, then cap any growth stock and redistribute excess across uncapped growth names in proportion to their original dependency-layer weights.",
+  "layers": {
+    "materials_fuel": [
+      "MP",
+      "FCX",
+      "LEU"
+    ],
+    "power_infrastructure": [
+      "VRT",
+      "BE",
+      "GEV"
+    ],
+    "compute": [
+      "NVDA",
+      "QCOM"
+    ],
+    "memory": [
+      "MU"
+    ],
+    "networking_optics": [
+      "AAOI",
+      "LITE",
+      "MRVL"
+    ],
+    "cloud_edge": [
+      "ORCL",
+      "NBIS",
+      "NET"
+    ],
+    "orchestration": [
+      "PLTR"
+    ]
+  },
+  "winner": "DEPENDENCY_UNCAPPED",
+  "results": [
+    {
+      "strategy": "DEPENDENCY_UNCAPPED",
+      "ann_return": 1.1755500729144166,
+      "ann_vol": 0.3767404928921796,
+      "sharpe": 2.30020514730087,
+      "sortino": 5.948181472236863,
+      "max_drawdown": -0.13246341413181528,
+      "worst_month": -0.11991980796068069,
+      "ending_value": 12400.457903413815,
+      "months": 23,
+      "composite_score": 1.0
+    },
+    {
+      "strategy": "DEP_CAP_10_0",
+      "ann_return": 1.1536462184310383,
+      "ann_vol": 0.3785126361937721,
+      "sharpe": 2.2626723528114105,
+      "sortino": 5.7486083573249305,
+      "max_drawdown": -0.1330287738063355,
+      "worst_month": -0.12135697955958358,
+      "ending_value": 12239.578728255592,
+      "months": 23,
+      "composite_score": 0.8333333333333334
+    },
+    {
+      "strategy": "DEP_CAP_8_5",
+      "ann_return": 1.1317286565308313,
+      "ann_vol": 0.37969199029235196,
+      "sharpe": 2.228096372182012,
+      "sortino": 5.526036089234672,
+      "max_drawdown": -0.13352332408784373,
+      "worst_month": -0.12274101213558464,
+      "ending_value": 12078.91774116958,
+      "months": 23,
+      "composite_score": 0.6666666666666666
+    },
+    {
+      "strategy": "DEP_CAP_7_5",
+      "ann_return": 1.1167993866747916,
+      "ann_vol": 0.38074971763646914,
+      "sharpe": 2.2032666865179342,
+      "sortino": 5.391068157653027,
+      "max_drawdown": -0.13653139810671355,
+      "worst_month": -0.12361861029003485,
+      "ending_value": 11968.966306787437,
+      "months": 23,
+      "composite_score": 0.5
+    },
+    {
+      "strategy": "DEP_CAP_6_5",
+      "ann_return": 1.1104324307097415,
+      "ann_vol": 0.3834277770464889,
+      "sharpe": 2.1819116322900194,
+      "sortino": 5.233488889509854,
+      "max_drawdown": -0.14103538508342617,
+      "worst_month": -0.1249787116972979,
+      "ending_value": 11916.911508118876,
+      "months": 23,
+      "composite_score": 0.3333333333333333
+    },
+    {
+      "strategy": "CURRENT_V08",
+      "ann_return": 0.9580100961968476,
+      "ann_vol": 0.37954329921869046,
+      "sharpe": 1.9916371890982112,
+      "sortino": 4.802258344172804,
+      "max_drawdown": -0.14549053414732827,
+      "worst_month": -0.1317006407649446,
+      "ending_value": 11362.4022275772,
+      "months": 23,
+      "composite_score": 0.16666666666666666
+    }
+  ],
+  "targets": {
+    "CURRENT_V08": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "NVDA": 0.155,
+      "ORCL": 0.05,
+      "AAOI": 0.05,
+      "LITE": 0.035,
+      "MU": 0.105,
+      "MRVL": 0.04,
+      "QCOM": 0.095,
+      "VRT": 0.05,
+      "NBIS": 0.04,
+      "BE": 0.025,
+      "GEV": 0.025,
+      "LEU": 0.03,
+      "MP": 0.03,
+      "FCX": 0.03,
+      "PLTR": 0.025,
+      "NET": 0.025
+    },
+    "DEPENDENCY_UNCAPPED": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "MP": 0.038571428571428576,
+      "FCX": 0.038571428571428576,
+      "LEU": 0.038571428571428576,
+      "VRT": 0.038571428571428576,
+      "BE": 0.038571428571428576,
+      "GEV": 0.038571428571428576,
+      "NVDA": 0.057857142857142864,
+      "QCOM": 0.057857142857142864,
+      "MU": 0.11571428571428573,
+      "AAOI": 0.038571428571428576,
+      "LITE": 0.038571428571428576,
+      "MRVL": 0.038571428571428576,
+      "ORCL": 0.038571428571428576,
+      "NBIS": 0.038571428571428576,
+      "NET": 0.038571428571428576,
+      "PLTR": 0.11571428571428573
+    },
+    "DEP_CAP_6_5": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "NVDA": 0.065,
+      "ORCL": 0.04583333333333334,
+      "AAOI": 0.04583333333333334,
+      "LITE": 0.04583333333333334,
+      "MU": 0.065,
+      "MRVL": 0.04583333333333334,
+      "QCOM": 0.065,
+      "VRT": 0.04583333333333334,
+      "NBIS": 0.04583333333333334,
+      "BE": 0.04583333333333334,
+      "GEV": 0.04583333333333334,
+      "LEU": 0.04583333333333334,
+      "MP": 0.04583333333333334,
+      "FCX": 0.04583333333333334,
+      "PLTR": 0.065,
+      "NET": 0.04583333333333334
+    },
+    "DEP_CAP_7_5": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "NVDA": 0.066,
+      "ORCL": 0.044000000000000004,
+      "AAOI": 0.044000000000000004,
+      "LITE": 0.044000000000000004,
+      "MU": 0.075,
+      "MRVL": 0.044000000000000004,
+      "QCOM": 0.066,
+      "VRT": 0.044000000000000004,
+      "NBIS": 0.044000000000000004,
+      "BE": 0.044000000000000004,
+      "GEV": 0.044000000000000004,
+      "LEU": 0.044000000000000004,
+      "MP": 0.044000000000000004,
+      "FCX": 0.044000000000000004,
+      "PLTR": 0.075,
+      "NET": 0.044000000000000004
+    },
+    "DEP_CAP_8_5": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "NVDA": 0.064,
+      "ORCL": 0.04266666666666667,
+      "AAOI": 0.04266666666666667,
+      "LITE": 0.04266666666666667,
+      "MU": 0.085,
+      "MRVL": 0.04266666666666667,
+      "QCOM": 0.064,
+      "VRT": 0.04266666666666667,
+      "NBIS": 0.04266666666666667,
+      "BE": 0.04266666666666667,
+      "GEV": 0.04266666666666667,
+      "LEU": 0.04266666666666667,
+      "MP": 0.04266666666666667,
+      "FCX": 0.04266666666666667,
+      "PLTR": 0.085,
+      "NET": 0.04266666666666667
+    },
+    "DEP_CAP_10_0": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "NVDA": 0.061000000000000006,
+      "ORCL": 0.04066666666666667,
+      "AAOI": 0.04066666666666667,
+      "LITE": 0.04066666666666667,
+      "MU": 0.1,
+      "MRVL": 0.04066666666666667,
+      "QCOM": 0.061000000000000006,
+      "VRT": 0.04066666666666667,
+      "NBIS": 0.04066666666666667,
+      "BE": 0.04066666666666667,
+      "GEV": 0.04066666666666667,
+      "LEU": 0.04066666666666667,
+      "MP": 0.04066666666666667,
+      "FCX": 0.04066666666666667,
+      "PLTR": 0.1,
+      "NET": 0.04066666666666667
+    }
+  },
+  "limitations": [
+    "Current 2026 holdings are held fixed historically, so this tests weighting mechanics, not stock-selection foresight.",
+    "Smart refill uses lagged reported earnings/surprise and trailing historical P/E as the point-in-time proxy for the current forward-estimate ranking rule.",
+    "The common sample is constrained by the youngest current holding and is only about 23 months."
+  ]
+}
