@@ -36,5 +36,6 @@ jobs:
             echo "No result changes"
           else
             git commit -m "Run MACRO v08 weighting comparison"
+            git pull --rebase origin macro-backtest-v08
             git push origin HEAD:macro-backtest-v08
           fi
