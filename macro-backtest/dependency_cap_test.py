@@ -1,13 +1,33 @@
 import json
 from pathlib import Path
 import pandas as pd
+import yfinance as yf
 
-from backtest import DEFENSE, CASH, GROWTH, load_prices, load_earnings, run
+from backtest import DEFENSE, CASH, GROWTH, TARGETS, BENCH, load_earnings, run
 from weighting_test import dependency_layer_growth
 
 OUT = Path('macro-backtest/results-dependency-caps')
 OUT.mkdir(parents=True, exist_ok=True)
 CAPS = [0.065, 0.075, 0.085, 0.10]
+
+
+def robust_load_prices(start):
+    """Sequential price download to avoid yfinance cache locking on GitHub runners."""
+    tickers = list(TARGETS) + BENCH
+    series = {}
+    for i, t in enumerate(tickers, 1):
+        print(f'price {i}/{len(tickers)} {t}', flush=True)
+        x = yf.download(t, start=start, auto_adjust=True, progress=False, threads=False)
+        if x is None or x.empty:
+            raise RuntimeError(f'No price history returned for {t}')
+        if isinstance(x.columns, pd.MultiIndex):
+            close = x['Close'][t] if t in x['Close'].columns else x['Close'].iloc[:, 0]
+        else:
+            close = x['Close']
+        series[t] = close
+    p = pd.DataFrame(series)
+    p.index = pd.to_datetime(p.index).tz_localize(None)
+    return p.resample('ME').last().ffill()
 
 
 def cap_and_redistribute(full_targets, cap):
@@ -20,7 +40,6 @@ def cap_and_redistribute(full_targets, cap):
     base = {t: full_targets[t] for t in GROWTH}
     g = dict(base)
 
-    # Iterative water-filling with original dependency weights as redistribution weights.
     for _ in range(50):
         over = {t: max(0.0, g[t] - cap) for t in g}
         excess = sum(over.values())
@@ -33,7 +52,6 @@ def cap_and_redistribute(full_targets, cap):
         if not eligible:
             raise ValueError(f'Cap {cap:.2%} is too low to allocate the 81% growth sleeve.')
         remaining_excess = excess
-        # redistribute proportional to original dependency weights, respecting remaining headroom
         while remaining_excess > 1e-12:
             eligible = [t for t in eligible if g[t] < cap - 1e-12]
             if not eligible:
@@ -56,7 +74,7 @@ def cap_and_redistribute(full_targets, cap):
 
 
 def main():
-    prices = load_prices('2024-01-01')
+    prices = robust_load_prices('2024-01-01')
     earnings = load_earnings()
 
     dependency, layers = dependency_layer_growth()
@@ -80,7 +98,6 @@ def main():
         logs.append(l)
 
     df = pd.DataFrame(rows)
-    # Composite rewards return, downside-adjusted return, and shallower drawdown.
     df['composite_score'] = (
         df['ann_return'].rank(pct=True) * 0.40
         + df['sortino'].rank(pct=True) * 0.35
