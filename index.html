@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SignalBrief">
-<title>SignalBrief v0.2.1</title>
+<title>SignalBrief v0.2.2-OAI</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -250,7 +250,7 @@
   color: var(--muted);
   margin: 7px 0;
 }
-#sb .runtimebox input[type=password] {
+#sb .runtimebox input[type=password], #sb .runtimebox input[type=url] {
   width: 100%;
   font-family: inherit;
   font-size: 13px;
@@ -271,7 +271,7 @@
 <div id="sb">
   <div class="masthead">
     <h1 class="wordmark">SignalBrief</h1>
-    <span class="version">v0.2.1</span>
+    <span class="version">v0.2.2-OAI</span>
     <span class="tagline">Separates what a source supports from what it merely suggests</span>
   </div>
 
@@ -280,17 +280,33 @@
 
       <div class="runtimebox">
         <div class="runtime-head">
-          <span class="runtime-title">Standalone app runtime</span>
+          <span class="runtime-title">Secure OpenAI backend</span>
           <button type="button" class="act quiet" id="sb-install">Install SignalBrief</button>
         </div>
-        <details>
-          <summary>Local API / BYOK</summary>
+        <div class="runtime-note" id="sb-backend-status">Not configured</div>
+        <details id="sb-backend-details">
+          <summary>Backend connection</summary>
           <div class="runtime-note">
-            Controlled personal testing only. Your Anthropic API key is used only for this browser session,
-            is not stored by SignalBrief, and should not be used on a shared device. A public production
-            deployment should use a secure server-side proxy instead.
+            SignalBrief sends analysis requests through a private serverless bridge.
+            Your OpenAI API key stays in the backend secret store and is never placed in this webpage or GitHub.
           </div>
-          <input type="password" id="sb-api-key" placeholder="Anthropic API key" autocomplete="off">
+          <label for="sb-backend-url">Backend URL</label>
+          <input type="url" id="sb-backend-url"
+                 placeholder="https://signalbrief-api.your-name.workers.dev"
+                 autocomplete="off">
+          <label for="sb-access-token" style="margin-top:8px">SignalBrief access code</label>
+          <input type="password" id="sb-access-token"
+                 placeholder="Private access code"
+                 autocomplete="off">
+          <div class="buttons" style="margin-top:9px">
+            <button type="button" class="act quiet" id="sb-save-backend">Save connection</button>
+            <button type="button" class="act quiet" id="sb-test-backend">Test connection</button>
+            <button type="button" class="linkbtn" id="sb-clear-backend">Clear</button>
+          </div>
+          <div class="runtime-note" style="margin-top:8px">
+            The backend URL and SignalBrief access code are stored only on this device so the installed app can reconnect automatically.
+            The OpenAI API key is never stored here.
+          </div>
         </details>
       </div>
 
@@ -364,7 +380,98 @@
   const runBtn = $('sb-run'), exampleBtn = $('sb-example'), clearBtn = $('sb-clear');
   const noticeEl = $('sb-notice'), resultsEl = $('sb-results'), counterEl = $('sb-counter');
 
-  const apiKeyEl = $('sb-api-key'), installBtn = $('sb-install');
+  const installBtn = $('sb-install');
+  const backendUrlEl = $('sb-backend-url');
+  const accessTokenEl = $('sb-access-token');
+  const backendStatusEl = $('sb-backend-status');
+  const saveBackendBtn = $('sb-save-backend');
+  const testBackendBtn = $('sb-test-backend');
+  const clearBackendBtn = $('sb-clear-backend');
+
+  const BACKEND_URL_KEY = 'signalbrief.backendUrl.v022oai';
+  const ACCESS_TOKEN_KEY = 'signalbrief.accessToken.v022oai';
+
+  function normalizedBackendUrl(value) {
+    return String(value || '').trim().replace(/\/+$/, '');
+  }
+
+  function currentBackendConfig() {
+    return {
+      backendUrl: normalizedBackendUrl(backendUrlEl.value),
+      accessToken: String(accessTokenEl.value || '').trim()
+    };
+  }
+
+  function updateBackendStatus(text, kind) {
+    backendStatusEl.textContent = text;
+    backendStatusEl.style.color =
+      kind === 'ok' ? 'var(--source)' :
+      kind === 'error' ? 'var(--neg)' :
+      'var(--muted)';
+  }
+
+  function loadBackendConfig() {
+    backendUrlEl.value = localStorage.getItem(BACKEND_URL_KEY) || '';
+    accessTokenEl.value = localStorage.getItem(ACCESS_TOKEN_KEY) || '';
+    const cfg = currentBackendConfig();
+    if (cfg.backendUrl && cfg.accessToken) {
+      updateBackendStatus('Configured — test the connection before analysis.');
+    } else {
+      updateBackendStatus('Not configured — open Backend connection.', 'error');
+    }
+  }
+
+  saveBackendBtn.addEventListener('click', () => {
+    const cfg = currentBackendConfig();
+    if (!cfg.backendUrl || !cfg.accessToken) {
+      updateBackendStatus('Enter both the backend URL and access code.', 'error');
+      return;
+    }
+    localStorage.setItem(BACKEND_URL_KEY, cfg.backendUrl);
+    localStorage.setItem(ACCESS_TOKEN_KEY, cfg.accessToken);
+    updateBackendStatus('Saved locally. Test the connection next.', 'ok');
+  });
+
+  clearBackendBtn.addEventListener('click', () => {
+    localStorage.removeItem(BACKEND_URL_KEY);
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    backendUrlEl.value = '';
+    accessTokenEl.value = '';
+    updateBackendStatus('Connection cleared from this device.', 'error');
+  });
+
+  testBackendBtn.addEventListener('click', async () => {
+    const cfg = currentBackendConfig();
+    if (!cfg.backendUrl || !cfg.accessToken) {
+      updateBackendStatus('Enter and save the backend URL and access code first.', 'error');
+      return;
+    }
+
+    testBackendBtn.disabled = true;
+    updateBackendStatus('Testing secure backend…');
+
+    try {
+      const res = await fetch(cfg.backendUrl + '/health', {
+        method: 'GET',
+        headers: { 'X-SignalBrief-Access': cfg.accessToken }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+
+      updateBackendStatus(
+        'Connected securely — ' + (data.model || 'OpenAI backend') + ' ready.',
+        'ok'
+      );
+    } catch (err) {
+      updateBackendStatus(
+        'Backend test failed. Check the Worker URL, access code, and backend secrets.',
+        'error'
+      );
+    } finally {
+      testBackendBtn.disabled = false;
+    }
+  });
+
   let deferredInstallPrompt = null;
 
   window.addEventListener('beforeinstallprompt', (event) => {
@@ -394,6 +501,8 @@
       installBtn.style.display = 'none';
     });
   }
+
+  loadBackendConfig();
 
   const MAX = 45000, MIN = 150, MAX_SUPPORT = 3;
   let busy = false;
@@ -666,57 +775,53 @@ Return ONLY valid JSON matching the requested shape. No markdown fences, no prea
   }
 
   async function callOnce(instructions, payload) {
-    const apiKey = apiKeyEl ? apiKeyEl.value.trim() : '';
-    const headers = { 'Content-Type': 'application/json' };
+    const cfg = currentBackendConfig();
 
-    if (apiKey) {
-      headers['x-api-key'] = apiKey;
-      headers['anthropic-version'] = '2023-06-01';
-      headers['anthropic-dangerous-direct-browser-access'] = 'true';
+    if (!cfg.backendUrl || !cfg.accessToken) {
+      throw new Error(
+        'SignalBrief backend is not configured. Open Secure OpenAI backend, enter the Worker URL and private access code, then test the connection.'
+      );
     }
 
     let res;
     try {
-      res = await fetch('https://api.anthropic.com/v1/messages', {
+      res = await fetch(cfg.backendUrl + '/api/analyze', {
         method: 'POST',
-        headers,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-SignalBrief-Access': cfg.accessToken
+        },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1000,
           system: SHARED_RULES + '\n\n' + instructions,
-          messages: [{ role: 'user', content: payload }]
+          payload
         })
       });
     } catch (e) {
-      if (!apiKey) {
-        throw new Error(
-          'NO API ACCESS IN THIS ENVIRONMENT. The interface is working, but this standalone copy has no authenticated analysis service. ' +
-          'Open SignalBrief inside its supported hosted runtime or enter a personal Anthropic API key under Local API / BYOK for controlled testing.'
-        );
-      }
       throw new Error(
-        'SignalBrief could not reach the Anthropic API from this browser. The key was not stored. ' +
-        'Browser/API security policy may be blocking the request.'
+        'SignalBrief could not reach its secure backend. Check the Worker URL and network connection.'
       );
     }
 
+    let data = {};
+    try { data = await res.json(); } catch (e) {}
+
     if (!res.ok) {
-      if (!apiKey && (res.status === 401 || res.status === 403)) {
-        throw new Error(
-          'NO API ACCESS IN THIS ENVIRONMENT. This standalone copy is not authenticated. ' +
-          'Use Local API / BYOK for controlled testing or connect a secure server-side API proxy.'
-        );
+      const detail = data && data.error ? (' ' + data.error) : '';
+      if (res.status === 401 || res.status === 403) {
+        throw new Error('SignalBrief backend rejected the access code.' + detail);
       }
-      throw new Error('The analysis service returned status ' + res.status + '.');
+      if (res.status === 429) {
+        throw new Error('The OpenAI API is temporarily rate-limited.' + detail);
+      }
+      throw new Error('The analysis service returned status ' + res.status + '.' + detail);
     }
 
-    const data = await res.json();
-    const text = (data.content || []).map(b => b.text || '').join('').trim();
+    const text = String(data.text || '').trim();
     if (!text) throw new Error('The analysis came back empty.');
     return parseJSON(text);
   }
 
-  async function callClaude(instructions, payload) {
+  async function callModel(instructions, payload) {
     try { return await callOnce(instructions, payload); }
     catch (first) {
       try { return await callOnce(instructions, payload); }
@@ -1182,7 +1287,7 @@ HARD LIMITS: at most 5 questions.`;
     // Stage 0 — relevance gate
     if (!skipRelevance && subject) {
       try {
-        const rel = await callClaude(RELEVANCE, block);
+        const rel = await callModel(RELEVANCE, block);
         if (rel.related === false) {
           showMismatch(rel, subject);
           busy = false;
@@ -1199,7 +1304,7 @@ HARD LIMITS: at most 5 questions.`;
     let summary = null, claims = [], checks = [], deps = null, risks = null;
 
     try {
-      summary = await callClaude(PASS_SUMMARY, block);
+      summary = await callModel(PASS_SUMMARY, block);
       if (summary.usable === false) {
         resultsEl.innerHTML = '<div class="empty"><h2>This does not look like research material</h2><p>' +
           esc(summary.unusableReason || 'The text supplied could not be read as a source document.') +
@@ -1214,7 +1319,7 @@ HARD LIMITS: at most 5 questions.`;
     }
 
     try {
-      const cl = await callClaude(PASS_CLAIMS, block);
+      const cl = await callModel(PASS_CLAIMS, block);
       claims = arr(cl.claims);
       renderClaims(claims, []);
     } catch (err) {
@@ -1229,7 +1334,7 @@ HARD LIMITS: at most 5 questions.`;
           claims.map((c, i) => i + ': ' + c.claim).join('\n') +
           '\n\nSUPPORTING MATERIAL:\n' +
           support.map(s => '--- ' + s.label + ' ---\n' + s.text.slice(0, 12000)).join('\n\n');
-        const x = await callClaude(PASS_CROSS, payload);
+        const x = await callModel(PASS_CROSS, payload);
         checks = arr(x.checks);
         renderClaims(claims, checks);
       } catch (err) {
@@ -1242,7 +1347,7 @@ HARD LIMITS: at most 5 questions.`;
       JSON.stringify({ summary: summary.summary, signal: summary.signal, claims: claims.map(c => c.claim) }) : '';
 
     try {
-      deps = await callClaude(PASS_DEPS, block + carry);
+      deps = await callModel(PASS_DEPS, block + carry);
       renderDeps(deps);
     } catch (err) {
       fail('sb-s4', '4 — Dependency map', err.message);
@@ -1250,7 +1355,7 @@ HARD LIMITS: at most 5 questions.`;
     }
 
     try {
-      risks = await callClaude(PASS_RISKS, block + carry);
+      risks = await callModel(PASS_RISKS, block + carry);
       renderRisks(risks);
     } catch (err) {
       fail('sb-s6', '6 — Risks and catalysts', err.message);
@@ -1262,7 +1367,7 @@ HARD LIMITS: at most 5 questions.`;
       (checks.length ? '\n\nCROSS-SOURCE CHECKS:\n' + JSON.stringify(checks) : '');
 
     try {
-      const fin = await callClaude(PASS_BRIEF, block + carry2);
+      const fin = await callModel(PASS_BRIEF, block + carry2);
       renderBrief(fin, !!thesis);
     } catch (err) {
       fail('sb-s7', '7 — Open questions', err.message);
