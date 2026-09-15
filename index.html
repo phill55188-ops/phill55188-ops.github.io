@@ -456,15 +456,27 @@
         headers: { 'X-SignalBrief-Access': cfg.accessToken }
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+      if (!res.ok) {
+        const reasons = {
+          401: 'HTTP 401: access code rejected. Save the same code as the Cloudflare Worker secret SIGNALBRIEF_ACCESS_TOKEN, then deploy the change.',
+          403: 'HTTP 403: this request was blocked by the Worker or Cloudflare. Open SignalBrief at https://phill55188-ops.github.io/ and check the Worker access settings.',
+          404: 'HTTP 404: the backend health route was not found. Check the Worker address and deployment.'
+        };
+        throw new Error(reasons[res.status] || ('The Worker returned HTTP ' + res.status + '. Check its deployment and runtime logs.'));
+      }
+      if (!data || data.ok !== true || data.service !== 'SignalBrief secure OpenAI bridge') {
+        throw new Error('The address responded, but not with a SignalBrief backend health response. Check the Worker address and deployment.');
+      }
 
       updateBackendStatus(
-        'Connected securely — ' + (data.model || 'OpenAI backend') + ' ready.',
+        'Worker connected — ' + (data.model || 'OpenAI backend') + '. Run an analysis to verify OpenAI.',
         'ok'
       );
     } catch (err) {
       updateBackendStatus(
-        'Backend test failed. Check the Worker URL, access code, and backend secrets.',
+        'Connection test failed: ' + (err instanceof TypeError
+          ? 'the browser could not read the Worker response. Check the Worker address, network connection, and Cloudflare access settings.'
+          : err.message),
         'error'
       );
     } finally {

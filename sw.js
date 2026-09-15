@@ -1,4 +1,4 @@
-const CACHE = 'signalbrief-v022-oai-shell-2';
+const CACHE = 'signalbrief-v022-oai-shell-3';
 const SHELL = [
   './',
   './index.html',
