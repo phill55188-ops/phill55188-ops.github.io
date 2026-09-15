@@ -411,7 +411,7 @@
   }
 
   function loadBackendConfig() {
-    backendUrlEl.value = localStorage.getItem(BACKEND_URL_KEY) || '';
+    backendUrlEl.value = localStorage.getItem(BACKEND_URL_KEY) || 'https://phill55188-ops-github-io.phill55188.workers.dev';
     accessTokenEl.value = localStorage.getItem(ACCESS_TOKEN_KEY) || '';
     const cfg = currentBackendConfig();
     if (cfg.backendUrl && cfg.accessToken) {

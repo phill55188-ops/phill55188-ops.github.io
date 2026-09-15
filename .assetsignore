@@ -1,0 +1,7 @@
+# Publish only the existing SignalBrief application assets.
+*
+!index.html
+!manifest.json
+!sw.js
+!icon-192.png
+!icon-512.png
