@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SignalBrief">
-<title>SignalBrief v0.2.2-OAI</title>
+<title>SignalBrief v0.3-OAI</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -271,7 +271,7 @@
 <div id="sb">
   <div class="masthead">
     <h1 class="wordmark">SignalBrief</h1>
-    <span class="version">v0.2.2-OAI</span>
+    <span class="version">v0.3-OAI</span>
     <span class="tagline">Separates what a source supports from what it merely suggests</span>
   </div>
 
@@ -578,6 +578,52 @@
     return '<span class="basis" style="color:' + CLASSES[key].c + ';background:' + CLASSES[key].bg + '">' + short + '</span>';
   }
 
+  function normalizeClaims(claims) {
+    return arr(claims).map(c => {
+      const out = Object.assign({}, c);
+      if (out.claimType === 'Audit finding') {
+        out.classification = 'Unsupported';
+        out.provenance = 'SignalBrief audit finding';
+      } else if (out.claimType === 'Attributed statement') {
+        out.classification = 'Opinion';
+        out.provenance = 'Attributed statement in supplied source';
+      } else if (String(out.provenance || '').toLowerCase().startsWith('primary source')) {
+        out.provenance = 'Supplied source';
+      }
+      return out;
+    });
+  }
+
+  function lockedBasis(item, claims) {
+    const refs = arr(item && item.claimRefs)
+      .map(Number)
+      .filter(i => Number.isInteger(i) && i >= 0 && i < claims.length);
+    if (!refs.length) return normClass(item && (item.classification || item.basis)) === 'Source' ? 'Inference' : null;
+    const classes = refs.map(i => normClass(claims[i].classification));
+    if (classes.includes('Unsupported')) return 'Unsupported';
+    if (classes.includes('Opinion')) return 'Opinion';
+    if (classes.includes('Inference')) return 'Inference';
+    return 'Source';
+  }
+
+  function lockLaterStages(result, claims) {
+    if (!result) return result;
+    arr(result.dependencies).forEach(item => {
+      const locked = lockedBasis(item, claims);
+      if (locked) item.classification = locked === 'Source' ? 'Source-supported' : locked;
+    });
+    const groups = result.implications || {};
+    ['positive', 'negative', 'mixed', 'unknown'].forEach(k => arr(groups[k]).forEach(item => {
+      const locked = lockedBasis(item, claims);
+      if (locked) item.basis = locked === 'Source' ? 'Source-supported' : locked === 'Inference' ? 'Inferred' : locked;
+    }));
+    ['catalysts', 'risks', 'assumptions'].forEach(k => arr(result[k]).forEach(item => {
+      const locked = lockedBasis(item, claims);
+      if (locked) item.basis = locked === 'Source' ? 'Source-supported' : locked === 'Inference' ? 'Inferred' : locked;
+    }));
+    return result;
+  }
+
   function notice(msg, kind) {
     noticeEl.innerHTML = msg
       ? '<div class="notice' + (kind ? ' ' + kind : '') + '">' + msg + '</div>'
@@ -709,7 +755,7 @@
 
   // ---------- API ----------
 
-  const SHARED_RULES = `You are the reasoning engine behind SignalBrief v0.2, a source-bounded research intelligence tool.
+  const SHARED_RULES = `You are the reasoning engine behind SignalBrief v0.3, a source-bounded research intelligence tool.
 
 THE EPISTEMIC BOUNDARY — THIS IS THE POINT OF THE TOOL
 You have NOT independently verified anything. You are reporting what the SUPPLIED material does and does not establish.
@@ -722,6 +768,18 @@ CLASSIFICATION — apply to claims and to your own analytical output
 - "Inference": reasonably follows from the supplied material but is not explicitly stated. This is YOUR conclusion, not the source's.
 - "Opinion": a judgment, prediction, recommendation, characterization, promotional statement, or subjective interpretation — whether the source's or a person quoted in it.
 - "Unsupported": raised or implied but left insufficient, absent, contradictory, or unresolved by the supplied material.
+
+ATTRIBUTION AND EXPLICIT-CLAIM RULES
+- Classify what the supplied material establishes, not what your outside knowledge suggests is true.
+- If the source explicitly asserts a factual proposition, classify that proposition as "Source-supported" even if it seems impossible, false, or conflicts with your prior knowledge. Source-supported means only that the source states it.
+- If a named person makes a prediction, warning, judgment, causal hypothesis, or recommendation, keep the speaker in the claim and classify it as "Opinion". The evidence supports the attribution, not the proposition as objective fact.
+- A conclusion about what the source fails to demonstrate is a SignalBrief audit finding. Classify it "Unsupported", set claimType to "Audit finding", and do not present it as though it were a failed source claim.
+- Do not use a "Primary source" provenance label for a news article merely because it quotes a named person. Describe provenance using the supplied-source roles required by the stage.
+
+CROSS-STAGE CONSISTENCY
+- The claims ledger is the classification authority for later stages.
+- Later dependencies, implications, catalysts, risks, assumptions, and the final brief must preserve claim attribution and classification. They may qualify or downgrade a claim, but must never upgrade Opinion, Inference, or Unsupported material into Source-supported.
+- A proposed or hypothetical causal pathway must remain visibly proposed or hypothetical everywhere it appears.
 
 CONFIDENCE — strength of the EVIDENCE RELATIONSHIP, never truth
 Confidence answers: "How confidently can I say the supplied evidence supports this classification?"
@@ -888,13 +946,19 @@ Return JSON:
       "evidence": "at most 25 words describing what in the supplied material supports it",
       "classification": "Source-supported | Inference | Opinion | Unsupported",
       "confidence": "High | Medium | Low",
-      "provenance": "Primary source | Inference from supplied evidence | Unsupported",
+      "claimType": "Source claim | Attributed statement | Audit finding",
+      "provenance": "Supplied source | Attributed statement in supplied source | Inference from supplied evidence | SignalBrief audit finding | Unsupported",
       "why": "at most 20 words on why it matters"
     }
   ]
 }
 
-Provenance records where the evidence came from, not whether the claim is true. Use "Primary source" when the supplied primary material states it. Use "Inference from supplied evidence" when you derived it. Use "Unsupported" when nothing supplied establishes it.
+Provenance records where the evidence came from, not whether the claim is true.
+- Use "Supplied source" for an explicit factual assertion made by the supplied material.
+- Use "Attributed statement in supplied source" for a named person's prediction, warning, judgment, recommendation, or causal hypothesis. Keep the speaker in the claim and classify it Opinion.
+- Use "Inference from supplied evidence" when SignalBrief derived the claim.
+- Use "SignalBrief audit finding" when the claim states that the source does not demonstrate, quantify, identify, or resolve something. Set claimType to "Audit finding" and classification to Unsupported.
+- Never downgrade an explicit factual assertion because outside knowledge makes it seem false or impossible.
 
 HARD LIMITS — exceeding them truncates the response and loses everything:
 - Between 3 and 6 claims, prioritizing the most consequential.`;
@@ -930,16 +994,17 @@ Return JSON:
       "nodes": ["A", "B", "C"],
       "relations": ["affects", "constrains"],
       "consequence": "at most 25 words on what follows if a downstream item changes",
-      "classification": "Source-supported | Inference | Unsupported",
+      "classification": "Source-supported | Inference | Opinion | Unsupported",
       "confidence": "High | Medium | Low",
-      "basis": "at most 15 words on what supports this relationship"
+      "basis": "at most 15 words on what supports this relationship",
+      "claimRefs": [0]
     }
   ],
   "implications": {
-    "positive": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
-    "negative": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
-    "mixed": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
-    "unknown": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }]
+    "positive": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Opinion | Unsupported", "claimRefs": [0] }],
+    "negative": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Opinion | Unsupported", "claimRefs": [0] }],
+    "mixed": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Opinion | Unsupported", "claimRefs": [0] }],
+    "unknown": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Opinion | Unsupported", "claimRefs": [0] }]
   }
 }
 
@@ -950,6 +1015,9 @@ RELATIONSHIP RULES — this is where the previous version failed
 - Do not default to "depends on". Use the relation that actually describes the link.
 - Do not emit a tidy chain whose direction you cannot justify. Fewer, correct relationships beat more, neat ones.
 - If the supplied material does not establish a relationship, mark it "Inference" with honest confidence, or omit it.
+- claimRefs must identify the zero-based claims-ledger entries supporting each item.
+- Preserve the referenced claims' epistemic status. If an edge comes from a person's warning or hypothesis, classify it Opinion and phrase it as proposed, warned, predicted, or hypothetical.
+- Never turn an attributed opinion into a Source-supported causal relationship. Never render a proposed pathway as an established causal chain.
 
 HARD LIMITS — exceeding them truncates the response and loses everything:
 - At most 3 dependencies. Nodes are 2 to 4 items, each at most 6 words.
@@ -959,12 +1027,13 @@ HARD LIMITS — exceeding them truncates the response and loses everything:
 
 Return JSON:
 {
-  "catalysts": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
-  "risks": [{ "type": "Execution | Competitive | Financial | Regulatory | Technology", "detail": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }],
-  "assumptions": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Unsupported" }]
+  "catalysts": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Opinion | Unsupported", "claimRefs": [0] }],
+  "risks": [{ "type": "Execution | Competitive | Financial | Regulatory | Technology", "detail": "at most 25 words", "basis": "Source-supported | Inferred | Opinion | Unsupported", "claimRefs": [0] }],
+  "assumptions": [{ "text": "at most 25 words", "basis": "Source-supported | Inferred | Opinion | Unsupported", "claimRefs": [0] }]
 }
 
 Mark "Source-supported" only when the supplied material names the risk or catalyst itself. When you identified it by reasoning over the material, mark it "Inferred".
+Use Opinion when the item is a named person's prediction, warning, recommendation, or causal hypothesis. Include claimRefs and never upgrade the referenced ledger classifications.
 
 HARD LIMITS: at most 4 catalysts, 5 risks, 4 assumptions. Only include risk types the material speaks to. Leave arrays empty rather than padding them.`;
 
@@ -976,7 +1045,8 @@ Return JSON:
 {
   "questions": ["specific, decision-oriented unanswered questions — at most 20 words each"],
   "thesis": {
-    "verdict": "Supported by supplied evidence | Partially supported | Not supported | Insufficient evidence",
+    "kind": "Thesis | Question",
+    "verdict": "For a thesis: Supported by supplied evidence | Partially supported | Not supported | Insufficient evidence. For a question: a direct 2-8 word answer, not a support verdict",
     "reasoning": "at most 45 words tying the verdict to specific supplied evidence"
   },
   "brief": {
@@ -989,12 +1059,21 @@ Return JSON:
 }
 
 Set "thesis" to null if no thesis was supplied.
+The payload identifies the input as THESIS UNDER TEST or USER QUESTION. Preserve that distinction:
+- For a thesis, use one of the four fixed evidence verdicts.
+- For a question, set kind to Question and answer it directly. Do not call a question supported, partially supported, or not supported.
 Questions must be specific to this material and answerable in principle. No generic prompts like "what are the risks?".
 Do not manufacture certainty to give a decisive answer. If the supplied evidence is insufficient, say that plainly — "Insufficient evidence" is a legitimate and often correct verdict.
 
 HARD LIMITS: at most 5 questions.`;
 
   // ---------- Payload assembly ----------
+
+  function inputKind(text) {
+    const s = String(text || '').trim();
+    return /\?$/.test(s) || /^(who|what|when|where|why|how|does|do|did|is|are|can|could|should|would|will|has|have)\b/i.test(s)
+      ? 'question' : 'thesis';
+  }
 
   function sourceBlock(subject, source, thesis) {
     let meta = '';
@@ -1008,7 +1087,7 @@ HARD LIMITS: at most 5 questions.`;
              'The text below was pasted by the user. Do not assume it matches the URL.\n';
     }
     return 'RESEARCH SUBJECT: ' + (subject || '(not specified)') + '\n' +
-      (thesis ? 'THESIS UNDER TEST: ' + thesis + '\n' : '') + meta +
+      (thesis ? (inputKind(thesis) === 'question' ? 'USER QUESTION: ' : 'THESIS UNDER TEST: ') + thesis + '\n' : '') + meta +
       '\nPRIMARY SOURCE MATERIAL:\n"""\n' + source + '\n"""';
   }
 
@@ -1062,6 +1141,7 @@ HARD LIMITS: at most 5 questions.`;
 
   function renderClaim(c, idx, checks) {
     const cls = normClass(c.classification), conf = normConf(c.confidence);
+    const displayLabel = c.claimType === 'Audit finding' ? 'Audit finding' : CLASSES[cls].label;
     const mine = checks.filter(x => Number(x.claimIndex) === idx);
     let xs = '';
     if (mine.length) {
@@ -1076,7 +1156,7 @@ HARD LIMITS: at most 5 questions.`;
     return '<div class="claim" style="border-left-color:' + CLASSES[cls].c + '">' +
       '<div class="claim-text">' + esc(c.claim) + '</div>' +
       '<div class="claim-meta">' +
-        '<span class="badge" style="color:' + CLASSES[cls].c + ';background:' + CLASSES[cls].bg + '">' + CLASSES[cls].label + '</span>' +
+        '<span class="badge" style="color:' + CLASSES[cls].c + ';background:' + CLASSES[cls].bg + '">' + displayLabel + '</span>' +
         meterHTML(conf) +
         (c.provenance ? '<span class="prov">' + esc(c.provenance) + '</span>' : '') +
       '</div>' +
@@ -1209,8 +1289,9 @@ HARD LIMITS: at most 5 questions.`;
       if (v.startsWith('supported')) { color = 'var(--source)'; bg = 'var(--source-bg)'; }
       else if (v.startsWith('partially')) { color = 'var(--opinion)'; bg = 'var(--opinion-bg)'; }
       else if (v.startsWith('not supported')) { color = 'var(--neg)'; bg = 'var(--neg-bg)'; }
+      const isQuestion = String(d.thesis.kind || '').toLowerCase() === 'question' || inputKind(thesisEl.value) === 'question';
       thesisHTML =
-        '<div class="card"><h2>Your thesis, tested against supplied evidence</h2><div class="body">' +
+        '<div class="card"><h2>' + (isQuestion ? 'Your question, answered from supplied evidence' : 'Your thesis, tested against supplied evidence') + '</h2><div class="body">' +
         '<div class="verdict" style="color:' + color + ';background:' + bg + '">' + esc(d.thesis.verdict) + '</div>' +
         '<p>' + esc(d.thesis.reasoning) + '</p></div></div>';
     }
@@ -1231,7 +1312,7 @@ HARD LIMITS: at most 5 questions.`;
     const copyBtn = $('sb-copy');
     if (copyBtn) copyBtn.addEventListener('click', () => {
       const lines = [
-        'SIGNALBRIEF v0.2 — ' + (subjectEl.value.trim() || 'Executive brief'),
+        'SIGNALBRIEF v0.3 — ' + (subjectEl.value.trim() || 'Executive brief'),
         'Mode: ' + (mode === 'evidence' ? 'Evidence check' : 'Source analysis'),
         'Based only on supplied material. Nothing independently verified.', '',
         'MAIN CONCLUSION\n' + (b.mainConclusion || ''), '',
@@ -1332,7 +1413,7 @@ HARD LIMITS: at most 5 questions.`;
 
     try {
       const cl = await callModel(PASS_CLAIMS, block);
-      claims = arr(cl.claims);
+      claims = normalizeClaims(cl.claims);
       renderClaims(claims, []);
     } catch (err) {
       fail('sb-s2', '2 — Claims and evidence', err.message);
@@ -1355,11 +1436,11 @@ HARD LIMITS: at most 5 questions.`;
       }
     }
 
-    const carry = summary ? '\n\nEARLIER FINDINGS (context only — do not repeat):\n' +
-      JSON.stringify({ summary: summary.summary, signal: summary.signal, claims: claims.map(c => c.claim) }) : '';
+    const carry = summary ? '\n\nEARLIER FINDINGS AND AUTHORITATIVE CLAIMS LEDGER (do not repeat or upgrade classifications):\n' +
+      JSON.stringify({ summary: summary.summary, signal: summary.signal, claims: claims }) : '';
 
     try {
-      deps = await callModel(PASS_DEPS, block + carry);
+      deps = lockLaterStages(await callModel(PASS_DEPS, block + carry), claims);
       renderDeps(deps);
     } catch (err) {
       fail('sb-s4', '4 — Dependency map', err.message);
@@ -1367,7 +1448,7 @@ HARD LIMITS: at most 5 questions.`;
     }
 
     try {
-      risks = await callModel(PASS_RISKS, block + carry);
+      risks = lockLaterStages(await callModel(PASS_RISKS, block + carry), claims);
       renderRisks(risks);
     } catch (err) {
       fail('sb-s6', '6 — Risks and catalysts', err.message);
