@@ -5,6 +5,7 @@ on:
     branches: [macro-backtest-v08]
     paths:
       - 'macro-backtest/dependency_cap_test.py'
+      - 'macro-backtest/satellite_weight_test.py'
       - '.github/workflows/macro-dependency-cap-test.yml'
   workflow_dispatch:
 
@@ -25,8 +26,10 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: pip install -r macro-backtest/requirements.txt
-      - name: Run dependency cap comparison
+      - name: Run controlled dependency comparison
         run: python macro-backtest/dependency_cap_test.py
+      - name: Run ADBE TSM SNPS satellite weight sensitivity
+        run: python macro-backtest/satellite_weight_test.py
       - name: Save dependency cap results to branch
         run: |
           git config user.name "github-actions[bot]"
@@ -35,7 +38,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No result changes"
           else
-            git commit -m "Run dependency cap comparison"
+            git commit -m "Run dependency and satellite weight comparisons"
             git pull --rebase origin macro-backtest-v08
             git push origin HEAD:macro-backtest-v08
           fi
