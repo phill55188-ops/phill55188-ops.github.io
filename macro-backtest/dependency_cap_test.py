@@ -8,28 +8,27 @@ OUT = Path('macro-backtest/results-dependency-caps')
 OUT.mkdir(parents=True, exist_ok=True)
 CAP = 0.10
 
-# Authoritative v10.4 canonical targets before the Silicon Creation / Enablement layer.
-CURRENT_V10_4_GROWTH = {
-    'NVDA': 0.061,
-    'QCOM': 0.061,
-    'MU': 0.10,
-    'PLTR': 0.05,
-    'ADBE': 0.05,
-    'ORCL': 0.040666667,
-    'NBIS': 0.040666667,
-    'NET': 0.040666667,
-    'AAOI': 0.040666667,
-    'LITE': 0.040666667,
-    'MRVL': 0.040666667,
-    'VRT': 0.040666667,
-    'BE': 0.040666667,
-    'GEV': 0.040666667,
-    'LEU': 0.040666667,
-    'MP': 0.040666667,
-    'FCX': 0.040666667,
+V08_LAYERS = {
+    'materials_fuel': ['MP', 'FCX', 'LEU'],
+    'power_infrastructure': ['VRT', 'BE', 'GEV'],
+    'compute': ['NVDA', 'QCOM'],
+    'memory': ['MU'],
+    'networking_optics': ['AAOI', 'LITE', 'MRVL'],
+    'cloud_edge_execution': ['ORCL', 'NBIS', 'NET'],
+    'orchestration': ['PLTR'],
 }
 
-NEW_LAYERS = {
+V10_4_LAYERS = {
+    'materials_fuel': ['MP', 'FCX', 'LEU'],
+    'power_infrastructure': ['VRT', 'BE', 'GEV'],
+    'compute': ['NVDA', 'QCOM'],
+    'memory': ['MU'],
+    'networking_optics': ['AAOI', 'LITE', 'MRVL'],
+    'cloud_edge_execution': ['ORCL', 'NBIS', 'NET'],
+    'orchestration': ['PLTR', 'ADBE'],
+}
+
+V10_5_LAYERS = {
     'materials_fuel': ['MP', 'FCX', 'LEU'],
     'power_infrastructure': ['VRT', 'BE', 'GEV'],
     'silicon_creation_enablement': ['TSM', 'SNPS'],
@@ -40,11 +39,17 @@ NEW_LAYERS = {
     'orchestration': ['PLTR', 'ADBE'],
 }
 
+CONFIGS = {
+    'V08_DEP_CAP_10': V08_LAYERS,
+    'V10_4_DEP_CAP_10': V10_4_LAYERS,
+    'V10_5_DEP_CAP_10': V10_5_LAYERS,
+}
+
 
 def dependency_targets(layers, cap=CAP):
     """Equal-weight the 81% growth sleeve by dependency layer, then equal-weight
-    within each layer. Enforce a single-stock cap and redistribute any excess
-    across uncapped names in proportion to their uncapped dependency weights.
+    within each layer. Enforce a single-stock cap and redistribute excess across
+    uncapped names in proportion to their original dependency weights.
     """
     layer_weight = 0.81 / len(layers)
     base = {}
@@ -86,97 +91,123 @@ def dependency_targets(layers, cap=CAP):
 
 
 def main():
-    new_growth, new_targets = dependency_targets(NEW_LAYERS, CAP)
-    current_targets = {**bt.DEFENSE, **CURRENT_V10_4_GROWTH}
+    built = {}
+    all_growth = set()
+    for name, layers in CONFIGS.items():
+        growth, targets = dependency_targets(layers, CAP)
+        built[name] = {'layers': layers, 'growth': growth, 'targets': targets}
+        all_growth.update(growth)
 
-    # Make the existing engine fetch price + earnings history for the expanded
-    # universe while preserving its established smart-refill/run mechanics.
-    expanded = sorted(set(CURRENT_V10_4_GROWTH) | set(new_growth))
-    bt.GROWTH = {t: new_growth.get(t, CURRENT_V10_4_GROWTH.get(t, 0.0)) for t in expanded}
+    # Fetch one expanded dataset, then run each portfolio through the exact same
+    # engine/refill rules. All three universes share NBIS, the youngest holding,
+    # so bt.run resolves to the same common start window for every configuration.
+    union_growth = sorted(all_growth)
+    bt.GROWTH = {t: 0.01 for t in union_growth}
     bt.TARGETS = {**bt.DEFENSE, **bt.GROWTH}
 
     prices = bt.load_prices('2024-01-01')
     earnings = bt.load_earnings()
 
-    specs = [
-        ('CURRENT_V10_4', current_targets, list(CURRENT_V10_4_GROWTH)),
-        ('V10_5_TSM_SNPS_DEP_CAP_10', new_targets, list(new_growth)),
-    ]
-
     rows = []
     logs = []
-    for name, targets, growth_names in specs:
-        n, s, l = bt.run(name, prices, earnings, targets, 'smart', 500, 200, bt.CASH, growth_names)
+    for name in CONFIGS:
+        spec = built[name]
+        n, s, l = bt.run(
+            name,
+            prices,
+            earnings,
+            spec['targets'],
+            'smart',
+            500,
+            200,
+            bt.CASH,
+            list(spec['growth']),
+        )
         rows.append({'strategy': n, **s})
         l['strategy'] = n
         logs.append(l)
 
     df = pd.DataFrame(rows)
-    cur = df.loc[df.strategy == 'CURRENT_V10_4'].iloc[0]
-    new = df.loc[df.strategy == 'V10_5_TSM_SNPS_DEP_CAP_10'].iloc[0]
+    df['composite_score'] = (
+        df['ann_return'].rank(pct=True) * 0.40
+        + df['sortino'].rank(pct=True) * 0.35
+        + (-df['max_drawdown'].abs()).rank(pct=True) * 0.25
+    )
+    df = df.sort_values('composite_score', ascending=False).reset_index(drop=True)
 
-    comparison = {
-        'annual_return_change_points': float((new.ann_return - cur.ann_return) * 100),
-        'sortino_change': float(new.sortino - cur.sortino),
-        'max_drawdown_change_points': float((new.max_drawdown - cur.max_drawdown) * 100),
-        'ending_value_change': float(new.ending_value - cur.ending_value),
-    }
+    winner_return = df.loc[df['ann_return'].idxmax(), 'strategy']
+    winner_sortino = df.loc[df['sortino'].idxmax(), 'strategy']
+    winner_drawdown = df.loc[df['max_drawdown'].idxmax(), 'strategy']
+    winner_composite = df.loc[df['composite_score'].idxmax(), 'strategy']
+
+    targets_out = {name: built[name]['targets'] for name in CONFIGS}
+    layers_out = {name: built[name]['layers'] for name in CONFIGS}
 
     target_rows = []
-    for ticker, weight in sorted(new_targets.items(), key=lambda kv: kv[1], reverse=True):
-        target_rows.append({
-            'ticker': ticker,
-            'target_weight': weight,
-            'target_percent': weight * 100,
-            'layer': next((layer for layer, names in NEW_LAYERS.items() if ticker in names), 'defensive'),
-        })
+    for name in CONFIGS:
+        reverse_layer = {
+            ticker: layer
+            for layer, names in built[name]['layers'].items()
+            for ticker in names
+        }
+        for ticker, weight in sorted(built[name]['targets'].items(), key=lambda kv: kv[1], reverse=True):
+            target_rows.append({
+                'strategy': name,
+                'ticker': ticker,
+                'target_weight': weight,
+                'target_percent': weight * 100,
+                'layer': reverse_layer.get(ticker, 'defensive'),
+            })
 
-    df.to_csv(OUT / 'summary.csv', index=False)
-    pd.concat(logs, ignore_index=True).to_csv(OUT / 'trades.csv', index=False)
-    pd.DataFrame(target_rows).to_csv(OUT / 'v10_5_targets.csv', index=False)
+    df.to_csv(OUT / 'controlled_three_config_summary.csv', index=False)
+    pd.concat(logs, ignore_index=True).to_csv(OUT / 'controlled_three_config_trades.csv', index=False)
+    pd.DataFrame(target_rows).to_csv(OUT / 'controlled_three_config_targets.csv', index=False)
 
     result = {
-        'test': 'v10.4 canonical vs v10.5 proposed Silicon Creation / Enablement layer',
+        'test': 'Controlled dependency-layer + 10% cap comparison: v08 vs v10.4 (+ADBE) vs v10.5 (+TSM + SNPS)',
         'assumptions': {
             'same_backtest_engine': True,
+            'same_price_dataset': True,
             'same_smart_refill': True,
             'same_defensive_liquidity_sleeve': 0.19,
             'same_initial_capital': 500,
             'same_monthly_contribution': 200,
-            'single_stock_cap': CAP,
-            'new_holdings': ['TSM', 'SNPS'],
-            'growth_sleeve': 0.81,
+            'same_single_stock_cap': CAP,
+            'same_growth_sleeve': 0.81,
+            'same_common_window': True,
+            'only_change': 'holdings/layer structure',
         },
-        'new_layers': NEW_LAYERS,
-        'comparison': comparison,
+        'winners': {
+            'highest_return': winner_return,
+            'best_sortino': winner_sortino,
+            'shallowest_drawdown': winner_drawdown,
+            'best_composite': winner_composite,
+        },
         'results': df.to_dict(orient='records'),
-        'new_targets': new_targets,
-        'new_growth_targets': new_growth,
+        'layers': layers_out,
+        'targets': targets_out,
         'limitations': [
-            'Current 2026 holdings are held fixed historically, so this tests weighting/universe mechanics rather than stock-selection foresight.',
-            'Smart refill uses the established lagged reported-earnings/surprise and trailing historical P/E proxy, not a paid point-in-time forward-estimate database.',
-            'The common sample remains constrained by the youngest holding in the portfolio and is short.',
-            'Adding TSM and SNPS uses their historical returns even though the decision to add them was made in 2026, so absolute returns contain hindsight/selection bias. Relative comparisons are the useful evidence.',
+            'Current holdings are applied retrospectively, so this is a portfolio mechanics/universe comparison rather than proof that each stock could have been selected without hindsight.',
+            'Smart refill uses lagged reported earnings/surprise and trailing historical P/E as a point-in-time proxy for the current forward-estimate ranking rule.',
+            'The common sample is constrained by NBIS and remains short at roughly 23 months.',
+            'Absolute annualized returns from a short high-growth sample should not be treated as expected future returns; relative differences are the useful evidence.',
         ],
     }
-    (OUT / 'results.json').write_text(json.dumps(result, indent=2))
+    (OUT / 'controlled_three_config_results.json').write_text(json.dumps(result, indent=2))
 
     rows_html = ''.join(
-        f"<tr><td>{r.strategy}</td><td>{r.ann_return:.1%}</td><td>{r.max_drawdown:.1%}</td><td>{r.sortino:.2f}</td><td>${r.ending_value:,.0f}</td></tr>"
+        f"<tr><td>{r.strategy}</td><td>{r.ann_return:.1%}</td><td>{r.ann_vol:.1%}</td><td>{r.max_drawdown:.1%}</td><td>{r.sortino:.2f}</td><td>${r.ending_value:,.0f}</td><td>{r.composite_score:.2f}</td></tr>"
         for r in df.itertuples()
     )
-    targets_html = ''.join(
-        f"<tr><td>{r['ticker']}</td><td>{r['target_percent']:.2f}%</td><td>{r['layer'].replace('_', ' ')}</td></tr>"
-        for r in target_rows
-    )
-    html = f'''<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>MACRO v10.5 Silicon Layer Test</title><style>body{{font-family:system-ui;background:#0b0d10;color:#eee;max-width:1000px;margin:40px auto;padding:0 20px}}.cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}}.c{{background:#151a20;padding:18px;border-radius:14px}}table{{width:100%;border-collapse:collapse;margin-top:24px}}td,th{{padding:10px;border-bottom:1px solid #333;text-align:right}}td:first-child,th:first-child{{text-align:left}}b{{font-size:24px}}</style><h1>v10.5 Silicon Creation / Enablement Test</h1><p>Same engine · same smart refill · same 19% defense · $500 start · $200/month</p><div class="cards"><div class="c">Annual return change<br><b>{comparison['annual_return_change_points']:+.1f} pts</b></div><div class="c">Sortino change<br><b>{comparison['sortino_change']:+.2f}</b></div><div class="c">Drawdown change<br><b>{comparison['max_drawdown_change_points']:+.1f} pts</b></div><div class="c">Ending value change<br><b>${comparison['ending_value_change']:+,.0f}</b></div></div><h2>Backtest</h2><table><tr><th>Architecture</th><th>Annual return</th><th>Max drawdown</th><th>Sortino</th><th>Ending value</th></tr>{rows_html}</table><h2>Proposed canonical targets</h2><table><tr><th>Ticker</th><th>Target</th><th>Layer</th></tr>{targets_html}</table><p><small>Mechanics comparison only. Today's holdings are tested historically and therefore contain hindsight/selection bias.</small></p>'''
-    (OUT / 'index.html').write_text(html)
+    html = f'''<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>MACRO Controlled 3-Config Test</title><style>body{{font-family:system-ui;background:#0b0d10;color:#eee;max-width:1050px;margin:40px auto;padding:0 20px}}.cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}}.c{{background:#151a20;padding:18px;border-radius:14px}}table{{width:100%;border-collapse:collapse;margin-top:24px}}td,th{{padding:10px;border-bottom:1px solid #333;text-align:right}}td:first-child,th:first-child{{text-align:left}}b{{font-size:20px}}</style><h1>Controlled Dependency Architecture Test</h1><p>Same dates · same engine · same smart refill · same 19% defense · same 10% cap · $500 start · $200/month</p><div class="cards"><div class="c">Highest return<br><b>{winner_return}</b></div><div class="c">Best Sortino<br><b>{winner_sortino}</b></div><div class="c">Shallowest drawdown<br><b>{winner_drawdown}</b></div><div class="c">Best composite<br><b>{winner_composite}</b></div></div><table><tr><th>Configuration</th><th>Annual return</th><th>Volatility</th><th>Max drawdown</th><th>Sortino</th><th>Ending value</th><th>Score</th></tr>{rows_html}</table><p><small>Only holdings/layer structure changes. Absolute returns are hindsight-biased; use relative differences as evidence.</small></p>'''
+    (OUT / 'controlled_three_config.html').write_text(html)
 
     print(df.to_string(index=False))
-    print('\nCOMPARISON', json.dumps(comparison, indent=2))
-    print('\nNEW TARGETS')
-    for row in target_rows:
-        print(f"{row['ticker']:5s} {row['target_percent']:6.3f}%  {row['layer']}")
+    print('\nWINNERS', json.dumps(result['winners'], indent=2))
+    for name in CONFIGS:
+        print(f'\n{name} TARGETS')
+        for t, w in sorted(built[name]['targets'].items(), key=lambda kv: kv[1], reverse=True):
+            print(f'{t:5s} {w*100:6.3f}%')
 
 
 if __name__ == '__main__':
