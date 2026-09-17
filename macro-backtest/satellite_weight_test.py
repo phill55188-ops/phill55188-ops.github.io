@@ -10,8 +10,6 @@ import dependency_cap_test as dct
 OUT = Path('macro-backtest/results-dependency-caps')
 OUT.mkdir(parents=True, exist_ok=True)
 
-# Canon rules: 81% growth sleeve, 19% defense, 10% single-name cap,
-# and 2% permanent minimum strategic position.
 GROWTH_SLEEVE = 0.81
 CAP = 0.10
 MIN_POSITION = 0.02
@@ -21,39 +19,23 @@ SATELLITES = ['ADBE', 'TSM', 'SNPS']
 
 
 def satellite_overlay_targets(base_growth, satellite_weights):
-    """Preserve the v08 dependency architecture and treat ADBE/TSM/SNPS as
-    explicit satellite allocations instead of giving each new dependency an
-    automatically equal layer.
-
-    The satellites reserve their fixed weights first. The remaining growth
-    sleeve is distributed across the original v08 growth names in proportion
-    to their dependency-model weights. This tests whether the new thesis names
-    can be included without mechanically diluting every established layer as
-    aggressively as the equal-layer v10.5 construction.
-    """
     reserved = sum(satellite_weights.values())
     if reserved >= GROWTH_SLEEVE:
         raise ValueError('Satellite weights consume the entire growth sleeve.')
-
     scale = (GROWTH_SLEEVE - reserved) / GROWTH_SLEEVE
     growth = {ticker: weight * scale for ticker, weight in base_growth.items()}
     growth.update(satellite_weights)
-
     if abs(sum(growth.values()) - GROWTH_SLEEVE) > 1e-10:
         raise AssertionError(sum(growth.values()))
     if max(growth.values()) > CAP + 1e-10:
         raise AssertionError(f'10% cap breached: {max(growth.values())}')
     if min(satellite_weights.values()) < MIN_POSITION - 1e-10:
         raise AssertionError('Satellite below permanent 2% minimum.')
-
     return growth, {**bt.DEFENSE, **growth}
 
 
 def main():
     base_growth, base_targets = dct.dependency_targets(dct.V08_LAYERS, CAP)
-
-    # Build all pre-declared, coarse weight combinations. The grid is deliberately
-    # coarse (2/3/4/5%) to reduce false precision and discourage overfitting.
     specs = [('V08_BENCHMARK', base_growth, base_targets, 0.0, 0.0, 0.0)]
     for adbe, tsm, snps in product(WEIGHT_GRID, repeat=3):
         satellites = {'ADBE': adbe, 'TSM': tsm, 'SNPS': snps}
@@ -64,24 +46,13 @@ def main():
     all_growth = sorted(set(base_growth) | set(SATELLITES))
     bt.GROWTH = {ticker: 0.01 for ticker in all_growth}
     bt.TARGETS = {**bt.DEFENSE, **bt.GROWTH}
-
     prices = bt.load_prices('2024-01-01')
     earnings = bt.load_earnings()
 
     rows = []
     logs = []
     for name, growth, targets, adbe, tsm, snps in specs:
-        n, s, l = bt.run(
-            name,
-            prices,
-            earnings,
-            targets,
-            'smart',
-            500,
-            200,
-            bt.CASH,
-            list(growth),
-        )
+        n, s, l = bt.run(name, prices, earnings, targets, 'smart', 500, 200, bt.CASH, list(growth))
         rows.append({
             'strategy': n,
             'ADBE_weight': adbe,
@@ -94,44 +65,33 @@ def main():
         logs.append(l)
 
     df = pd.DataFrame(rows)
-    benchmark = df.loc[df.strategy == 'V08_BENCHMARK'].iloc[0]
-    df['return_gap_points_vs_v08'] = (df['ann_return'] - benchmark.ann_return) * 100
-    df['drawdown_change_points_vs_v08'] = (df['max_drawdown'] - benchmark.max_drawdown) * 100
-    df['vol_change_points_vs_v08'] = (df['ann_vol'] - benchmark.ann_vol) * 100
+    benchmark_return = float(df.loc[df.strategy == 'V08_BENCHMARK', 'ann_return'].iloc[0])
+    benchmark_drawdown = float(df.loc[df.strategy == 'V08_BENCHMARK', 'max_drawdown'].iloc[0])
+    benchmark_vol = float(df.loc[df.strategy == 'V08_BENCHMARK', 'ann_vol'].iloc[0])
+    df['return_gap_points_vs_v08'] = (df['ann_return'] - benchmark_return) * 100
+    df['drawdown_change_points_vs_v08'] = (df['max_drawdown'] - benchmark_drawdown) * 100
+    df['vol_change_points_vs_v08'] = (df['ann_vol'] - benchmark_vol) * 100
     df['qualifies_within_5pts'] = df['return_gap_points_vs_v08'] >= -RETURN_TOLERANCE_POINTS
 
+    # Re-select after derived columns are attached so the benchmark carries them too.
+    benchmark = df.loc[df.strategy == 'V08_BENCHMARK'].iloc[0]
     candidates = df[df.strategy != 'V08_BENCHMARK'].copy()
-    top_return = candidates.sort_values(
-        ['ann_return', 'sortino', 'max_drawdown'], ascending=[False, False, False]
-    ).iloc[0]
-    top_sharpe = candidates.sort_values(
-        ['sharpe', 'ann_return'], ascending=[False, False]
-    ).iloc[0]
-    top_sortino = candidates.sort_values(
-        ['sortino', 'ann_return'], ascending=[False, False]
-    ).iloc[0]
+    top_return = candidates.sort_values(['ann_return', 'sortino', 'max_drawdown'], ascending=[False, False, False]).iloc[0]
+    top_sharpe = candidates.sort_values(['sharpe', 'ann_return'], ascending=[False, False]).iloc[0]
+    top_sortino = candidates.sort_values(['sortino', 'ann_return'], ascending=[False, False]).iloc[0]
 
     qualifying = candidates[candidates.qualifies_within_5pts].copy()
     if len(qualifying):
-        best_qualifying_sortino = qualifying.sort_values(
-            ['sortino', 'ann_return'], ascending=[False, False]
-        ).iloc[0]
-        best_qualifying_return = qualifying.sort_values(
-            ['ann_return', 'sortino'], ascending=[False, False]
-        ).iloc[0]
+        best_qualifying_sortino = qualifying.sort_values(['sortino', 'ann_return'], ascending=[False, False]).iloc[0]
+        best_qualifying_return = qualifying.sort_values(['ann_return', 'sortino'], ascending=[False, False]).iloc[0]
     else:
         best_qualifying_sortino = None
         best_qualifying_return = None
 
-    # Save complete grid plus concise shortlists.
-    ordered = df.sort_values(
-        ['ann_return', 'sortino', 'max_drawdown'], ascending=[False, False, False]
-    ).reset_index(drop=True)
+    ordered = df.sort_values(['ann_return', 'sortino', 'max_drawdown'], ascending=[False, False, False]).reset_index(drop=True)
     ordered.to_csv(OUT / 'satellite_weight_grid_full.csv', index=False)
     pd.concat(logs, ignore_index=True).to_csv(OUT / 'satellite_weight_grid_trades.csv', index=False)
-    candidates.sort_values('ann_return', ascending=False).head(12).to_csv(
-        OUT / 'satellite_weight_top12_return.csv', index=False
-    )
+    candidates.sort_values('ann_return', ascending=False).head(12).to_csv(OUT / 'satellite_weight_top12_return.csv', index=False)
 
     def row_dict(row):
         if row is None:
@@ -153,10 +113,7 @@ def main():
             'drawdown_change_points_vs_v08': float(row.drawdown_change_points_vs_v08),
         }
 
-    top12 = candidates.sort_values(
-        ['ann_return', 'sortino'], ascending=[False, False]
-    ).head(12)
-
+    top12 = candidates.sort_values(['ann_return', 'sortino'], ascending=[False, False]).head(12)
     result = {
         'test': 'ADBE + TSM + SNPS satellite-weight sensitivity around the v08 dependency architecture',
         'method': {
@@ -187,6 +144,7 @@ def main():
             'The grid is intentionally coarse and pre-declared; it is a sensitivity test, not a fine-grained historical optimizer.',
             'ADBE, TSM, and SNPS are applied retrospectively even though the present theses were formed in 2026, so results contain hindsight/selection bias.',
             'ADBE historical weakness is part of the tested history and cannot evaluate a future comeback thesis that has not yet occurred.',
+            'PLTR historical strength is embedded in the v08 benchmark and should not be extrapolated as a forward return assumption.',
             'Smart refill uses lagged reported earnings/surprise and trailing historical P/E as a proxy for the live forward-estimate ranking rule.',
             'The common sample remains short and constrained by NBIS; absolute annualized returns are not expected future returns.',
         ],
@@ -196,11 +154,7 @@ def main():
     print('V08 BENCHMARK')
     print(pd.DataFrame([row_dict(benchmark)]).to_string(index=False))
     print('\nTOP 12 SATELLITE CONFIGURATIONS BY RETURN')
-    display_cols = [
-        'strategy', 'ADBE_weight', 'TSM_weight', 'SNPS_weight', 'ann_return',
-        'ann_vol', 'sharpe', 'sortino', 'max_drawdown',
-        'return_gap_points_vs_v08', 'ending_value'
-    ]
+    display_cols = ['strategy', 'ADBE_weight', 'TSM_weight', 'SNPS_weight', 'ann_return', 'ann_vol', 'sharpe', 'sortino', 'max_drawdown', 'return_gap_points_vs_v08', 'ending_value']
     print(top12[display_cols].to_string(index=False))
     print(f'\nWithin {RETURN_TOLERANCE_POINTS:.0f} return points of v08: {len(qualifying)} / {len(candidates)}')
     print('\nBEST RETURN', json.dumps(row_dict(top_return), indent=2))
