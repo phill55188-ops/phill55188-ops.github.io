@@ -1,0 +1,238 @@
+{
+  "test": "Controlled dependency-layer + 10% cap comparison: v08 vs v10.4 (+ADBE) vs v10.5 (+TSM + SNPS)",
+  "assumptions": {
+    "same_backtest_engine": true,
+    "same_price_dataset": true,
+    "same_smart_refill": true,
+    "same_defensive_liquidity_sleeve": 0.19,
+    "same_initial_capital": 500,
+    "same_monthly_contribution": 200,
+    "same_single_stock_cap": 0.1,
+    "same_growth_sleeve": 0.81,
+    "same_common_window": true,
+    "only_change": "holdings/layer structure"
+  },
+  "winners": {
+    "highest_return": "V08_DEP_CAP_10",
+    "best_sortino": "V10_4_DEP_CAP_10",
+    "shallowest_drawdown": "V10_4_DEP_CAP_10",
+    "best_composite": "V10_4_DEP_CAP_10"
+  },
+  "results": [
+    {
+      "strategy": "V10_4_DEP_CAP_10",
+      "ann_return": 0.9720028259281615,
+      "ann_vol": 0.36855098816239884,
+      "sharpe": 2.0610923448418412,
+      "sortino": 5.692899109092619,
+      "max_drawdown": -0.13129608625084965,
+      "worst_month": -0.11203161815453977,
+      "ending_value": 10982.383111070058,
+      "months": 23,
+      "composite_score": 0.8666666666666667
+    },
+    {
+      "strategy": "V08_DEP_CAP_10",
+      "ann_return": 1.1015252246958922,
+      "ann_vol": 0.3824316214394473,
+      "sharpe": 2.1746219101324806,
+      "sortino": 5.651948580033321,
+      "max_drawdown": -0.1330209015579955,
+      "worst_month": -0.12135775816806049,
+      "ending_value": 11681.836845099524,
+      "months": 23,
+      "composite_score": 0.7166666666666667
+    },
+    {
+      "strategy": "V10_5_DEP_CAP_10",
+      "ann_return": 0.8679470936458522,
+      "ann_vol": 0.3486693631939946,
+      "sharpe": 1.9971957159864104,
+      "sortino": 5.429988268232368,
+      "max_drawdown": -0.13244649892423987,
+      "worst_month": -0.11042398996121461,
+      "ending_value": 10313.297053605804,
+      "months": 23,
+      "composite_score": 0.41666666666666663
+    }
+  ],
+  "layers": {
+    "V08_DEP_CAP_10": {
+      "materials_fuel": [
+        "MP",
+        "FCX",
+        "LEU"
+      ],
+      "power_infrastructure": [
+        "VRT",
+        "BE",
+        "GEV"
+      ],
+      "compute": [
+        "NVDA",
+        "QCOM"
+      ],
+      "memory": [
+        "MU"
+      ],
+      "networking_optics": [
+        "AAOI",
+        "LITE",
+        "MRVL"
+      ],
+      "cloud_edge_execution": [
+        "ORCL",
+        "NBIS",
+        "NET"
+      ],
+      "orchestration": [
+        "PLTR"
+      ]
+    },
+    "V10_4_DEP_CAP_10": {
+      "materials_fuel": [
+        "MP",
+        "FCX",
+        "LEU"
+      ],
+      "power_infrastructure": [
+        "VRT",
+        "BE",
+        "GEV"
+      ],
+      "compute": [
+        "NVDA",
+        "QCOM"
+      ],
+      "memory": [
+        "MU"
+      ],
+      "networking_optics": [
+        "AAOI",
+        "LITE",
+        "MRVL"
+      ],
+      "cloud_edge_execution": [
+        "ORCL",
+        "NBIS",
+        "NET"
+      ],
+      "orchestration": [
+        "PLTR",
+        "ADBE"
+      ]
+    },
+    "V10_5_DEP_CAP_10": {
+      "materials_fuel": [
+        "MP",
+        "FCX",
+        "LEU"
+      ],
+      "power_infrastructure": [
+        "VRT",
+        "BE",
+        "GEV"
+      ],
+      "silicon_creation_enablement": [
+        "TSM",
+        "SNPS"
+      ],
+      "compute": [
+        "NVDA",
+        "QCOM"
+      ],
+      "memory": [
+        "MU"
+      ],
+      "networking_optics": [
+        "AAOI",
+        "LITE",
+        "MRVL"
+      ],
+      "cloud_edge_execution": [
+        "ORCL",
+        "NBIS",
+        "NET"
+      ],
+      "orchestration": [
+        "PLTR",
+        "ADBE"
+      ]
+    }
+  },
+  "targets": {
+    "V08_DEP_CAP_10": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "MP": 0.04066666666666667,
+      "FCX": 0.04066666666666667,
+      "LEU": 0.04066666666666667,
+      "VRT": 0.04066666666666667,
+      "BE": 0.04066666666666667,
+      "GEV": 0.04066666666666667,
+      "NVDA": 0.061000000000000006,
+      "QCOM": 0.061000000000000006,
+      "MU": 0.1,
+      "AAOI": 0.04066666666666667,
+      "LITE": 0.04066666666666667,
+      "MRVL": 0.04066666666666667,
+      "ORCL": 0.04066666666666667,
+      "NBIS": 0.04066666666666667,
+      "NET": 0.04066666666666667,
+      "PLTR": 0.1
+    },
+    "V10_4_DEP_CAP_10": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "MP": 0.03944444444444445,
+      "FCX": 0.03944444444444445,
+      "LEU": 0.03944444444444445,
+      "VRT": 0.03944444444444445,
+      "BE": 0.03944444444444445,
+      "GEV": 0.03944444444444445,
+      "NVDA": 0.05916666666666667,
+      "QCOM": 0.05916666666666667,
+      "MU": 0.1,
+      "AAOI": 0.03944444444444445,
+      "LITE": 0.03944444444444445,
+      "MRVL": 0.03944444444444445,
+      "ORCL": 0.03944444444444445,
+      "NBIS": 0.03944444444444445,
+      "NET": 0.03944444444444445,
+      "PLTR": 0.05916666666666667,
+      "ADBE": 0.05916666666666667
+    },
+    "V10_5_DEP_CAP_10": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "MP": 0.03380952380952381,
+      "FCX": 0.03380952380952381,
+      "LEU": 0.03380952380952381,
+      "VRT": 0.03380952380952381,
+      "BE": 0.03380952380952381,
+      "GEV": 0.03380952380952381,
+      "TSM": 0.05071428571428572,
+      "SNPS": 0.05071428571428572,
+      "NVDA": 0.05071428571428572,
+      "QCOM": 0.05071428571428572,
+      "MU": 0.1,
+      "AAOI": 0.03380952380952381,
+      "LITE": 0.03380952380952381,
+      "MRVL": 0.03380952380952381,
+      "ORCL": 0.03380952380952381,
+      "NBIS": 0.03380952380952381,
+      "NET": 0.03380952380952381,
+      "PLTR": 0.05071428571428572,
+      "ADBE": 0.05071428571428572
+    }
+  },
+  "limitations": [
+    "Current holdings are applied retrospectively, so this is a portfolio mechanics/universe comparison rather than proof that each stock could have been selected without hindsight.",
+    "Smart refill uses lagged reported earnings/surprise and trailing historical P/E as a point-in-time proxy for the current forward-estimate ranking rule.",
+    "The common sample is constrained by NBIS and remains short at roughly 23 months.",
+    "Absolute annualized returns from a short high-growth sample should not be treated as expected future returns; relative differences are the useful evidence."
+  ]
+}
