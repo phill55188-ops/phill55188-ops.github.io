@@ -1,149 +1,182 @@
 import json
 from pathlib import Path
 import pandas as pd
-import yfinance as yf
 
-from backtest import DEFENSE, CASH, GROWTH, TARGETS, BENCH, load_earnings, run
-from weighting_test import dependency_layer_growth
+import backtest as bt
 
 OUT = Path('macro-backtest/results-dependency-caps')
 OUT.mkdir(parents=True, exist_ok=True)
-CAPS = [0.065, 0.075, 0.085, 0.10]
+CAP = 0.10
+
+# Authoritative v10.4 canonical targets before the Silicon Creation / Enablement layer.
+CURRENT_V10_4_GROWTH = {
+    'NVDA': 0.061,
+    'QCOM': 0.061,
+    'MU': 0.10,
+    'PLTR': 0.05,
+    'ADBE': 0.05,
+    'ORCL': 0.040666667,
+    'NBIS': 0.040666667,
+    'NET': 0.040666667,
+    'AAOI': 0.040666667,
+    'LITE': 0.040666667,
+    'MRVL': 0.040666667,
+    'VRT': 0.040666667,
+    'BE': 0.040666667,
+    'GEV': 0.040666667,
+    'LEU': 0.040666667,
+    'MP': 0.040666667,
+    'FCX': 0.040666667,
+}
+
+NEW_LAYERS = {
+    'materials_fuel': ['MP', 'FCX', 'LEU'],
+    'power_infrastructure': ['VRT', 'BE', 'GEV'],
+    'silicon_creation_enablement': ['TSM', 'SNPS'],
+    'compute': ['NVDA', 'QCOM'],
+    'memory': ['MU'],
+    'networking_optics': ['AAOI', 'LITE', 'MRVL'],
+    'cloud_edge_execution': ['ORCL', 'NBIS', 'NET'],
+    'orchestration': ['PLTR', 'ADBE'],
+}
 
 
-def robust_load_prices(start):
-    """Sequential price download to avoid yfinance cache locking on GitHub runners."""
-    tickers = list(TARGETS) + BENCH
-    series = {}
-    for i, t in enumerate(tickers, 1):
-        print(f'price {i}/{len(tickers)} {t}', flush=True)
-        x = yf.download(t, start=start, auto_adjust=True, progress=False, threads=False)
-        if x is None or x.empty:
-            raise RuntimeError(f'No price history returned for {t}')
-        if isinstance(x.columns, pd.MultiIndex):
-            close = x['Close'][t] if t in x['Close'].columns else x['Close'].iloc[:, 0]
-        else:
-            close = x['Close']
-        series[t] = close
-    p = pd.DataFrame(series)
-    p.index = pd.to_datetime(p.index).tz_localize(None)
-    return p.resample('ME').last().ffill()
-
-
-def cap_and_redistribute(full_targets, cap):
-    """Apply a single-stock cap to dependency-layer growth weights.
-
-    Excess from capped names is redistributed iteratively across uncapped growth
-    names in proportion to their original dependency-layer weights. This keeps
-    the dependency design as intact as possible while enforcing the cap.
+def dependency_targets(layers, cap=CAP):
+    """Equal-weight the 81% growth sleeve by dependency layer, then equal-weight
+    within each layer. Enforce a single-stock cap and redistribute any excess
+    across uncapped names in proportion to their uncapped dependency weights.
     """
-    base = {t: full_targets[t] for t in GROWTH}
-    g = dict(base)
+    layer_weight = 0.81 / len(layers)
+    base = {}
+    for names in layers.values():
+        each = layer_weight / len(names)
+        for ticker in names:
+            base[ticker] = each
 
-    for _ in range(50):
-        over = {t: max(0.0, g[t] - cap) for t in g}
+    growth = dict(base)
+    for _ in range(100):
+        over = {t: max(0.0, growth[t] - cap) for t in growth}
         excess = sum(over.values())
         if excess < 1e-12:
             break
         for t, x in over.items():
             if x > 0:
-                g[t] = cap
-        eligible = [t for t in g if g[t] < cap - 1e-12]
-        if not eligible:
-            raise ValueError(f'Cap {cap:.2%} is too low to allocate the 81% growth sleeve.')
-        remaining_excess = excess
-        while remaining_excess > 1e-12:
-            eligible = [t for t in eligible if g[t] < cap - 1e-12]
+                growth[t] = cap
+
+        remaining = excess
+        while remaining > 1e-12:
+            eligible = [t for t in growth if growth[t] < cap - 1e-12]
             if not eligible:
-                raise ValueError(f'Cap {cap:.2%} is infeasible.')
+                raise ValueError('Cap is infeasible for this universe.')
             denom = sum(base[t] for t in eligible)
             moved = 0.0
-            for t in list(eligible):
-                proposed = remaining_excess * (base[t] / denom)
-                headroom = cap - g[t]
+            for t in eligible:
+                proposed = remaining * (base[t] / denom)
+                headroom = cap - growth[t]
                 add = min(proposed, headroom)
-                g[t] += add
+                growth[t] += add
                 moved += add
             if moved < 1e-14:
-                raise RuntimeError('Redistribution stalled')
-            remaining_excess -= moved
+                raise RuntimeError('Redistribution stalled.')
+            remaining -= moved
 
-    assert abs(sum(g.values()) - 0.81) < 1e-8, sum(g.values())
-    assert max(g.values()) <= cap + 1e-8
-    return {**DEFENSE, **g}
+    assert abs(sum(growth.values()) - 0.81) < 1e-8, sum(growth.values())
+    assert max(growth.values()) <= cap + 1e-8
+    return growth, {**bt.DEFENSE, **growth}
 
 
 def main():
-    prices = robust_load_prices('2024-01-01')
-    earnings = load_earnings()
+    new_growth, new_targets = dependency_targets(NEW_LAYERS, CAP)
+    current_targets = {**bt.DEFENSE, **CURRENT_V10_4_GROWTH}
 
-    dependency, layers = dependency_layer_growth()
-    current = {**DEFENSE, **GROWTH}
+    # Make the existing engine fetch price + earnings history for the expanded
+    # universe while preserving its established smart-refill/run mechanics.
+    expanded = sorted(set(CURRENT_V10_4_GROWTH) | set(new_growth))
+    bt.GROWTH = {t: new_growth.get(t, CURRENT_V10_4_GROWTH.get(t, 0.0)) for t in expanded}
+    bt.TARGETS = {**bt.DEFENSE, **bt.GROWTH}
 
-    specs = [('CURRENT_V08', current), ('DEPENDENCY_UNCAPPED', dependency)]
-    targets_out = {'CURRENT_V08': current, 'DEPENDENCY_UNCAPPED': dependency}
+    prices = bt.load_prices('2024-01-01')
+    earnings = bt.load_earnings()
 
-    for cap in CAPS:
-        name = f'DEP_CAP_{cap*100:.1f}'.replace('.', '_')
-        t = cap_and_redistribute(dependency, cap)
-        specs.append((name, t))
-        targets_out[name] = t
+    specs = [
+        ('CURRENT_V10_4', current_targets, list(CURRENT_V10_4_GROWTH)),
+        ('V10_5_TSM_SNPS_DEP_CAP_10', new_targets, list(new_growth)),
+    ]
 
     rows = []
     logs = []
-    for name, targets in specs:
-        n, s, l = run(name, prices, earnings, targets, 'smart', 500, 200, CASH, list(GROWTH))
+    for name, targets, growth_names in specs:
+        n, s, l = bt.run(name, prices, earnings, targets, 'smart', 500, 200, bt.CASH, growth_names)
         rows.append({'strategy': n, **s})
         l['strategy'] = n
         logs.append(l)
 
     df = pd.DataFrame(rows)
-    df['composite_score'] = (
-        df['ann_return'].rank(pct=True) * 0.40
-        + df['sortino'].rank(pct=True) * 0.35
-        + (-df['max_drawdown'].abs()).rank(pct=True) * 0.25
-    )
-    df = df.sort_values('composite_score', ascending=False).reset_index(drop=True)
+    cur = df.loc[df.strategy == 'CURRENT_V10_4'].iloc[0]
+    new = df.loc[df.strategy == 'V10_5_TSM_SNPS_DEP_CAP_10'].iloc[0]
+
+    comparison = {
+        'annual_return_change_points': float((new.ann_return - cur.ann_return) * 100),
+        'sortino_change': float(new.sortino - cur.sortino),
+        'max_drawdown_change_points': float((new.max_drawdown - cur.max_drawdown) * 100),
+        'ending_value_change': float(new.ending_value - cur.ending_value),
+    }
+
+    target_rows = []
+    for ticker, weight in sorted(new_targets.items(), key=lambda kv: kv[1], reverse=True):
+        target_rows.append({
+            'ticker': ticker,
+            'target_weight': weight,
+            'target_percent': weight * 100,
+            'layer': next((layer for layer, names in NEW_LAYERS.items() if ticker in names), 'defensive'),
+        })
 
     df.to_csv(OUT / 'summary.csv', index=False)
     pd.concat(logs, ignore_index=True).to_csv(OUT / 'trades.csv', index=False)
+    pd.DataFrame(target_rows).to_csv(OUT / 'v10_5_targets.csv', index=False)
 
-    winner = df.iloc[0]['strategy']
     result = {
-        'test': 'Dependency-layer weighting with single-stock caps',
+        'test': 'v10.4 canonical vs v10.5 proposed Silicon Creation / Enablement layer',
         'assumptions': {
-            'same_holdings': True,
+            'same_backtest_engine': True,
             'same_smart_refill': True,
-            'defensive_liquidity_sleeve': 0.19,
-            'initial_capital': 500,
-            'monthly_contribution': 200,
-            'caps_tested': CAPS,
+            'same_defensive_liquidity_sleeve': 0.19,
+            'same_initial_capital': 500,
+            'same_monthly_contribution': 200,
+            'single_stock_cap': CAP,
+            'new_holdings': ['TSM', 'SNPS'],
+            'growth_sleeve': 0.81,
         },
-        'method': 'Start with equal weight across seven dependency layers, equal within each layer, then cap any growth stock and redistribute excess across uncapped growth names in proportion to their original dependency-layer weights.',
-        'layers': layers,
-        'winner': winner,
+        'new_layers': NEW_LAYERS,
+        'comparison': comparison,
         'results': df.to_dict(orient='records'),
-        'targets': targets_out,
+        'new_targets': new_targets,
+        'new_growth_targets': new_growth,
         'limitations': [
-            'Current 2026 holdings are held fixed historically, so this tests weighting mechanics, not stock-selection foresight.',
-            'Smart refill uses lagged reported earnings/surprise and trailing historical P/E as the point-in-time proxy for the current forward-estimate ranking rule.',
-            'The common sample is constrained by the youngest current holding and is only about 23 months.',
+            'Current 2026 holdings are held fixed historically, so this tests weighting/universe mechanics rather than stock-selection foresight.',
+            'Smart refill uses the established lagged reported-earnings/surprise and trailing historical P/E proxy, not a paid point-in-time forward-estimate database.',
+            'The common sample remains constrained by the youngest holding in the portfolio and is short.',
+            'Adding TSM and SNPS uses their historical returns even though the decision to add them was made in 2026, so absolute returns contain hindsight/selection bias. Relative comparisons are the useful evidence.',
         ],
     }
     (OUT / 'results.json').write_text(json.dumps(result, indent=2))
 
     rows_html = ''.join(
-        f"<tr><td>{r.strategy}</td><td>{r.ann_return:.1%}</td><td>{r.max_drawdown:.1%}</td><td>{r.sortino:.2f}</td><td>${r.ending_value:,.0f}</td><td>{r.composite_score:.2f}</td></tr>"
+        f"<tr><td>{r.strategy}</td><td>{r.ann_return:.1%}</td><td>{r.max_drawdown:.1%}</td><td>{r.sortino:.2f}</td><td>${r.ending_value:,.0f}</td></tr>"
         for r in df.itertuples()
     )
-    html = f'''<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>MACRO Dependency Cap Test</title><style>body{{font-family:system-ui;background:#0b0d10;color:#eee;max-width:950px;margin:40px auto;padding:0 20px}}.c{{background:#151a20;padding:18px;border-radius:14px;display:inline-block}}table{{width:100%;border-collapse:collapse;margin-top:24px}}td,th{{padding:10px;border-bottom:1px solid #333;text-align:right}}td:first-child,th:first-child{{text-align:left}}b{{font-size:24px}}</style><h1>Dependency + Single-Stock Cap Test</h1><p>Same holdings · same refill · same 19% defense · only cap changes</p><div class="c">Best overall<br><b>{winner}</b></div><table><tr><th>Weighting</th><th>Annual return</th><th>Max drawdown</th><th>Sortino</th><th>Ending value</th><th>Score</th></tr>{rows_html}</table><p><small>Current v08 universe held fixed historically. Mechanics test, not proof of stock-selection foresight.</small></p>'''
+    targets_html = ''.join(
+        f"<tr><td>{r['ticker']}</td><td>{r['target_percent']:.2f}%</td><td>{r['layer'].replace('_', ' ')}</td></tr>"
+        for r in target_rows
+    )
+    html = f'''<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>MACRO v10.5 Silicon Layer Test</title><style>body{{font-family:system-ui;background:#0b0d10;color:#eee;max-width:1000px;margin:40px auto;padding:0 20px}}.cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}}.c{{background:#151a20;padding:18px;border-radius:14px}}table{{width:100%;border-collapse:collapse;margin-top:24px}}td,th{{padding:10px;border-bottom:1px solid #333;text-align:right}}td:first-child,th:first-child{{text-align:left}}b{{font-size:24px}}</style><h1>v10.5 Silicon Creation / Enablement Test</h1><p>Same engine · same smart refill · same 19% defense · $500 start · $200/month</p><div class="cards"><div class="c">Annual return change<br><b>{comparison['annual_return_change_points']:+.1f} pts</b></div><div class="c">Sortino change<br><b>{comparison['sortino_change']:+.2f}</b></div><div class="c">Drawdown change<br><b>{comparison['max_drawdown_change_points']:+.1f} pts</b></div><div class="c">Ending value change<br><b>${comparison['ending_value_change']:+,.0f}</b></div></div><h2>Backtest</h2><table><tr><th>Architecture</th><th>Annual return</th><th>Max drawdown</th><th>Sortino</th><th>Ending value</th></tr>{rows_html}</table><h2>Proposed canonical targets</h2><table><tr><th>Ticker</th><th>Target</th><th>Layer</th></tr>{targets_html}</table><p><small>Mechanics comparison only. Today's holdings are tested historically and therefore contain hindsight/selection bias.</small></p>'''
     (OUT / 'index.html').write_text(html)
 
     print(df.to_string(index=False))
-    print('\nWINNER', winner)
-    for name, t in targets_out.items():
-        if name.startswith('DEP_'):
-            print('\n', name, 'largest growth weights:', sorted(((k,v) for k,v in t.items() if k in GROWTH), key=lambda x:x[1], reverse=True)[:6])
+    print('\nCOMPARISON', json.dumps(comparison, indent=2))
+    print('\nNEW TARGETS')
+    for row in target_rows:
+        print(f"{row['ticker']:5s} {row['target_percent']:6.3f}%  {row['layer']}")
 
 
 if __name__ == '__main__':
