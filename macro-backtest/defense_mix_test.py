@@ -16,6 +16,7 @@ SCENARIOS = {
     "GLD2_SGOV9_RSP7": {"RSP": 0.07, "SGOV": 0.09, "GLD": 0.02},
     "GLD2_RSP8_SGOV8": {"RSP": 0.08, "SGOV": 0.08, "GLD": 0.02},
     "GLD1_SGOV9_RSP8": {"RSP": 0.08, "SGOV": 0.09, "GLD": 0.01},
+    "GLD5_SGOV7_RSP6": {"RSP": 0.06, "SGOV": 0.07, "GLD": 0.05},
 }
 
 def main():
