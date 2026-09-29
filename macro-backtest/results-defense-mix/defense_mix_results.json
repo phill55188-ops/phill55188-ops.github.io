@@ -1,0 +1,137 @@
+{
+  "test": "Current v10.22 defensive-mix comparison",
+  "method": {
+    "canon": "09.28.2026_v.10.22",
+    "growth_architecture": "current dependency backbone + ADBE/TSM/SNPS 2% strategic-starter overlay",
+    "growth_sleeve": 0.81,
+    "defense_assets_total": 0.18,
+    "cash_target": 0.01,
+    "total_defensive_liquidity": 0.19,
+    "same_engine": true,
+    "same_smart_refill": true,
+    "same_price_dataset": true,
+    "same_common_window": true,
+    "same_initial_capital": 500,
+    "same_monthly_contribution": 200,
+    "start_request": "2024-01-01",
+    "only_change": "RSP/SGOV/GLD target split"
+  },
+  "scenarios": {
+    "CURRENT_RSP7_SGOV8_GLD3": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03
+    },
+    "GLD2_SGOV9_RSP7": {
+      "RSP": 0.07,
+      "SGOV": 0.09,
+      "GLD": 0.02
+    },
+    "GLD2_RSP8_SGOV8": {
+      "RSP": 0.08,
+      "SGOV": 0.08,
+      "GLD": 0.02
+    },
+    "GLD1_SGOV9_RSP8": {
+      "RSP": 0.08,
+      "SGOV": 0.09,
+      "GLD": 0.01
+    }
+  },
+  "results": [
+    {
+      "strategy": "CURRENT_RSP7_SGOV8_GLD3",
+      "ann_return": 1.0378622935279922,
+      "ann_vol": 0.36164862763905653,
+      "sharpe": 2.190677676700413,
+      "sortino": 5.805914901915739,
+      "max_drawdown": -0.12767971168579817,
+      "worst_month": -0.11349799382568737,
+      "ending_value": 11379.079952289885,
+      "months": 23
+    },
+    {
+      "strategy": "GLD2_SGOV9_RSP7",
+      "ann_return": 1.0341807429262975,
+      "ann_vol": 0.36147612183916195,
+      "sharpe": 2.1862612744688827,
+      "sortino": 5.7180198748648365,
+      "max_drawdown": -0.12870239968309516,
+      "worst_month": -0.11351018206994967,
+      "ending_value": 11359.18041156541,
+      "months": 23
+    },
+    {
+      "strategy": "GLD2_RSP8_SGOV8",
+      "ann_return": 1.0351454403611449,
+      "ann_vol": 0.3622541290434095,
+      "sharpe": 2.183629636655709,
+      "sortino": 5.726638666192709,
+      "max_drawdown": -0.12914711293363723,
+      "worst_month": -0.11343149197204117,
+      "ending_value": 11368.238156320569,
+      "months": 23
+    },
+    {
+      "strategy": "GLD1_SGOV9_RSP8",
+      "ann_return": 1.031387991684729,
+      "ann_vol": 0.36211249301497717,
+      "sharpe": 2.1789417914219125,
+      "sortino": 5.6392398562587465,
+      "max_drawdown": -0.13016938871544048,
+      "worst_month": -0.113443913376708,
+      "ending_value": 11348.320762420317,
+      "months": 23
+    }
+  ],
+  "deltas_vs_current": {
+    "CURRENT_RSP7_SGOV8_GLD3": {
+      "ann_return_points_vs_current": 0.0,
+      "ann_vol_points_vs_current": 0.0,
+      "sharpe_vs_current": 0.0,
+      "sortino_vs_current": 0.0,
+      "max_drawdown_points_vs_current": 0.0,
+      "worst_month_points_vs_current": 0.0,
+      "ending_value_vs_current": 0.0
+    },
+    "GLD2_SGOV9_RSP7": {
+      "ann_return_points_vs_current": -0.36815506016947275,
+      "ann_vol_points_vs_current": -0.017250579989458448,
+      "sharpe_vs_current": -0.004416402231530281,
+      "sortino_vs_current": -0.08789502705090246,
+      "max_drawdown_points_vs_current": -0.10226879972969893,
+      "worst_month_points_vs_current": -0.001218824426230114,
+      "ending_value_vs_current": -19.89954072447472
+    },
+    "GLD2_RSP8_SGOV8": {
+      "ann_return_points_vs_current": -0.2716853166847333,
+      "ann_vol_points_vs_current": 0.06055014043529483,
+      "sharpe_vs_current": -0.0070480400447041625,
+      "sortino_vs_current": -0.07927623572302966,
+      "max_drawdown_points_vs_current": -0.1467401247839062,
+      "worst_month_points_vs_current": 0.006650185364620587,
+      "ending_value_vs_current": -10.841795969316081
+    },
+    "GLD1_SGOV9_RSP8": {
+      "ann_return_points_vs_current": -0.6474301843263142,
+      "ann_vol_points_vs_current": 0.04638653759206357,
+      "sharpe_vs_current": -0.011735885278500557,
+      "sortino_vs_current": -0.16667504565699254,
+      "max_drawdown_points_vs_current": -0.2489677029642312,
+      "worst_month_points_vs_current": 0.005408044897936559,
+      "ending_value_vs_current": -30.759189869568218
+    }
+  },
+  "ranking_by_annual_return_then_sortino_then_drawdown": [
+    "CURRENT_RSP7_SGOV8_GLD3",
+    "GLD2_RSP8_SGOV8",
+    "GLD2_SGOV9_RSP7",
+    "GLD1_SGOV9_RSP8"
+  ],
+  "limitations": [
+    "Current 2026 holdings are applied retrospectively, so survivorship/selection bias remains.",
+    "The common sample is constrained by the newest holding history and is short; absolute annualized returns are not forward forecasts.",
+    "Smart refill uses lagged reported earnings/surprise and trailing historical P/E as a proxy for the live forward-estimate ranking rule.",
+    "The engine's Sortino is the system's simplified internal variant and should only be compared within this engine unless outside methodology matches."
+  ]
+}
