@@ -36,51 +36,67 @@
       "RSP": 0.08,
       "SGOV": 0.09,
       "GLD": 0.01
+    },
+    "GLD5_SGOV7_RSP6": {
+      "RSP": 0.06,
+      "SGOV": 0.07,
+      "GLD": 0.05
     }
   },
   "results": [
     {
       "strategy": "CURRENT_RSP7_SGOV8_GLD3",
-      "ann_return": 1.0378622935279922,
-      "ann_vol": 0.36164862763905653,
-      "sharpe": 2.190677676700413,
-      "sortino": 5.805914901915739,
-      "max_drawdown": -0.12767971168579817,
-      "worst_month": -0.11349799382568737,
-      "ending_value": 11379.079952289885,
+      "ann_return": 1.0378623263097335,
+      "ann_vol": 0.3616486003740715,
+      "sharpe": 2.190677863830292,
+      "sortino": 5.805914590477102,
+      "max_drawdown": -0.12767968297265808,
+      "worst_month": -0.11349799998313115,
+      "ending_value": 11379.080051002209,
       "months": 23
     },
     {
       "strategy": "GLD2_SGOV9_RSP7",
-      "ann_return": 1.0341807429262975,
-      "ann_vol": 0.36147612183916195,
-      "sharpe": 2.1862612744688827,
-      "sortino": 5.7180198748648365,
-      "max_drawdown": -0.12870239968309516,
-      "worst_month": -0.11351018206994967,
-      "ending_value": 11359.18041156541,
+      "ann_return": 1.0341807771354188,
+      "ann_vol": 0.3614760927138019,
+      "sharpe": 2.1862614730061076,
+      "sortino": 5.718019561413436,
+      "max_drawdown": -0.1287023701254989,
+      "worst_month": -0.11351018897075549,
+      "ending_value": 11359.180513070265,
       "months": 23
     },
     {
       "strategy": "GLD2_RSP8_SGOV8",
-      "ann_return": 1.0351454403611449,
-      "ann_vol": 0.3622541290434095,
-      "sharpe": 2.183629636655709,
-      "sortino": 5.726638666192709,
-      "max_drawdown": -0.12914711293363723,
-      "worst_month": -0.11343149197204117,
-      "ending_value": 11368.238156320569,
+      "ann_return": 1.0351454731385306,
+      "ann_vol": 0.3622541016987663,
+      "sharpe": 2.183629823302892,
+      "sortino": 5.726638434830756,
+      "max_drawdown": -0.12914708338858494,
+      "worst_month": -0.11343149816012066,
+      "ending_value": 11368.238252383393,
       "months": 23
     },
     {
       "strategy": "GLD1_SGOV9_RSP8",
-      "ann_return": 1.031387991684729,
-      "ann_vol": 0.36211249301497717,
-      "sharpe": 2.1789417914219125,
-      "sortino": 5.6392398562587465,
-      "max_drawdown": -0.13016938871544048,
-      "worst_month": -0.113443913376708,
-      "ending_value": 11348.320762420317,
+      "ann_return": 1.031388019644547,
+      "ann_vol": 0.3621124629285996,
+      "sharpe": 2.17894198495716,
+      "sortino": 5.639239596320022,
+      "max_drawdown": -0.1301693583254192,
+      "worst_month": -0.11344392030315453,
+      "ending_value": 11348.320812906613,
+      "months": 23
+    },
+    {
+      "strategy": "GLD5_SGOV7_RSP6",
+      "ann_return": 1.041790653745267,
+      "ann_vol": 0.36119398777093115,
+      "sharpe": 2.198725544215554,
+      "sortino": 5.963317914708918,
+      "max_drawdown": -0.12938197645930283,
+      "worst_month": -0.11379248694830235,
+      "ending_value": 11385.09954662831,
       "months": 23
     }
   ],
@@ -95,34 +111,44 @@
       "ending_value_vs_current": 0.0
     },
     "GLD2_SGOV9_RSP7": {
-      "ann_return_points_vs_current": -0.36815506016947275,
-      "ann_vol_points_vs_current": -0.017250579989458448,
-      "sharpe_vs_current": -0.004416402231530281,
-      "sortino_vs_current": -0.08789502705090246,
-      "max_drawdown_points_vs_current": -0.10226879972969893,
-      "worst_month_points_vs_current": -0.001218824426230114,
-      "ending_value_vs_current": -19.89954072447472
+      "ann_return_points_vs_current": -0.36815491743147355,
+      "ann_vol_points_vs_current": -0.017250766026960518,
+      "sharpe_vs_current": -0.004416390824184546,
+      "sortino_vs_current": -0.08789502906366664,
+      "max_drawdown_points_vs_current": -0.10226871528408177,
+      "worst_month_points_vs_current": -0.001218898762433973,
+      "ending_value_vs_current": -19.899537931943996
     },
     "GLD2_RSP8_SGOV8": {
-      "ann_return_points_vs_current": -0.2716853166847333,
-      "ann_vol_points_vs_current": 0.06055014043529483,
-      "sharpe_vs_current": -0.0070480400447041625,
-      "sortino_vs_current": -0.07927623572302966,
-      "max_drawdown_points_vs_current": -0.1467401247839062,
-      "worst_month_points_vs_current": 0.006650185364620587,
-      "ending_value_vs_current": -10.841795969316081
+      "ann_return_points_vs_current": -0.271685317120296,
+      "ann_vol_points_vs_current": 0.060550132469483486,
+      "sharpe_vs_current": -0.007048040527400268,
+      "sortino_vs_current": -0.0792761556463466,
+      "max_drawdown_points_vs_current": -0.1467400415926856,
+      "worst_month_points_vs_current": 0.006650182301048968,
+      "ending_value_vs_current": -10.841798618816028
     },
     "GLD1_SGOV9_RSP8": {
-      "ann_return_points_vs_current": -0.6474301843263142,
-      "ann_vol_points_vs_current": 0.04638653759206357,
-      "sharpe_vs_current": -0.011735885278500557,
-      "sortino_vs_current": -0.16667504565699254,
-      "max_drawdown_points_vs_current": -0.2489677029642312,
-      "worst_month_points_vs_current": 0.005408044897936559,
-      "ending_value_vs_current": -30.759189869568218
+      "ann_return_points_vs_current": -0.6474306665186447,
+      "ann_vol_points_vs_current": 0.04638625545281272,
+      "sharpe_vs_current": -0.011735878873132322,
+      "sortino_vs_current": -0.16667499415708065,
+      "max_drawdown_points_vs_current": -0.24896753527611226,
+      "worst_month_points_vs_current": 0.0054079679976615225,
+      "ending_value_vs_current": -30.75923809559572
+    },
+    "GLD5_SGOV7_RSP6": {
+      "ann_return_points_vs_current": 0.39283274355335074,
+      "ann_vol_points_vs_current": -0.045461260314033636,
+      "sharpe_vs_current": 0.008047680385261824,
+      "sortino_vs_current": 0.15740332423181602,
+      "max_drawdown_points_vs_current": -0.1702293486644746,
+      "worst_month_points_vs_current": -0.029448696517120343,
+      "ending_value_vs_current": 6.019495626100252
     }
   },
   "ranking_by_annual_return_then_sortino_then_drawdown": [
+    "GLD5_SGOV7_RSP6",
     "CURRENT_RSP7_SGOV8_GLD3",
     "GLD2_RSP8_SGOV8",
     "GLD2_SGOV9_RSP7",
