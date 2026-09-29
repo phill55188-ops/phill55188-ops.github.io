@@ -1,0 +1,41 @@
+name: MACRO Defense Mix Test
+
+on:
+  push:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/defense_mix_test.py'
+      - '.github/workflows/macro-defense-mix-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  defense-mix-test:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: macro-backtest-v08
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r macro-backtest/requirements.txt
+      - name: Run defensive mix comparison
+        run: python macro-backtest/defense_mix_test.py
+      - name: Save defensive mix results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add macro-backtest/results-defense-mix
+          if git diff --cached --quiet; then
+            echo "No result changes"
+          else
+            git commit -m "Run defensive mix comparison"
+            git pull --rebase origin macro-backtest-v08
+            git push origin HEAD:macro-backtest-v08
+          fi
