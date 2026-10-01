@@ -5,6 +5,7 @@ on:
     branches: [macro-backtest-v08]
     paths:
       - 'macro-backtest/defense_mix_test.py'
+      - 'macro-backtest/fractional_diversifier_test.py'
       - '.github/workflows/macro-defense-mix-test.yml'
   workflow_dispatch:
 
@@ -27,6 +28,8 @@ jobs:
         run: pip install -r macro-backtest/requirements.txt
       - name: Run defensive mix comparison
         run: python macro-backtest/defense_mix_test.py
+      - name: Run fractionable diversifier comparison
+        run: python macro-backtest/fractional_diversifier_test.py
       - name: Save defensive mix results
         run: |
           git config user.name "github-actions[bot]"
