@@ -10,11 +10,24 @@ import yfinance as yf
 FEE_DEFAULT = 0.0005
 
 
+def _completed_monthly_values(values):
+    values = pd.Series(values, dtype=float).dropna().sort_index()
+    if len(values) == 0:
+        return values
+    last_obs = values.index.max()
+    monthly_values = values.resample("ME").last()
+    now = pd.Timestamp.utcnow().tz_localize(None).normalize()
+    if last_obs.to_period("M") == now.to_period("M"):
+        month_end = now + pd.offsets.MonthEnd(0)
+        if now < month_end:
+            monthly_values = monthly_values[monthly_values.index.to_period("M") < now.to_period("M")]
+    return monthly_values
+
 def stats_from_values(values):
-    values = pd.Series(values, dtype=float).dropna()
-    monthly = values.resample("ME").last().pct_change().dropna()
+    monthly_values = _completed_monthly_values(values)
+    monthly = monthly_values.pct_change().dropna()
     if len(monthly) == 0:
-        raise RuntimeError("RUN INVALID — no monthly returns available")
+        raise RuntimeError("RUN INVALID — no completed monthly returns available")
     wealth = (1 + monthly).cumprod()
     dd = wealth / wealth.cummax() - 1
     ann = wealth.iloc[-1] ** (12 / len(monthly)) - 1
@@ -29,7 +42,7 @@ def stats_from_values(values):
         "sortino": float(sortino) if pd.notna(sortino) else None,
         "max_drawdown": float(dd.min()),
         "worst_month": float(monthly.min()),
-        "ending_value": float(values.iloc[-1]),
+        "ending_value": float(monthly_values.iloc[-1]),
         "months": int(len(monthly)),
     }
 
