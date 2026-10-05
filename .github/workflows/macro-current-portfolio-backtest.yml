@@ -1,0 +1,41 @@
+name: MACRO Current Portfolio Backtest
+
+on:
+  push:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/current_portfolio_backtest.py'
+      - '.github/workflows/macro-current-portfolio-backtest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  current-portfolio-backtest:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: macro-backtest-v08
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r macro-backtest/requirements.txt
+      - name: Run current portfolio backtest
+        run: python macro-backtest/current_portfolio_backtest.py
+      - name: Persist current portfolio results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add macro-backtest/results-current-portfolio
+          if git diff --cached --quiet; then
+            echo "No result changes"
+          else
+            git commit -m "Run v10.37 current portfolio backtest"
+            git pull --rebase origin macro-backtest-v08
+            git push origin HEAD:macro-backtest-v08
+          fi
