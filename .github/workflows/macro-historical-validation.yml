@@ -1,0 +1,29 @@
+name: MACRO Historical Validation Self-Test
+
+on:
+  push:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/historical_validation.py'
+      - '.github/workflows/macro-historical-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  historical-validation-self-test:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: macro-backtest-v08
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r macro-backtest/requirements.txt
+      - name: Run historical validation self-test
+        run: python macro-backtest/historical_validation.py --self-test
