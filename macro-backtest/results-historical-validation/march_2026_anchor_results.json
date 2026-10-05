@@ -25,13 +25,13 @@
   "cash_target": 0.0,
   "refill_method": "cash_only",
   "metrics": {
-    "ann_return": 0.3207638857567532,
-    "ann_vol": 0.3815958247209234,
-    "sharpe": 0.8921999747836186,
-    "sortino": 3.130617859098588,
-    "max_drawdown": -0.17252940625905533,
-    "worst_month": -0.11227390084583799,
-    "ending_value": 581.5198253878705,
+    "ann_return": 0.3207638830812829,
+    "ann_vol": 0.3815958207039228,
+    "sharpe": 0.8921999746901058,
+    "sortino": 3.1306182794333828,
+    "max_drawdown": -0.17252940127804983,
+    "worst_month": -0.11227389497071483,
+    "ending_value": 581.5198181601377,
     "months": 6
   }
 }
