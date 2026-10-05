@@ -20,6 +20,19 @@ def rank_lo(s):
     s=pd.Series(s,dtype=float).replace([np.inf,-np.inf],np.nan)
     return s.rank(pct=True,ascending=False).fillna(.5)
 
+def _completed_monthly_last(p):
+    p=p.sort_index()
+    if p.empty:
+        return p
+    last_obs=p.index.max()
+    monthly=p.resample('ME').last().ffill()
+    now=pd.Timestamp.utcnow().tz_localize(None).normalize()
+    if last_obs.to_period('M')==now.to_period('M'):
+        month_end=now+pd.offsets.MonthEnd(0)
+        if now<month_end:
+            monthly=monthly[monthly.index.to_period('M')<now.to_period('M')]
+    return monthly
+
 def load_prices(start):
     tickers=list(TARGETS)+BENCH
     x=yf.download(tickers,start=start,auto_adjust=True,progress=False,threads=True,group_by='ticker')
@@ -29,7 +42,7 @@ def load_prices(start):
         except:pass
     p=pd.DataFrame(d)
     p.index=pd.to_datetime(p.index).tz_localize(None)
-    return p.resample('ME').last().ffill()
+    return _completed_monthly_last(p)
 
 def load_earnings():
     out={}
