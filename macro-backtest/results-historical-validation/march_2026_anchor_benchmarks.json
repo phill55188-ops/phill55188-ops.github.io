@@ -5,54 +5,54 @@
   "bias_classification": "EX-ANTE / ANCHOR-FORWARD for the frozen portfolio snapshot; benchmarks use the same subsequent period.",
   "results": {
     "MARCH_2026_FROZEN_THESIS": {
-      "ann_return": 0.30282281265053856,
-      "ann_vol": 0.3487665101810774,
-      "sharpe": 0.9120406462223789,
-      "sortino": 2.92491475913481,
-      "max_drawdown": -0.17252940836215447,
-      "worst_month": -0.11227390165424411,
-      "ending_value": 590.429939597073,
-      "months": 7
+      "ann_return": 0.3207638857567532,
+      "ann_vol": 0.3815958247209234,
+      "sharpe": 0.8921999747836186,
+      "sortino": 3.130617859098588,
+      "max_drawdown": -0.17252940625905533,
+      "worst_month": -0.11227390084583799,
+      "ending_value": 581.5198253878705,
+      "months": 6
     },
     "SPY": {
-      "ann_return": 0.346347569681589,
-      "ann_vol": 0.1419460223774235,
-      "sharpe": 2.179081435898082,
-      "sortino": 18.04159561845308,
-      "max_drawdown": -0.010292580956815622,
-      "worst_month": -0.010292580956815622,
-      "ending_value": 609.6548839184228,
-      "months": 7
+      "ann_return": 0.38910733690589616,
+      "ann_vol": 0.15299764165061971,
+      "sharpe": 2.2384655345858926,
+      "sortino": 19.976224256920574,
+      "max_drawdown": -0.0102925809568154,
+      "worst_month": -0.010292580956815511,
+      "ending_value": 604.1019869941357,
+      "months": 6
     },
     "QQQ": {
-      "ann_return": 0.5709997145517232,
-      "ann_vol": 0.25157669406435423,
-      "sharpe": 1.9325845409886528,
-      "sortino": 3.089399978318197,
-      "max_drawdown": -0.06713154774065344,
-      "worst_month": -0.06573874109851152,
-      "ending_value": 667.2918168460956,
-      "months": 7
+      "ann_return": 0.6497934570260291,
+      "ann_vol": 0.2717886204042174,
+      "sharpe": 1.9894272759075604,
+      "sortino": 3.4357738451777786,
+      "max_drawdown": -0.06713154774065333,
+      "worst_month": -0.06573874109851141,
+      "ending_value": 658.5588233375461,
+      "months": 6
     }
   },
   "deltas_vs_benchmarks": {
     "SPY": {
-      "ann_return_points_portfolio_minus_benchmark": -4.352475703105041,
-      "ann_vol_points_portfolio_minus_benchmark": 20.682048780365392,
-      "sharpe_portfolio_minus_benchmark": -1.2670407896757032,
-      "sortino_portfolio_minus_benchmark": -15.11668085931827,
-      "max_drawdown_points_portfolio_minus_benchmark": -16.223682740533885,
-      "worst_month_points_portfolio_minus_benchmark": -10.198132069742849,
-      "ending_value_portfolio_minus_benchmark": -19.224944321349767
+      "ann_return_points_portfolio_minus_benchmark": -6.8343451149142975,
+      "ann_vol_points_portfolio_minus_benchmark": 22.85981830703037,
+      "sharpe_portfolio_minus_benchmark": -1.3462655598022741,
+      "sortino_portfolio_minus_benchmark": -16.845606397821985,
+      "max_drawdown_points_portfolio_minus_benchmark": -16.223682530223993,
+      "worst_month_points_portfolio_minus_benchmark": -10.198131988902247,
+      "ending_value_portfolio_minus_benchmark": -22.58216160626523
     },
     "QQQ": {
-      "ann_return_points_portfolio_minus_benchmark": -26.81769019011846,
-      "ann_vol_points_portfolio_minus_benchmark": 9.718981611672318,
-      "sharpe_portfolio_minus_benchmark": -1.020543894766274,
-      "sortino_portfolio_minus_benchmark": -0.164485219183387,
-      "max_drawdown_points_portfolio_minus_benchmark": -10.539786062150103,
-      "worst_month_points_portfolio_minus_benchmark": -4.6535160555732595,
-      "ending_value_portfolio_minus_benchmark": -76.86187724902254
+      "ann_return_points_portfolio_minus_benchmark": -32.90295712692759,
+      "ann_vol_points_portfolio_minus_benchmark": 10.980720431670598,
+      "sharpe_portfolio_minus_benchmark": -1.097227301123942,
+      "sortino_portfolio_minus_benchmark": -0.3051559860791908,
+      "max_drawdown_points_portfolio_minus_benchmark": -10.5397858518402,
+      "worst_month_points_portfolio_minus_benchmark": -4.653515974732658,
+      "ending_value_portfolio_minus_benchmark": -77.0389979496756
     }
   },
   "limitations": [
