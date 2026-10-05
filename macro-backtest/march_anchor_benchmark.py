@@ -50,7 +50,7 @@ def main():
         "results":rows,
         "deltas_vs_benchmarks":delta,
         "limitations":[
-            "Only seven monthly return observations are available, so annualized metrics are highly unstable.",
+            f"Only {base['months']} completed monthly return observations are available, so annualized metrics are highly unstable.",
             "The historical snapshot must be complete to preserve the ex-ante classification.",
             "Internal Sortino is methodology-specific."
         ]
