@@ -7,7 +7,7 @@ from defense_mix_test import CURRENT_GROWTH
 OUT=Path("macro-backtest/results-current-portfolio")
 OUT.mkdir(parents=True,exist_ok=True)
 
-CANON="10.04.2026_v.10.37"
+CANON="10.04.2026_v.10.38"
 REQUESTED_START="2024-01-01"
 CASH=0.01
 DEFENSE={"TPYP":0.07,"SGOV":0.08,"GLD":0.03}
@@ -38,7 +38,7 @@ def main():
     p=prices.loc[common_start:common_end,required].copy()
 
     specs=[
-        ("CURRENT_CANON_V10_37",TARGETS,"smart",CASH,list(CURRENT_GROWTH)),
+        ("CURRENT_CANON_V10_38",TARGETS,"smart",CASH,list(CURRENT_GROWTH)),
         ("SPY",{"SPY":1.0},"benchmark",0.0,["SPY"]),
         ("QQQ",{"QQQ":1.0},"benchmark",0.0,["QQQ"]),
     ]
@@ -50,7 +50,7 @@ def main():
         l["strategy"]=n; logs.append(l)
 
     df=pd.DataFrame(rows)
-    base=df.set_index("strategy").loc["CURRENT_CANON_V10_37"]
+    base=df.set_index("strategy").loc["CURRENT_CANON_V10_38"]
     deltas={}
     for b in ["SPY","QQQ"]:
         r=df.set_index("strategy").loc[b]
