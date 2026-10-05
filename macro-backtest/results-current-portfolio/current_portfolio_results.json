@@ -4,7 +4,7 @@
   "information_set": "Current v10.37 canonical target architecture applied retrospectively for mechanics/allocation comparison. Same monthly window and contribution assumptions used for portfolio, SPY, and QQQ.",
   "requested_start": "2024-01-01",
   "actual_start": "2024-10-31",
-  "actual_end": "2026-10-31",
+  "actual_end": "2026-09-30",
   "start_reason": "first common monthly observation available across every current canonical holding",
   "constraining_series": [
     "NBIS"
@@ -48,56 +48,56 @@
   "results": [
     {
       "strategy": "CURRENT_CANON_V10_37",
-      "ann_return": 0.9476230529123775,
-      "ann_vol": 0.3215398375339457,
-      "sharpe": 2.277588100256993,
-      "sortino": 5.783140098171064,
-      "max_drawdown": -0.11952003150865298,
-      "worst_month": -0.10580220694154319,
-      "ending_value": 11488.46906392569,
-      "months": 24
+      "ann_return": 0.9802960814696533,
+      "ann_vol": 0.32757388275862853,
+      "sharpe": 2.2946957073899235,
+      "sortino": 5.935921343305225,
+      "max_drawdown": -0.11952004038206931,
+      "worst_month": -0.10580220725122891,
+      "ending_value": 11024.572029139905,
+      "months": 23
     },
     {
       "strategy": "SPY",
-      "ann_return": 0.17673678808639104,
-      "ann_vol": 0.12541771053829012,
-      "sharpe": 1.3653614854712277,
-      "sortino": 2.4631879421979295,
-      "max_drawdown": -0.07578993369555787,
-      "worst_month": -0.05571921132269575,
-      "ending_value": 6352.964383987797,
-      "months": 24
+      "ann_return": 0.17944884323544086,
+      "ann_vol": 0.1281791137826795,
+      "sharpe": 1.3566175214969458,
+      "sortino": 2.501303292095112,
+      "max_drawdown": -0.07578972687550145,
+      "worst_month": -0.05571910658300483,
+      "ending_value": 6097.021182061831,
+      "months": 23
     },
     {
       "strategy": "QQQ",
-      "ann_return": 0.25095089209471855,
-      "ann_vol": 0.18431687698598523,
-      "sharpe": 1.3116532730389212,
-      "sortino": 2.546090728304849,
-      "max_drawdown": -0.10084564498255233,
-      "worst_month": -0.07586186973081788,
-      "ending_value": 6884.413373270765,
-      "months": 24
+      "ann_return": 0.2545360039990481,
+      "ann_vol": 0.1883877844074036,
+      "sharpe": 1.3023802325095033,
+      "sortino": 2.583925310131013,
+      "max_drawdown": -0.1008457039092312,
+      "worst_month": -0.07586198626432639,
+      "ending_value": 6597.0311413366035,
+      "months": 23
     }
   ],
   "deltas_vs_benchmarks": {
     "SPY": {
-      "ann_return_points_portfolio_minus_benchmark": 77.08862648259864,
-      "ann_vol_points_portfolio_minus_benchmark": 19.61221269956556,
-      "sharpe_portfolio_minus_benchmark": 0.9122266147857654,
-      "sortino_portfolio_minus_benchmark": 3.319952155973134,
-      "max_drawdown_points_portfolio_minus_benchmark": -4.373009781309511,
-      "worst_month_points_portfolio_minus_benchmark": -5.008299561884744,
-      "ending_value_portfolio_minus_benchmark": 5135.504679937892
+      "ann_return_points_portfolio_minus_benchmark": 80.08472382342124,
+      "ann_vol_points_portfolio_minus_benchmark": 19.939476897594904,
+      "sharpe_portfolio_minus_benchmark": 0.9380781858929776,
+      "sortino_portfolio_minus_benchmark": 3.4346180512101125,
+      "max_drawdown_points_portfolio_minus_benchmark": -4.373031350656786,
+      "worst_month_points_portfolio_minus_benchmark": -5.008310066822408,
+      "ending_value_portfolio_minus_benchmark": 4927.550847078074
     },
     "QQQ": {
-      "ann_return_points_portfolio_minus_benchmark": 69.66721608176589,
-      "ann_vol_points_portfolio_minus_benchmark": 13.722296054796049,
-      "sharpe_portfolio_minus_benchmark": 0.9659348272180719,
-      "sortino_portfolio_minus_benchmark": 3.237049369866215,
-      "max_drawdown_points_portfolio_minus_benchmark": -1.867438652610065,
-      "worst_month_points_portfolio_minus_benchmark": -2.994033721072531,
-      "ending_value_portfolio_minus_benchmark": 4604.055690654925
+      "ann_return_points_portfolio_minus_benchmark": 72.57600774706052,
+      "ann_vol_points_portfolio_minus_benchmark": 13.918609835122492,
+      "sharpe_portfolio_minus_benchmark": 0.9923154748804202,
+      "sortino_portfolio_minus_benchmark": 3.3519960331742116,
+      "max_drawdown_points_portfolio_minus_benchmark": -1.8674336472838116,
+      "worst_month_points_portfolio_minus_benchmark": -2.994022098690252,
+      "ending_value_portfolio_minus_benchmark": 4427.540887803301
     }
   },
   "limitations": [
