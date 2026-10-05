@@ -5,6 +5,7 @@ on:
     branches: [macro-backtest-v08]
     paths:
       - 'macro-backtest/historical_validation.py'
+      - 'macro-backtest/march_anchor_benchmark.py'
       - 'macro-backtest/configs/2026-03-27_pre_bull_run_anchor.json'
       - '.github/workflows/macro-historical-validation.yml'
   workflow_dispatch:
@@ -33,11 +34,13 @@ jobs:
           python macro-backtest/historical_validation.py \
             --config macro-backtest/configs/2026-03-27_pre_bull_run_anchor.json \
             --output macro-backtest/results-historical-validation/march_2026_anchor_results.json
+      - name: Run March 2026 benchmark comparison
+        run: python macro-backtest/march_anchor_benchmark.py
       - name: Persist historical validation results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add macro-backtest/results-historical-validation/march_2026_anchor_results.json
+          git add macro-backtest/results-historical-validation
           if git diff --cached --quiet; then
             echo "No result changes"
           else
