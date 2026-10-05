@@ -1,0 +1,37 @@
+{
+  "test_type": "ANCHOR_FORWARD_THESIS",
+  "anchor_date": "2026-03-27",
+  "actual_start": "2026-03-27",
+  "start_reason": "first complete trading date on/after verified historical anchor",
+  "information_set": "Contemporaneous March 27, 2026 proposed target architecture only. No post-anchor ticker additions, upgrades, cuts, or later research are projected backward.",
+  "bias_classification": "Ex-ante anchor-forward security-selection test when the snapshot is complete and genuinely predates the measured period. Do not label post-anchor performance as hindsight selection merely because the test is run later. Bias remains if contemporaneous losers/positions were omitted or later information was used to alter the frozen snapshot.",
+  "targets": {
+    "NVDA": 0.14,
+    "META": 0.09,
+    "AMZN": 0.09,
+    "CEG": 0.08,
+    "DLR": 0.05,
+    "LEU": 0.07,
+    "MP": 0.06,
+    "FCX": 0.06,
+    "UUUU": 0.04,
+    "QCOM": 0.07,
+    "PLTR": 0.07,
+    "LSCC": 0.04,
+    "TER": 0.04,
+    "OKLO": 0.05,
+    "INFQ": 0.05
+  },
+  "cash_target": 0.0,
+  "refill_method": "cash_only",
+  "metrics": {
+    "ann_return": 0.3028227958977052,
+    "ann_vol": 0.34876649261527387,
+    "sharpe": 0.9120406402106488,
+    "sortino": 2.9249149476047043,
+    "max_drawdown": -0.17252940232296443,
+    "worst_month": -0.112273895706693,
+    "ending_value": 590.4299468537098,
+    "months": 7
+  }
+}
