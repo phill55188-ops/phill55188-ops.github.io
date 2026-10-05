@@ -4,6 +4,7 @@ on:
   push:
     branches: [macro-backtest-v08]
     paths:
+      - 'macro-backtest/backtest.py'
       - 'macro-backtest/defense_mix_test.py'
       - 'macro-backtest/fractional_diversifier_test.py'
       - '.github/workflows/macro-defense-mix-test.yml'
