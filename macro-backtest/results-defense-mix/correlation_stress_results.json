@@ -1,0 +1,262 @@
+{
+  "smart_refill_backtest": {
+    "common_start": "2024-10-31",
+    "common_end": "2026-09-30",
+    "results": [
+      {
+        "strategy": "CURRENT_RSP7",
+        "ann_return": 0.9707633042424957,
+        "ann_vol": 0.3320291292241955,
+        "sharpe": 2.2526401301264825,
+        "sortino": 5.89004600231484,
+        "max_drawdown": -0.1205577967567163,
+        "worst_month": -0.10678350886694332,
+        "ending_value": 10986.808616655828,
+        "months": 23
+      },
+      {
+        "strategy": "EINC7_REPLACES_RSP",
+        "ann_return": 0.9829319222045165,
+        "ann_vol": 0.3278461958751854,
+        "sharpe": 2.2973012160495605,
+        "sortino": 5.920653662949462,
+        "max_drawdown": -0.11928234204790522,
+        "worst_month": -0.10567669958589754,
+        "ending_value": 11048.938530404304,
+        "months": 23
+      },
+      {
+        "strategy": "USAI7_REPLACES_RSP",
+        "ann_return": 0.9789402191128571,
+        "ann_vol": 0.32805961689898533,
+        "sharpe": 2.289519300788837,
+        "sortino": 5.928781014728183,
+        "max_drawdown": -0.11959149758549048,
+        "worst_month": -0.10561009416537803,
+        "ending_value": 11013.315895777823,
+        "months": 23
+      }
+    ],
+    "deltas_vs_current_rsp": {
+      "CURRENT_RSP7": {
+        "ann_return_points_vs_rsp": 0.0,
+        "ann_vol_points_vs_rsp": 0.0,
+        "sharpe_vs_rsp": 0.0,
+        "sortino_vs_rsp": 0.0,
+        "max_drawdown_points_vs_rsp": 0.0,
+        "worst_month_points_vs_rsp": 0.0,
+        "ending_value_vs_rsp": 0.0
+      },
+      "EINC7_REPLACES_RSP": {
+        "ann_return_points_vs_rsp": 1.2168617962020845,
+        "ann_vol_points_vs_rsp": -0.41829333490100984,
+        "sharpe_vs_rsp": 0.04466108592307805,
+        "sortino_vs_rsp": 0.03060766063462239,
+        "max_drawdown_points_vs_rsp": 0.12754547088110746,
+        "worst_month_points_vs_rsp": 0.11068092810457841,
+        "ending_value_vs_rsp": 62.12991374847661
+      },
+      "USAI7_REPLACES_RSP": {
+        "ann_return_points_vs_rsp": 0.8176914870361429,
+        "ann_vol_points_vs_rsp": -0.3969512325210145,
+        "sharpe_vs_rsp": 0.036879170662354355,
+        "sortino_vs_rsp": 0.038735012413343206,
+        "max_drawdown_points_vs_rsp": 0.09662991712258151,
+        "worst_month_points_vs_rsp": 0.11734147015652896,
+        "ending_value_vs_rsp": 26.507279121995452
+      }
+    }
+  },
+  "stress_test": {
+    "test": "RSP vs EINC vs USAI correlation and downside-stress diagnostic under canonical v10.29 architecture",
+    "method": {
+      "canon": "09.30.2026_v.10.29",
+      "daily_data_source": "yfinance adjusted close",
+      "requested_start": "2024-01-01",
+      "common_daily_start": "2024-10-21",
+      "common_daily_end": "2026-10-02",
+      "daily_observations": 488,
+      "growth_sleeve_proxy": "canonical v10.29 growth targets normalized from 81% to 100% within the sleeve",
+      "portfolio_monthly_proxy": "fixed canonical target weights; only the 7% RSP/EINC/USAI sleeve changes; 1% operating cash assumed 0% monthly return",
+      "rolling_windows": [
+        "60 trading days",
+        "120 trading days"
+      ],
+      "downside_correlation": "daily correlation conditional on benchmark daily return < 0",
+      "downside_capture": "candidate mean monthly return divided by benchmark mean monthly return in benchmark-negative months, x100",
+      "beta": "daily covariance(candidate, benchmark) / variance(benchmark)"
+    },
+    "correlation": {
+      "RSP": {
+        "vs_spy": {
+          "corr_full": 0.8746621572218366,
+          "beta_full": 0.7754380477260322,
+          "downside_corr": 0.8243672609973524,
+          "rolling_60d_avg": 0.8101015167358562,
+          "rolling_60d_latest": 0.6552253346908887,
+          "rolling_60d_min": 0.6152487028634416,
+          "rolling_60d_max": 0.9787146389566586,
+          "rolling_120d_latest": 0.712096873497935,
+          "observations": 488
+        },
+        "vs_growth_sleeve": {
+          "corr_full": 0.5667919824605712,
+          "beta_full": 0.1942681375580073,
+          "downside_corr": 0.3896072299860362,
+          "rolling_60d_avg": 0.4895652002171953,
+          "rolling_60d_latest": 0.2292460084675205,
+          "rolling_60d_min": 0.13002853661142794,
+          "rolling_60d_max": 0.9180236140825926,
+          "rolling_120d_latest": 0.34380162952431637,
+          "observations": 488
+        },
+        "monthly_downside_capture_vs_spy": 102.16130390699946,
+        "monthly_downside_capture_vs_growth_sleeve": 25.888661537231812
+      },
+      "EINC": {
+        "vs_spy": {
+          "corr_full": 0.3345608535396464,
+          "beta_full": 0.3751764068442139,
+          "downside_corr": 0.49686236232347564,
+          "rolling_60d_avg": 0.13661359706167003,
+          "rolling_60d_latest": -0.23519046895594695,
+          "rolling_60d_min": -0.47913170523339366,
+          "rolling_60d_max": 0.8034054172144824,
+          "rolling_120d_latest": -0.2966596603840862,
+          "observations": 488
+        },
+        "vs_growth_sleeve": {
+          "corr_full": 0.2743874561390018,
+          "beta_full": 0.11895857647164897,
+          "downside_corr": 0.35316719691077736,
+          "rolling_60d_avg": 0.16520700942936845,
+          "rolling_60d_latest": -0.1665115586032228,
+          "rolling_60d_min": -0.35068848060678726,
+          "rolling_60d_max": 0.7854522782079537,
+          "rolling_120d_latest": -0.2121698782467695,
+          "observations": 488
+        },
+        "monthly_downside_capture_vs_spy": -2.384349586380768,
+        "monthly_downside_capture_vs_growth_sleeve": -28.02905481353274
+      },
+      "USAI": {
+        "vs_spy": {
+          "corr_full": 0.3710435260543941,
+          "beta_full": 0.4417306104599998,
+          "downside_corr": 0.5365676115161669,
+          "rolling_60d_avg": 0.18259054799957578,
+          "rolling_60d_latest": -0.22985006806379515,
+          "rolling_60d_min": -0.42662746863370515,
+          "rolling_60d_max": 0.8146482648410003,
+          "rolling_120d_latest": -0.28023477896911714,
+          "observations": 488
+        },
+        "vs_growth_sleeve": {
+          "corr_full": 0.3160576600806726,
+          "beta_full": 0.14546887038859505,
+          "downside_corr": 0.39810502461078434,
+          "rolling_60d_avg": 0.21637339556549878,
+          "rolling_60d_latest": -0.16004203602052233,
+          "rolling_60d_min": -0.300385821206684,
+          "rolling_60d_max": 0.8142155658161284,
+          "rolling_120d_latest": -0.18169945382359529,
+          "observations": 488
+        },
+        "monthly_downside_capture_vs_spy": 20.971541000947763,
+        "monthly_downside_capture_vs_growth_sleeve": -22.657440974168296
+      }
+    },
+    "worst_growth_sleeve_months": [
+      {
+        "month": "2026-07-31",
+        "growth_sleeve": -0.1335170813565029,
+        "RSP": 0.010527735778810499,
+        "EINC": 0.026006780688099473,
+        "USAI": 0.027428013028543363,
+        "SPY": 0.00034822442006920973
+      },
+      {
+        "month": "2025-03-31",
+        "growth_sleeve": -0.1199014008431931,
+        "RSP": -0.033954571237215125,
+        "EINC": 0.013790296408144886,
+        "USAI": 0.010256502951847546,
+        "SPY": -0.05571931022636345
+      },
+      {
+        "month": "2025-11-30",
+        "growth_sleeve": -0.059993589044472495,
+        "RSP": 0.019156095059661427,
+        "EINC": 0.05857496273231333,
+        "USAI": 0.04654510319919103,
+        "SPY": 0.0019498720874142617
+      },
+      {
+        "month": "2024-12-31",
+        "growth_sleeve": -0.03955632413585429,
+        "RSP": -0.06274832051374157,
+        "EINC": -0.058941246598947505,
+        "USAI": -0.04697786969096762,
+        "SPY": -0.02405981579133909
+      },
+      {
+        "month": "2026-03-31",
+        "growth_sleeve": -0.029267167983634546,
+        "RSP": -0.05965932440284516,
+        "EINC": 0.035328262802390764,
+        "USAI": 0.04001377029957731,
+        "SPY": -0.049379608638833394
+      }
+    ],
+    "worst_growth_sleeve_month_average_candidate_returns": {
+      "RSP": -0.025335677063065987,
+      "EINC": 0.01495181120640019,
+      "USAI": 0.015453103957638326
+    },
+    "worst_growth_sleeve_month_positive_counts": {
+      "RSP": 2,
+      "EINC": 4,
+      "USAI": 4
+    },
+    "baseline_portfolio_worst_months_fixed_target_proxy": [
+      {
+        "month": "2026-07-31",
+        "CURRENT_RSP7": -0.10688676014634048,
+        "EINC7_REPLACES_RSP": -0.10580322700269025,
+        "USAI7_REPLACES_RSP": -0.10570374073885919
+      },
+      {
+        "month": "2025-03-31",
+        "CURRENT_RSP7": -0.09639748963100016,
+        "EINC7_REPLACES_RSP": -0.09305534889582495,
+        "USAI7_REPLACES_RSP": -0.09330271443776576
+      },
+      {
+        "month": "2025-11-30",
+        "CURRENT_RSP7": -0.04540601941661236,
+        "EINC7_REPLACES_RSP": -0.04264669867952673,
+        "USAI7_REPLACES_RSP": -0.04348878884684529
+      },
+      {
+        "month": "2024-12-31",
+        "CURRENT_RSP7": -0.036544069189088986,
+        "EINC7_REPLACES_RSP": -0.0362775740150534,
+        "USAI7_REPLACES_RSP": -0.035440137631494804
+      },
+      {
+        "month": "2026-03-31",
+        "CURRENT_RSP7": -0.030965160092438833,
+        "EINC7_REPLACES_RSP": -0.02431602898807232,
+        "USAI7_REPLACES_RSP": -0.02398804346326926
+      }
+    ],
+    "limitations": [
+      "Correlation is descriptive, not causal, and changes through time.",
+      "The daily stress test uses fixed target weights for the growth-sleeve and portfolio proxies; it is a diversification diagnostic, not a replacement for the monthly smart-refill engine.",
+      "Current 2026 holdings are applied retrospectively, creating survivorship/selection bias.",
+      "The common history is constrained by the newest current holding and any newer ETF history; a short common window can make rolling statistics fragile.",
+      "Downside capture is sample-sensitive because the number and severity of negative months are limited.",
+      "A lower correlation alone is not sufficient reason to replace RSP; implementation quality, liquidity, cost, holdings, mandate, and persistence across regimes still matter."
+    ]
+  }
+}

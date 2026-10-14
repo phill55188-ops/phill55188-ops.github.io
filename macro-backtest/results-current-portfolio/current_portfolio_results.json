@@ -1,0 +1,109 @@
+{
+  "canon": "10.04.2026_v.10.37",
+  "test_type": "COMMON_WINDOW_ARCHITECTURE",
+  "information_set": "Current v10.37 canonical target architecture applied retrospectively for mechanics/allocation comparison. Same monthly window and contribution assumptions used for portfolio, SPY, and QQQ.",
+  "requested_start": "2024-01-01",
+  "actual_start": "2024-10-31",
+  "actual_end": "2026-09-30",
+  "start_reason": "first common monthly observation available across every current canonical holding",
+  "constraining_series": [
+    "NBIS"
+  ],
+  "bias_classification": "RETROSPECTIVE SELECTION / SURVIVORSHIP EXPOSURE \u2014 current 2026 universe is projected backward. Use this test for mechanics/relative architecture, not proof that today's universe was selectable at the start.",
+  "controls": {
+    "initial_capital": 500,
+    "monthly_contribution": 200,
+    "fee": 0.0005,
+    "drift_threshold": 0.1,
+    "cash_target": 0.01,
+    "growth_sleeve": 0.81,
+    "defensive_assets": 0.18,
+    "price_data": "adjusted monthly-last yfinance data",
+    "refill": "canonical smart-refill proxy for portfolio; benchmark buy-and-hold/refill through same engine"
+  },
+  "targets": {
+    "TPYP": 0.07,
+    "SGOV": 0.08,
+    "GLD": 0.03,
+    "ADBE": 0.02,
+    "SNPS": 0.02,
+    "TSM": 0.02,
+    "MP": 0.038587521663778164,
+    "FCX": 0.038587521663778164,
+    "LEU": 0.038587521663778164,
+    "VRT": 0.038587521663778164,
+    "BE": 0.038587521663778164,
+    "GEV": 0.038587521663778164,
+    "NVDA": 0.057881282495667256,
+    "QCOM": 0.057881282495667256,
+    "MU": 0.09488734835355288,
+    "LITE": 0.038587521663778164,
+    "MRVL": 0.038587521663778164,
+    "ORCL": 0.038587521663778164,
+    "NBIS": 0.038587521663778164,
+    "NET": 0.038587521663778164,
+    "PLTR": 0.09488734835355288,
+    "FN": 0.02
+  },
+  "results": [
+    {
+      "strategy": "CURRENT_CANON_V10_37",
+      "ann_return": 0.9802960814696533,
+      "ann_vol": 0.32757388275862853,
+      "sharpe": 2.2946957073899235,
+      "sortino": 5.935921343305225,
+      "max_drawdown": -0.11952004038206931,
+      "worst_month": -0.10580220725122891,
+      "ending_value": 11024.572029139905,
+      "months": 23
+    },
+    {
+      "strategy": "SPY",
+      "ann_return": 0.17944884323544086,
+      "ann_vol": 0.1281791137826795,
+      "sharpe": 1.3566175214969458,
+      "sortino": 2.501303292095112,
+      "max_drawdown": -0.07578972687550145,
+      "worst_month": -0.05571910658300483,
+      "ending_value": 6097.021182061831,
+      "months": 23
+    },
+    {
+      "strategy": "QQQ",
+      "ann_return": 0.2545360039990481,
+      "ann_vol": 0.1883877844074036,
+      "sharpe": 1.3023802325095033,
+      "sortino": 2.583925310131013,
+      "max_drawdown": -0.1008457039092312,
+      "worst_month": -0.07586198626432639,
+      "ending_value": 6597.0311413366035,
+      "months": 23
+    }
+  ],
+  "deltas_vs_benchmarks": {
+    "SPY": {
+      "ann_return_points_portfolio_minus_benchmark": 80.08472382342124,
+      "ann_vol_points_portfolio_minus_benchmark": 19.939476897594904,
+      "sharpe_portfolio_minus_benchmark": 0.9380781858929776,
+      "sortino_portfolio_minus_benchmark": 3.4346180512101125,
+      "max_drawdown_points_portfolio_minus_benchmark": -4.373031350656786,
+      "worst_month_points_portfolio_minus_benchmark": -5.008310066822408,
+      "ending_value_portfolio_minus_benchmark": 4927.550847078074
+    },
+    "QQQ": {
+      "ann_return_points_portfolio_minus_benchmark": 72.57600774706052,
+      "ann_vol_points_portfolio_minus_benchmark": 13.918609835122492,
+      "sharpe_portfolio_minus_benchmark": 0.9923154748804202,
+      "sortino_portfolio_minus_benchmark": 3.3519960331742116,
+      "max_drawdown_points_portfolio_minus_benchmark": -1.8674336472838116,
+      "worst_month_points_portfolio_minus_benchmark": -2.994022098690252,
+      "ending_value_portfolio_minus_benchmark": 4427.540887803301
+    }
+  },
+  "limitations": [
+    "Current 2026 holdings are applied retrospectively, creating survivorship/selection bias.",
+    "The common sample is constrained by the newest current holding(s); absolute annualized returns are not forward forecasts.",
+    "Smart refill uses lagged reported earnings/surprise and trailing historical P/E proxies for some live forward-estimate inputs.",
+    "Internal Sortino is methodology-specific and intended for within-engine comparison."
+  ]
+}
