@@ -1,5 +1,6 @@
 import random
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -10,6 +11,7 @@ import pandas as pd
 import backtest as bt
 import historical_validation as hv
 import persist_results as pr
+import runtime_acceptance as ra
 import weighting_test as wt
 
 
@@ -338,6 +340,27 @@ class WorkflowRegressionTests(unittest.TestCase):
     def test_offline_pr_ci_checks_out_the_selected_repair_tree(self):
         text = (ROOT / ".github" / "workflows" / "macro-engine-tests.yml").read_text()
         self.assertIn("ref: ${{ github.event.pull_request.head.sha || github.sha }}", text)
+
+    def test_runtime_acceptance_uses_only_synthetic_isolated_outputs(self):
+        text = (ROOT / ".github" / "workflows" / "macro-writer-runtime-acceptance.yml").read_text()
+        self.assertIn("queue: max", text)
+        self.assertIn("max-parallel: 3", text)
+        self.assertIn("$RUNNER_TEMP/macro-writer-runtime-acceptance", text)
+        self.assertNotIn("results-current-portfolio", text)
+        self.assertNotIn("results-historical-validation", text)
+
+    def test_runtime_acceptance_persists_only_to_isolated_same_branch_remote(self):
+        head = pr._git("rev-parse", "HEAD", capture_output=True).stdout.strip()
+        with tempfile.TemporaryDirectory(prefix=".macro-runtime-test-", dir=ROOT) as temp:
+            output = Path(temp) / "slot-1.json"
+            record = ra.run_acceptance(1, output, head, ra.REPAIR_BRANCH)
+            ra.validate_record(record, head, ra.REPAIR_BRANCH)
+            self.assertTrue(record["synthetic"])
+            self.assertFalse(record["contains_financial_results"])
+            self.assertEqual(
+                record["persistence"]["changed_paths"],
+                ["macro-backtest/results-runtime-acceptance/slot-1.json"],
+            )
 
     def test_orchestration_dependency_paths_are_complete(self):
         text = (ROOT / ".github" / "workflows" / "macro-orchestration-split-test.yml").read_text()
