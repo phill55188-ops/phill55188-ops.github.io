@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import yfinance as yf
 
-from backtest import DEFENSE, CASH, GROWTH, load_earnings, run
+from backtest import DEFENSE, CASH, GROWTH, _completed_monthly_last, load_earnings, run
 
 # Isolate yfinance cache so concurrent GitHub workflows cannot lock the same sqlite DB.
 try:
@@ -52,7 +52,7 @@ def load_prices(active_growth):
         series[t] = c
     p = pd.DataFrame(series)
     p.index = pd.to_datetime(p.index).tz_localize(None)
-    return p.resample('ME').last().ffill()
+    return _completed_monthly_last(p)
 
 
 def normalize_current(active_growth):

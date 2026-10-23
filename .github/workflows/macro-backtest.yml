@@ -11,15 +11,24 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: macro-backtest-v08-results-writer
+  queue: max
+  cancel-in-progress: false
+
 jobs:
   backtest:
-    if: github.actor != 'github-actions[bot]'
+    if: >-
+      github.actor != 'github-actions[bot]' &&
+      github.ref_type == 'branch' &&
+      (github.ref_name == 'macro-backtest-v08' || github.ref_name == 'macro-backtest-v08-repair')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: macro-backtest-v08
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -28,13 +37,6 @@ jobs:
       - name: Run test
         run: python macro-backtest/backtest.py
       - name: Save results to branch
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add macro-backtest/results
-          if git diff --cached --quiet; then
-            echo "No result changes"
-          else
-            git commit -m "Run MACRO v08 backtest"
-            git push origin HEAD:macro-backtest-v08
-          fi
+        run: >-
+          python macro-backtest/persist_results.py macro-backtest/results
+          "Run MACRO v08 backtest"

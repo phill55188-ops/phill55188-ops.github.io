@@ -4,22 +4,35 @@ on:
   push:
     branches: [macro-backtest-v08]
     paths:
+      - 'macro-backtest/backtest.py'
+      - 'macro-backtest/dependency_cap_test.py'
+      - 'macro-backtest/satellite_weight_test.py'
       - 'macro-backtest/orchestration_split_test.py'
+      - 'macro-backtest/persist_results.py'
       - '.github/workflows/macro-orchestration-split-test.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: macro-backtest-v08-results-writer
+  queue: max
+  cancel-in-progress: false
+
 jobs:
   orchestration-split-test:
-    if: github.actor != 'github-actions[bot]'
+    if: >-
+      github.actor != 'github-actions[bot]' &&
+      github.ref_type == 'branch' &&
+      (github.ref_name == 'macro-backtest-v08' || github.ref_name == 'macro-backtest-v08-repair')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: macro-backtest-v08
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -28,14 +41,6 @@ jobs:
       - name: Run orchestration split comparison
         run: python macro-backtest/orchestration_split_test.py
       - name: Save orchestration comparison results
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add macro-backtest/results-orchestration
-          if git diff --cached --quiet; then
-            echo "No result changes"
-          else
-            git commit -m "Run orchestration split comparison"
-            git pull --rebase origin macro-backtest-v08
-            git push origin HEAD:macro-backtest-v08
-          fi
+        run: >-
+          python macro-backtest/persist_results.py macro-backtest/results-orchestration
+          "Run orchestration split comparison"
