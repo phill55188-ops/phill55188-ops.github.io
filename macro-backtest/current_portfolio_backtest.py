@@ -7,7 +7,7 @@ from defense_mix_test import CURRENT_GROWTH
 OUT=Path("macro-backtest/results-current-portfolio")
 OUT.mkdir(parents=True,exist_ok=True)
 
-CANON="10.04.2026_v.10.38"
+CANON="10.22.2026_v.11.14"
 REQUESTED_START="2024-01-01"
 CASH=0.01
 DEFENSE={"TPYP":0.07,"SGOV":0.08,"GLD":0.03}
@@ -38,7 +38,7 @@ def main():
     p=prices.loc[common_start:common_end,required].copy()
 
     specs=[
-        ("CURRENT_CANON_V10_38",TARGETS,"smart",CASH,list(CURRENT_GROWTH)),
+        ("CURRENT_CANON_V11_14",TARGETS,"smart",CASH,list(CURRENT_GROWTH)),
         ("SPY",{"SPY":1.0},"benchmark",0.0,["SPY"]),
         ("QQQ",{"QQQ":1.0},"benchmark",0.0,["QQQ"]),
     ]
@@ -50,7 +50,7 @@ def main():
         l["strategy"]=n; logs.append(l)
 
     df=pd.DataFrame(rows)
-    base=df.set_index("strategy").loc["CURRENT_CANON_V10_38"]
+    base=df.set_index("strategy").loc["CURRENT_CANON_V11_14"]
     deltas={}
     for b in ["SPY","QQQ"]:
         r=df.set_index("strategy").loc[b]
@@ -70,10 +70,11 @@ def main():
     result={
         "canon":CANON,
         "test_type":"COMMON_WINDOW_ARCHITECTURE",
-        "information_set":"Current v10.37 canonical target architecture applied retrospectively for mechanics/allocation comparison. Same monthly window and contribution assumptions used for portfolio, SPY, and QQQ.",
+        "information_set":"Current v11.14 canonical target architecture applied retrospectively for mechanics/allocation comparison. Same monthly window and contribution assumptions used for portfolio, SPY, and QQQ.",
         "requested_start":REQUESTED_START,
         "actual_start":str(common_start.date()),
         "actual_end":str(common_end.date()),
+        "months":int(base.months),
         "start_reason":"first common monthly observation available across every current canonical holding",
         "constraining_series":constraining,
         "bias_classification":"RETROSPECTIVE SELECTION / SURVIVORSHIP EXPOSURE — current 2026 universe is projected backward. Use this test for mechanics/relative architecture, not proof that today's universe was selectable at the start.",
@@ -87,6 +88,7 @@ def main():
             "defensive_assets":0.18,
             "price_data":"adjusted monthly-last yfinance data",
             "refill":"canonical smart-refill proxy for portfolio; benchmark buy-and-hold/refill through same engine",
+            "return_accounting":"external contributions excluded from return; configured transaction fees included",
         },
         "targets":TARGETS,
         "results":df.to_dict(orient="records"),

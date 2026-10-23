@@ -1,0 +1,91 @@
+name: MACRO Writer Runtime Acceptance
+
+on:
+  pull_request:
+    branches: [macro-backtest-v08]
+    paths:
+      - "macro-backtest/persist_results.py"
+      - "macro-backtest/runtime_acceptance.py"
+      - "macro-backtest/test_engine_regressions.py"
+      - ".github/workflows/macro-writer-runtime-acceptance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-writer:
+    name: synthetic-writer-${{ matrix.slot }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        slot: [1, 2, 3]
+    concurrency:
+      group: macro-writer-runtime-acceptance-${{ github.run_id }}
+      queue: max
+      cancel-in-progress: false
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_BRANCH: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run isolated synthetic writer acceptance
+        run: |
+          output="$RUNNER_TEMP/macro-writer-runtime-acceptance/slot-${{ matrix.slot }}.json"
+          python macro-backtest/runtime_acceptance.py run \
+            --slot "${{ matrix.slot }}" \
+            --output "$output" \
+            --expected-head "$EXPECTED_HEAD" \
+            --expected-branch "$EXPECTED_BRANCH" \
+            --hold-seconds 8
+          python macro-backtest/runtime_acceptance.py validate \
+            --input "$output" \
+            --expected-head "$EXPECTED_HEAD" \
+            --expected-branch "$EXPECTED_BRANCH"
+      - name: Upload synthetic acceptance artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-writer-runtime-acceptance-${{ matrix.slot }}
+          path: ${{ runner.temp }}/macro-writer-runtime-acceptance/slot-${{ matrix.slot }}.json
+          if-no-files-found: error
+          retention-days: 7
+
+  validate-queue-and-artifacts:
+    name: validate-queue-and-artifacts
+    if: always()
+    needs: synthetic-writer
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_BRANCH: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - name: Require every queued synthetic writer
+        run: test "${{ needs.synthetic-writer.result }}" = "success"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download synthetic artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: macro-writer-runtime-acceptance-*
+          path: ${{ runner.temp }}/macro-writer-runtime-acceptance
+          merge-multiple: true
+      - name: Validate queue behavior and artifact contracts
+        run: >-
+          python macro-backtest/runtime_acceptance.py validate-batch
+          --directory "$RUNNER_TEMP/macro-writer-runtime-acceptance"
+          --expected-head "$EXPECTED_HEAD"
+          --expected-branch "$EXPECTED_BRANCH"

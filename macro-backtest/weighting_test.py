@@ -15,19 +15,39 @@ def equal_growth():
 
 def capped_growth(cap=0.10):
     """Cap any growth holding at 10%, redistribute excess proportionally to uncapped names."""
-    g = dict(GROWTH)
-    excess = 0.0
-    uncapped = []
-    for t, w in list(g.items()):
-        if w > cap:
-            excess += w - cap
-            g[t] = cap
-        else:
-            uncapped.append(t)
-    base = sum(g[t] for t in uncapped)
-    for t in uncapped:
-        g[t] += excess * (g[t] / base)
+    if cap <= 0:
+        raise ValueError('cap must be positive')
+    base_weights = dict(GROWTH)
+    total = sum(base_weights.values())
+    if cap * len(base_weights) < total - 1e-12:
+        raise ValueError('Cap is infeasible for this universe.')
+
+    g = dict(base_weights)
+    for _ in range(len(g) + 1):
+        excess = sum(max(0.0, w - cap) for w in g.values())
+        if excess <= 1e-12:
+            break
+        g = {ticker: min(weight, cap) for ticker, weight in g.items()}
+
+        while excess > 1e-12:
+            eligible = [ticker for ticker, weight in g.items() if weight < cap - 1e-12]
+            if not eligible:
+                raise ValueError('Cap is infeasible for this universe.')
+            denominator = sum(base_weights[ticker] for ticker in eligible)
+            moved = 0.0
+            for ticker in eligible:
+                share = base_weights[ticker] / denominator if denominator > 0 else 1.0 / len(eligible)
+                addition = min(excess * share, cap - g[ticker])
+                g[ticker] += addition
+                moved += addition
+            if moved <= 1e-14:
+                raise RuntimeError('Cap redistribution stalled.')
+            excess -= moved
+    else:
+        raise RuntimeError('Cap redistribution did not converge.')
+
     assert abs(sum(g.values()) - 0.81) < 1e-9
+    assert max(g.values()) <= cap + 1e-12
     return {**DEFENSE, **g}
 
 

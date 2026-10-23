@@ -1,0 +1,32 @@
+name: MACRO Engine Regression Tests
+
+on:
+  pull_request:
+    paths:
+      - 'macro-backtest/**'
+      - '.github/workflows/macro-*.yml'
+  push:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/**'
+      - '.github/workflows/macro-*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r macro-backtest/requirements.txt
+      - name: Run synthetic engine regressions
+        run: python -m unittest discover -s macro-backtest -p 'test_*.py' -v
