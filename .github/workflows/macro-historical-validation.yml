@@ -21,17 +21,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: macro-backtest-v08
+          ref: ${{ github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: pip install -r macro-backtest/requirements.txt
+        run: pip install -r macro-backtest/requirements.txt 'exchange-calendars>=4,<5'
       - name: Run harness self-test
         run: python macro-backtest/historical_validation.py --self-test
       - name: Run March 2026 frozen-thesis validation
         run: |
-          python macro-backtest/historical_validation.py \
+          python macro-backtest/acceptance/acceptance_runtime.py capture \
+            --root . \
+            --bundle macro-backtest/results-provenance/${{ github.run_id }}-${{ github.run_attempt }}/historical \
+            --harness macro-backtest/historical_validation.py \
+            --output macro-backtest/results-historical-validation -- \
             --config macro-backtest/configs/2026-03-27_pre_bull_run_anchor.json \
             --output macro-backtest/results-historical-validation/march_2026_anchor_results.json
       - name: Run March 2026 benchmark comparison
@@ -40,7 +44,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add macro-backtest/results-historical-validation
+          git add macro-backtest/results-historical-validation macro-backtest/results-provenance/${{ github.run_id }}-${{ github.run_attempt }}/historical
           if git diff --cached --quiet; then
             echo "No result changes"
           else
@@ -48,3 +52,23 @@ jobs:
             git pull --rebase origin macro-backtest-v08
             git push origin HEAD:macro-backtest-v08
           fi
+      - name: Seal immutable captured evidence (not acceptance)
+        env:
+          CAPTURE_KIND: historical
+        run: |
+          python - <<'PYSEAL'
+          import json, os, pathlib, shutil, subprocess
+          bundle_path=f"macro-backtest/results-provenance/{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}/{os.environ['CAPTURE_KIND']}"
+          result_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          export=pathlib.Path(os.environ['RUNNER_TEMP'])/'macro-capture'
+          export.mkdir()
+          shutil.copytree(bundle_path,export/'bundle')
+          (export/'seal.json').write_text(json.dumps({'result_commit':result_commit,'bundle_path':bundle_path,'kind':os.environ['CAPTURE_KIND']},sort_keys=True)+'\n')
+          PYSEAL
+      - name: Retain captured evidence for independent completed-run gate
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-capture-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/macro-capture/
+          if-no-files-found: error
+          retention-days: 30
