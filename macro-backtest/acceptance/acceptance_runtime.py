@@ -1,4 +1,4 @@
-"""Two-phase Macro evidence capture and post-workflow acceptance. No formula changes.
+"""Two-phase Macro evidence capture and post-workflow acceptance. Corrected performance is bound separately from retained legacy metrics.
 Capture is used only by an already-authorized generation workflow. Verify never
 runs the engine, imports snapshots, contacts providers or invents a run receipt.
 """
@@ -102,7 +102,7 @@ class Capture:
                 config=self.config(cfg);data=self.snapshot('engine-inputs',{'prices':prices,'earnings':earnings})
                 tks=list(targets);start=max(prices[t].first_valid_index() for t in tks);p=prices[tks].loc[start:].dropna()
                 result=original_run(name,prices,earnings,targets,mode,initial,monthly,cash_target,growth_names)
-                months=[str(x.date()) for x in p.index[1:]]
+                months=[x['month_end'] for x in result[1]['performance']['monthly_returns']]
                 coverage=price_coverage(self._provider_prices,tks,months,self._provider_retrieved_at,data['path'])
                 self.manifest['calls'].append({'scenario_id':name,'config':config,'data':[data],'actual_start':str(p.index[0].date()),'requested_start':self.requested_start,'return_month_ends':months,'data_coverage':[coverage],'test_type':'COMMON_WINDOW_ARCHITECTURE'})
                 return result
@@ -115,6 +115,7 @@ class Capture:
                     def wrap(prices,cfg,original=original,kind=kind):
                         config=self.config(cfg);data=self.snapshot('engine-prices',prices)
                         result=original(prices,cfg)
+                        self._historical_dates=[x['month_end'] for x in result['performance']['monthly_returns']]
                         coverage=price_coverage(self._provider_prices,list(prices.columns),self._historical_dates,self._provider_retrieved_at,data['path'])
                         self.manifest['calls'].append({'scenario_id':'historical_single_run','config':config,'data':[data],'actual_start':result['actual_start'],'requested_start':cfg['anchor_date'],'test_type':kind,'return_month_ends':self._historical_dates,'data_coverage':[coverage]})
                         return result
@@ -168,7 +169,8 @@ def capture_history(capture,transport_path):
         source_path,b=original(item['path']);require(sha(b)==item['sha256'],'historical source digest mismatch')
         saved.append({**item,'source_path':source_path,'captured':capture.save_bytes(f'historical-source-{i:03d}.bin',b,'public-historical-source')})
     evidence=capture.save_bytes('historical-evidence.json',(json.dumps(h,sort_keys=True,allow_nan=False)+'\n').encode(),'historical-evidence')
-    return {'transport':transport,'source_path':rel,'sources':saved,'evidence':evidence,'information_set':t['information_set']}
+    require(isinstance(t.get('bias_profile'),dict) and isinstance(t.get('anchor_controls'),dict),'explicit historical bias/control provenance required')
+    return {'transport':transport,'source_path':rel,'sources':saved,'evidence':evidence,'information_set':t['information_set'],'bias_profile':t['bias_profile'],'anchor_controls':t['anchor_controls']}
 
 def verify_history(root,bundle,m,captured):
     h=m.get('historical_transport');require(h,'historical evidence transport missing; cannot accept supplied-only manifest')
@@ -181,6 +183,8 @@ def verify_history(root,bundle,m,captured):
     t=json.loads(transport);require(t.get('visibility')=='PUBLIC_REVIEWED','historical transport not public reviewed')
     require(isinstance(t.get('reviewer_assertion'),str) and t['reviewer_assertion'].strip(),'public source reviewer assertion required')
     require(t['information_set']==h['information_set'],'historical transport information set mismatch')
+    require(t.get('bias_profile')==h.get('bias_profile') and isinstance(h.get('bias_profile'),dict),'historical bias profile mismatch')
+    require(t.get('anchor_controls')==h.get('anchor_controls') and isinstance(h.get('anchor_controls'),dict),'historical anchor controls mismatch')
     evidence=json.loads(retained(h['evidence']));require(evidence==t['historical_evidence'],'historical transport evidence mismatch')
     require(len(t['sources'])==len(h['sources']),'historical source coverage mismatch')
     require(len(t['sources'])==len({x['path'] for x in t['sources']})==len({(x['source_ref'],x['source_version'],x['sha256']) for x in t['sources']}),'duplicate historical source mapping')
@@ -219,6 +223,7 @@ def verify_bundle(bundle,run,record_paths,contract_dir,result_commit):
             h=verify_history(root,bundle,m,captured)
             require(r['inputs']['historical_manifest']==pref(h['evidence']),'historical manifest differs from captured evidence')
             require(ident['information_set']==h['information_set'],'historical information set differs from captured evidence')
+            require(r['bias_profile']==h['bias_profile'] and r['anchor_controls']==h['anchor_controls'],'historical bias/control sidecar differs from captured transport')
         require(r['inputs']['config']==pref(call['config']) and r['inputs']['data']==[pref(x) for x in call['data']],'sidecar not bound to actual engine inputs')
         require(r['requested_start']==call['requested_start'] and r['actual_start']==call['actual_start'] and r['return_month_ends']==call['return_month_ends'],'sidecar temporal labels differ from engine observations')
         expected_coverage=[{**x,'path':prefix+'/'+x['path']} for x in call['data_coverage']]
@@ -292,20 +297,20 @@ def prepare_records(bundle,result_commit,output_dir,historical=False):
             payload=json.loads((bundle/raw['path']).read_text())
             if not isinstance(payload,dict):continue
             candidates=payload.get('summary',[])+payload.get('results',[])+payload.get('smart_refill_backtest',{}).get('results',[])
-            if historical and 'metrics' in payload:candidates=[{**payload['metrics'],'strategy':'historical_single_run'}]
+            if historical and 'metrics' in payload:candidates=[{'performance':payload.get('performance'),'strategy':'historical_single_run'}]
             for metric in candidates:
                 if metric.get('strategy')==call['scenario_id']:matches.append((raw,metric))
         require(len(matches)==1,'raw scenario missing/ambiguous '+call['scenario_id']);raw,metric=matches[0]
-        names=['ann_return','ann_vol','sharpe','sortino','max_drawdown','worst_month','ending_value','months'];metrics={k:metric[k] for k in names};metrics['undefined_reasons']={}
-        for name in ['sharpe','sortino']:
-            if metrics[name] is None or isinstance(metrics[name],float) and math.isnan(metrics[name]):
-                metrics[name]=None;metrics['undefined_reasons'][name]='Engine reported undefined ratio; denominator unavailable or zero under its documented sample-deviation convention.'
+        performance=metric.get('performance');require(isinstance(performance,dict) and performance.get('metric_convention')=='unitized_fee_inclusive_twr_v1','legacy-only or unsupported performance cannot receive current acceptance')
+        metrics=performance['metrics']
         artpath=prefix+'/'+raw['path'];identity={**m['execution'],'test_type':call['test_type'],'information_set':info}
         def pref(x):return {'path':prefix+'/'+x['path'],'sha256':x['sha256']}
         coverage=[{**x,'path':prefix+'/'+x['path']} for x in call['data_coverage']]
-        record={'schema_version':'1.3','scenario_id':call['scenario_id'],'status':'COMPLETE','limitations':['Retrospective selection/survivorship exposure; not a current-canon portfolio claim.','Core return statistics exclude contemporaneous trading fees; ending value includes fees.','No trade authority; provider completion independently checked in downstream gate.'],'identity':identity,'requested_start':call['requested_start'],'actual_start':call['actual_start'],'actual_end':call['return_month_ends'][-1],'checked_as_of':dt.datetime.now(dt.timezone.utc).date().isoformat(),'anchor_date':None,'start_reason':'Captured first common valid observation across actual scenario tickers','bias_classification':'RETROSPECTIVE SELECTION / SURVIVORSHIP EXPOSURE','return_month_ends':call['return_month_ends'],'metrics':metrics,'metric_convention':'core_pre_contribution_v1','inputs':{'config':pref(call['config']),'data':[pref(x) for x in call['data']],'historical_manifest':h},'historical_evidence':history,'artifact':{'kind':'git_file','id':f'{REPOSITORY}@{result_commit}:{artpath}','result_commit':result_commit,'path':artpath,'sha256':raw['sha256']},'data_coverage':coverage,'trade_authority':False}
+        record={'schema_version':'1.4','scenario_id':call['scenario_id'],'status':'COMPLETE','limitations':['Retrospective selection/survivorship exposure; not a current-canon portfolio claim.','Investment performance is contribution-adjusted and fee-inclusive; ending wealth remains flow-inclusive, not investor money-weighted return.','No trade authority; provider completion independently checked in downstream gate.'],'identity':identity,'requested_start':call['requested_start'],'actual_start':call['actual_start'],'actual_end':call['return_month_ends'][-1],'checked_as_of':dt.datetime.now(dt.timezone.utc).date().isoformat(),'anchor_date':None,'start_reason':'Captured first common valid observation across actual scenario tickers','bias_classification':'RETROSPECTIVE_SELECTION_SURVIVORSHIP','bias_profile':{'primary_test_type':call['test_type'],'completeness':'NOT_APPLICABLE','variant':'RETROSPECTIVE','claim':'RETROSPECTIVE_ARCHITECTURE_ONLY','risks':['SELECTION_SURVIVORSHIP'],'omitted_scope':[]},'anchor_controls':None,'performance':performance,'return_month_ends':call['return_month_ends'],'metrics':metrics,'metric_convention':'unitized_fee_inclusive_twr_v1','inputs':{'config':pref(call['config']),'data':[pref(x) for x in call['data']],'historical_manifest':h},'historical_evidence':history,'artifact':{'kind':'git_file','id':f'{REPOSITORY}@{result_commit}:{artpath}','result_commit':result_commit,'path':artpath,'sha256':raw['sha256']},'data_coverage':coverage,'trade_authority':False}
         if historical:
-            record.update(anchor_date=call['requested_start'],metric_convention='historical_value_pct_change_v1',bias_classification='HISTORICAL EVIDENCE: tracked reviewed public source provenance, not independent source truth',start_reason='Captured first valid historical engine observation',limitations=['Public reviewed source bytes bound to executed code and output commit; historical factual truth is not independently authenticated.','Historical value growth includes contributions and is not contribution-adjusted investment performance.','No trade authority; source completeness remains a reviewed claim.'])
+            profile=transport['bias_profile']
+            record.update(anchor_date=call['requested_start'],bias_profile=profile,anchor_controls=transport['anchor_controls'],bias_classification='SUPPORTED_SUBSET_ONLY' if profile['completeness']=='SUPPORTED_SUBSET' else 'HISTORICAL_SCOPE_LIMITED',start_reason='Captured first valid historical engine observation',limitations=['Public reviewed source bytes bound to executed code and output commit; historical factual truth is not independently authenticated.','Investment performance excludes external flows and includes trading fees; ending wealth is separate, legacy value growth is not current investment performance.','No trade authority; source completeness applies only to declared scope.']+(['Omitted history: '+str(profile['omitted_scope'])] if profile['completeness']=='SUPPORTED_SUBSET' else []))
+        record['limitations'].append('Monthly volatility/internal ratios use sqrt(12) and are not duration-normalized; first interval may be partial. first_period_partial is a calendar-inception flag, not exchange-session completeness proof.')
         path=out/f'result-{i:03d}.json';dump(path,record);records.append(str(path))
     return records
 

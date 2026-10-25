@@ -4,6 +4,12 @@ P=pathlib.Path(__file__).resolve().parent
 spec=importlib.util.spec_from_file_location('runtime',P/'acceptance_runtime.py');r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 CONTRACT=pathlib.Path(os.environ.get('MACRO_ACCEPTANCE_CONTRACT_DIR',str(P)))
 
+def fixture_performance():
+ spec=importlib.util.spec_from_file_location('metric_fixture',P.parent/'performance_metrics.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+ x=m.UnitizedPerformance(100,'2026-06-30');x.initial(100)
+ for date,value in [('2026-07-31',110),('2026-08-31',100),('2026-09-30',120)]:x.observe(date,value)
+ return x.result('2026-10-01')
+
 class RuntimeTests(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.root=pathlib.Path(self.tmp.name);self.bundle=self.root/'macro-backtest/results-provenance/123-1/defense';self.bundle.mkdir(parents=True)
@@ -14,7 +20,7 @@ class RuntimeTests(unittest.TestCase):
    p=self.bundle/name;p.parent.mkdir(exist_ok=True);r.dump(p,value);return {'path':name,'sha256':r.sha(p.read_bytes())}
   config=save('config.json',{'scenario_id':'FIXTURE','test_type':'COMMON_WINDOW_ARCHITECTURE','requested_start':'2026-06-01'})
   data=save('inputs.json',{'synthetic':True})
-  raw=save('output/raw.json',{'results':[{'strategy':'FIXTURE','ann_return':.1,'ann_vol':.2,'sharpe':.5,'sortino':None,'max_drawdown':-.1,'worst_month':-.05,'ending_value':120.,'months':3}]})
+  raw=save('output/raw.json',{'results':[{'strategy':'FIXTURE','performance':fixture_performance(),'ann_return':.1,'ann_vol':.2,'sharpe':.5,'sortino':None,'max_drawdown':-.1,'worst_month':-.05,'ending_value':120.,'months':3}]})
   months=['2026-07-31','2026-08-31','2026-09-30']
   call={'scenario_id':'FIXTURE','config':config,'data':[data],'actual_start':'2026-06-30','requested_start':'2026-06-01','return_month_ends':months,'test_type':'COMMON_WINDOW_ARCHITECTURE','data_coverage':[{'path':'inputs.json','retrieved_at':'2026-10-24T00:00:00Z','months':[{'month_end':x,'last_observation':x,'expected_last_session':x,'calendar_source':'synthetic calendar'} for x in months]}]}
   self.manifest={'format':'macro-capture-1','status':'CAPTURED','execution':self.identity,'bundle_path':self.bundle.relative_to(self.root).as_posix(),'files':[config,data],'outputs':[raw],'calls':[call]}
@@ -64,13 +70,16 @@ class RuntimeTests(unittest.TestCase):
   if kind=='EVENT_DATED_SYSTEM':items.append({**item,'known_at':'2026-07-01','effective_date':'2026-07-02','applied_date':'2026-07-02','classification':'EVENT','event_sha256':r.sha(json.dumps(event,sort_keys=True,separators=(',',':')).encode())})
   history={'status':'COMPLETE','scope':'Synthetic reviewed public evidence only','missing_items':[],'items':items}
   transport={'visibility':'PUBLIC_REVIEWED','reviewer_assertion':'Fixture author asserts public synthetic bytes; not source truth authentication','information_set':'Synthetic frozen public fixture','historical_evidence':history,'sources':[{'path':'public-evidence.txt','sha256':digest,'source_ref':'fixture:public-record','source_version':'synthetic-v1'}]}
+  controls={'targets':{'SYNTHETIC':1.0},'cash_target':0,'initial_capital':100,'monthly_contribution':0,'fee':0.0005,'refill_method':'cash_only','max_anchor_slippage_days':7} if kind=='ANCHOR_FORWARD_THESIS' else {'initial_targets':{'SYNTHETIC':1.0},'cash_target':0,'initial_capital':100,'fee':0.0005,'exclude_exogenous':False}
+  transport['bias_profile']={'primary_test_type':kind,'completeness':'COMPLETE','variant':'FULL_SCOPE','claim':'HISTORICAL_SCOPE_ONLY','risks':['DECLARED_EVIDENCE_NOT_INDEPENDENTLY_AUTHENTICATED'],'omitted_scope':[]}
+  transport['anchor_controls']={'profile':'EVIDENCED_ANCHOR_V1','controls':{k:{'value':val,**{n:item[n] for n in ['source_ref','source_version','bounded_sha256','known_at']}} for k,val in controls.items()}}
   r.dump(self.root/'public-history.json',transport);self.g('add','.');self.g('commit','-qm','public synthetic source');self.code=self.g('rev-parse','HEAD')
   bundle=self.root/'macro-backtest/results-provenance/123-1/historical'
   env={'GITHUB_REPOSITORY':r.REPOSITORY,'GITHUB_REF_NAME':'macro-backtest-v08','GITHUB_SHA':self.code,'GITHUB_RUN_ID':'123','GITHUB_RUN_ATTEMPT':'1'}
   cap=r.Capture(self.root,bundle,'macro-backtest/historical_validation.py',[],env,historical_evidence='public-history.json')
-  config=cap.config({'test_type':kind,'information_set':transport['information_set'],'anchor_date':'2026-06-01','events':[event] if kind=='EVENT_DATED_SYSTEM' else []})
+  config=cap.config({'test_type':kind,'information_set':transport['information_set'],'anchor_date':'2026-06-01',**controls,'events':[event] if kind=='EVENT_DATED_SYSTEM' else []})
   data=cap.save_bytes('inputs.json',b'{"synthetic":true}','engine-prices');call=copy.deepcopy(self.manifest['calls'][0]);call.update(scenario_id='historical_single_run',test_type=kind,config=config,data=[data]);cap.manifest['calls']=[call]
-  raw={'metrics':{'ann_return':.1,'ann_vol':.2,'sharpe':.5,'sortino':None,'max_drawdown':-.1,'worst_month':-.05,'ending_value':120.,'months':3},'test_type':kind}
+  raw={'performance':fixture_performance(),'metrics':{'ann_return':.1,'ann_vol':.2,'sharpe':.5,'sortino':None,'max_drawdown':-.1,'worst_month':-.05,'ending_value':120.,'months':3},'test_type':kind}
   if kind=='EVENT_DATED_SYSTEM':raw['events_applied']=[{**event,'status':'APPLIED','execution_date':'2026-07-02'}]
   output=self.root/'historical-output';output.mkdir();r.dump(output/'raw.json',raw);cap.finish(output)
   self.bundle=bundle;self.manifest=cap.manifest;self.provider.update(head_sha=self.code,path='.github/workflows/macro-historical-validation.yml')
@@ -114,6 +123,15 @@ class RuntimeTests(unittest.TestCase):
  def test_historical_duplicate_identity_rejected(self):
   def mutate(t):t['sources'].append({**t['sources'][0],'path':'another-path'})
   with self.assertRaisesRegex(ValueError,'duplicate historical source identity'):self.historical_recapture(mutate)
+ def test_legacy_only_new_acceptance_rejected(self):
+  raw=self.bundle/'output/raw.json';v=r.load(raw);del v['results'][0]['performance'];r.dump(raw,v)
+  with self.assertRaisesRegex(ValueError,'legacy-only'):r.prepare_common(self.bundle,self.result_commit,self.root/'other-records')
+ def test_performance_series_override_rejected(self):
+  v=r.load(self.records[0]);v['performance']['monthly_returns'][0]['return']=.9;r.dump(self.records[0],v);self.assertRaises(ValueError,self.verify)
+ def test_historical_controls_override_rejected(self):
+  self.historical_fixture();v=r.load(self.records[0]);v['anchor_controls']['controls']['fee']['value']=.9;r.dump(self.records[0],v);self.assertRaises(ValueError,self.verify)
+ def test_historical_bias_override_rejected(self):
+  self.historical_fixture();v=r.load(self.records[0]);v['bias_profile']['claim']='RETROSPECTIVE_ARCHITECTURE_ONLY';r.dump(self.records[0],v);self.assertRaises(ValueError,self.verify)
  def test_capture_failed(self):self.manifest['status']='FAILED';r.dump(self.bundle/'capture-manifest.json',self.manifest);self.assertRaises(ValueError,self.verify)
  def test_price_calendar_coverage(self):
   import pandas as pd
@@ -129,7 +147,8 @@ class RuntimeTests(unittest.TestCase):
   from unittest.mock import patch
   import pandas as pd
   folder=self.root/'macro-backtest';folder.mkdir(exist_ok=True)
-  (folder/'backtest.py').write_text("import pandas as pd\nFEE=.0005\nDRIFT=.10\ndef run(name,prices,earnings,targets,mode,initial,monthly,cash_target,growth_names):\n return name,{'ann_return':.1,'ann_vol':.2,'sharpe':.5,'sortino':None,'max_drawdown':-.1,'worst_month':-.05,'ending_value':120.,'months':3},pd.DataFrame()\n")
+  fake_metrics={'performance':fixture_performance(),**fixture_performance()['metrics']}
+  (folder/'backtest.py').write_text("import pandas as pd\nFEE=.0005\nDRIFT=.10\ndef run(name,prices,earnings,targets,mode,initial,monthly,cash_target,growth_names):\n return name,"+repr(fake_metrics)+",pd.DataFrame()\n")
   (folder/'defense_mix_test.py').write_text("import json\nfrom pathlib import Path\nimport yfinance as yf\nimport backtest as bt\nSTART_REQUEST='2026-06-01'\ndef main():\n raw=yf.download(['AAA']);prices=raw['AAA'][['Close']].rename(columns={'Close':'AAA'});name,metrics,_=bt.run('FIXTURE',prices,{}, {'AAA':1.},'benchmark',100,0,0,['AAA']);out=Path('macro-backtest/test-output');out.mkdir(exist_ok=True);(out/'raw.json').write_text(json.dumps({'results':[{'strategy':name,**metrics}]}))\n")
   self.g('add','.');self.g('commit','-qm','synthetic harness')
   frame=pd.DataFrame({('AAA','Close'):[10.,11.,10.,12.]},index=pd.to_datetime(['2026-06-30','2026-07-31','2026-08-31','2026-09-30']))

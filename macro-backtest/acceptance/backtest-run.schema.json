@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:vera:macro-backtest:result:1.3",
+  "$id": "urn:vera:macro-backtest:result:1.4",
   "title": "Macro Backtest acceptance sidecar (not raw engine output)",
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "1.3"
+      "const": "1.4"
     },
     "scenario_id": {
       "type": "string",
@@ -106,8 +106,11 @@
       "minLength": 1
     },
     "bias_classification": {
-      "type": "string",
-      "minLength": 1
+      "enum": [
+        "RETROSPECTIVE_SELECTION_SURVIVORSHIP",
+        "HISTORICAL_SCOPE_LIMITED",
+        "SUPPORTED_SUBSET_ONLY"
+      ]
     },
     "return_month_ends": {
       "type": "array",
@@ -125,7 +128,10 @@
           "type": "number"
         },
         "ann_vol": {
-          "type": "number"
+          "type": [
+            "number",
+            "null"
+          ]
         },
         "max_drawdown": {
           "type": "number"
@@ -162,6 +168,10 @@
             "sortino": {
               "type": "string",
               "minLength": 1
+            },
+            "ann_vol": {
+              "type": "string",
+              "minLength": 1
             }
           },
           "additionalProperties": false
@@ -181,10 +191,7 @@
       "additionalProperties": false
     },
     "metric_convention": {
-      "enum": [
-        "core_pre_contribution_v1",
-        "historical_value_pct_change_v1"
-      ]
+      "const": "unitized_fee_inclusive_twr_v1"
     },
     "inputs": {
       "type": "object",
@@ -456,6 +463,267 @@
         ],
         "additionalProperties": false
       }
+    },
+    "performance": {
+      "type": "object",
+      "properties": {
+        "metric_convention": {
+          "const": "unitized_fee_inclusive_twr_v1"
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "ann_return": {
+              "type": "number"
+            },
+            "ann_vol": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max_drawdown": {
+              "type": "number"
+            },
+            "worst_month": {
+              "type": "number"
+            },
+            "ending_value": {
+              "type": "number"
+            },
+            "sharpe": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "sortino": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "months": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "undefined_reasons": {
+              "type": "object",
+              "properties": {
+                "sharpe": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sortino": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ann_vol": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "ann_return",
+            "ann_vol",
+            "max_drawdown",
+            "worst_month",
+            "ending_value",
+            "sharpe",
+            "sortino",
+            "months",
+            "undefined_reasons"
+          ],
+          "additionalProperties": false
+        },
+        "initial_fee_return": {
+          "type": "number",
+          "minimum": -1,
+          "maximum": 0
+        },
+        "total_return": {
+          "type": "number",
+          "minimum": -1
+        },
+        "monthly_returns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "month_end": {
+                "type": "string",
+                "format": "date"
+              },
+              "return": {
+                "type": "number",
+                "minimum": -1
+              }
+            },
+            "required": [
+              "month_end",
+              "return"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "cashflow_timing": {
+          "type": "string",
+          "minLength": 1
+        },
+        "annualization_basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inception_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "final_observation_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "elapsed_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "first_period_partial": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "metric_convention",
+        "metrics",
+        "initial_fee_return",
+        "total_return",
+        "monthly_returns",
+        "cashflow_timing",
+        "annualization_basis",
+        "inception_date",
+        "final_observation_date",
+        "elapsed_days",
+        "first_period_partial"
+      ],
+      "additionalProperties": false
+    },
+    "bias_profile": {
+      "type": "object",
+      "properties": {
+        "primary_test_type": {
+          "enum": [
+            "COMMON_WINDOW_ARCHITECTURE",
+            "ANCHOR_FORWARD_THESIS",
+            "EVENT_DATED_SYSTEM"
+          ]
+        },
+        "completeness": {
+          "enum": [
+            "COMPLETE",
+            "SUPPORTED_SUBSET",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "variant": {
+          "enum": [
+            "FULL_SCOPE",
+            "SUPPORTED_SUBSET",
+            "RETROSPECTIVE"
+          ]
+        },
+        "claim": {
+          "enum": [
+            "HISTORICAL_SCOPE_ONLY",
+            "SUPPORTED_SUBSET_ONLY",
+            "RETROSPECTIVE_ARCHITECTURE_ONLY"
+          ]
+        },
+        "risks": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "SELECTION_SURVIVORSHIP",
+              "DECLARED_EVIDENCE_NOT_INDEPENDENTLY_AUTHENTICATED",
+              "OMITTED_HISTORY"
+            ]
+          }
+        },
+        "omitted_scope": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "primary_test_type",
+        "completeness",
+        "variant",
+        "claim",
+        "risks",
+        "omitted_scope"
+      ],
+      "additionalProperties": false
+    },
+    "anchor_controls": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "const": "EVIDENCED_ANCHOR_V1"
+            },
+            "controls": {
+              "type": "object",
+              "minProperties": 1,
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "value": {},
+                  "source_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "source_version": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "bounded_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "known_at": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "value",
+                  "source_ref",
+                  "source_version",
+                  "bounded_sha256",
+                  "known_at"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "profile",
+            "controls"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   },
   "required": [
@@ -478,7 +746,10 @@
     "historical_evidence",
     "artifact",
     "trade_authority",
-    "data_coverage"
+    "data_coverage",
+    "performance",
+    "bias_profile",
+    "anchor_controls"
   ],
   "additionalProperties": false,
   "allOf": [

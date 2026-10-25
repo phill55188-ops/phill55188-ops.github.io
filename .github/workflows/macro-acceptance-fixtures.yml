@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [macro-backtest-v08]
     paths:
-      - 'macro-backtest/acceptance/**'
+      - 'macro-backtest/**'
       - '.github/workflows/macro-acceptance-fixtures.yml'
       - '.github/workflows/macro-defense-mix-test.yml'
       - '.github/workflows/macro-historical-validation.yml'
@@ -26,8 +26,10 @@ jobs:
         run: pip install jsonschema==4.26.0 pandas==2.2.3 numpy==2.3.5 PyYAML==6.0.3
       - name: Reject malformed and incomplete result contracts
         run: python macro-backtest/acceptance/test_contract.py
-      - name: Characterize unchanged financial formulas offline
+      - name: Characterize preserved legacy financial formulas offline
         run: python macro-backtest/acceptance/test_engine_metrics.py
+      - name: Verify corrected performance known answers offline
+        run: python macro-backtest/test_performance_metrics.py
       - name: Test runtime integration without market data or real portfolio
         run: python -m unittest discover -s macro-backtest/acceptance -p 'test_integration*.py' -v
       - name: Verify workflow wiring and no-live-run boundaries

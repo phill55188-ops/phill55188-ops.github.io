@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yfinance as yf
+from performance_metrics import UnitizedPerformance, validate_capital
 
 FEE_DEFAULT = 0.0005
 
@@ -97,6 +98,7 @@ def run_anchor_forward(prices, cfg):
     initial = float(cfg.get("initial_capital", 500))
     monthly = float(cfg.get("monthly_contribution", 0))
     fee = float(cfg.get("fee", FEE_DEFAULT))
+    validate_capital(initial, fee, monthly)
     refill = cfg.get("refill_method", "target_gap")
     tickers = list(targets)
 
@@ -116,12 +118,15 @@ def run_anchor_forward(prices, cfg):
         cash -= dollars
 
     values = {d0: cash + sum(shares[t] * p.loc[d0, t] for t in tickers)}
+    performance = UnitizedPerformance(initial, d0)
+    performance.initial(values[d0])
     month_groups = list(p.groupby(p.index.to_period("M")))
 
     for _, frame in month_groups:
         d = frame.index[-1]
         if d == d0:
             continue
+        performance.contribute(monthly, cash + sum(shares[t] * p.loc[d, t] for t in tickers))
         cash += monthly
         total = cash + sum(shares[t] * p.loc[d, t] for t in tickers)
         floor = cash_target * total
@@ -151,8 +156,10 @@ def run_anchor_forward(prices, cfg):
                 raise RuntimeError(f"RUN INVALID — unknown refill_method {refill}")
 
         values[d] = cash + sum(shares[t] * p.loc[d, t] for t in tickers)
+        performance.observe(d, values[d])
 
     s = pd.Series(values).sort_index()
+    legacy_metrics = stats_from_values(s)
     result = {
         "test_type": "ANCHOR_FORWARD_THESIS",
         "anchor_date": str(anchor.date()),
@@ -171,7 +178,13 @@ def run_anchor_forward(prices, cfg):
         "targets": targets,
         "cash_target": cash_target,
         "refill_method": refill,
-        "metrics": stats_from_values(s),
+        "metrics": legacy_metrics,
+        "report_metric_convention": "unitized_fee_inclusive_twr_v1",
+        "primary_metric_path": "performance.metrics",
+        "legacy_metric_notice": "metrics and legacy_metrics are compatibility-only value-growth statistics, not contribution-adjusted investment performance. Use performance.metrics; ending_value still includes cash flows.",
+        "legacy_metrics": dict(legacy_metrics),
+        "legacy_metric_convention": "historical_value_pct_change_v1",
+        "performance": performance.result(),
     }
     return result
 
@@ -180,6 +193,7 @@ def run_event_dated(prices, cfg):
     anchor = pd.Timestamp(cfg["anchor_date"])
     initial = float(cfg.get("initial_capital", 500))
     fee = float(cfg.get("fee", FEE_DEFAULT))
+    validate_capital(initial, fee)
     exclude_exogenous = bool(cfg.get("exclude_exogenous", False))
     initial_targets = {k: float(v) for k, v in cfg.get("initial_targets", {}).items()}
     cash_target = float(cfg.get("cash_target", 0.0))
@@ -202,6 +216,8 @@ def run_event_dated(prices, cfg):
             shares[t] += dollars * (1 - fee) / p.loc[d0, t]
             cash -= dollars
 
+    performance = UnitizedPerformance(initial, d0)
+    performance.initial(cash + sum(shares[t] * p.loc[d0, t] for t in tickers if pd.notna(p.loc[d0, t])))
     values = {}
     applied = []
     event_idx = 0
@@ -214,8 +230,9 @@ def run_event_dated(prices, cfg):
                 continue
             kind = str(e.get("type", "")).upper()
             if kind == "CONTRIBUTION":
+                performance.contribute(float(e["dollars"]), cash + sum(shares[t] * p.loc[d, t] for t in tickers if pd.notna(p.loc[d, t])))
                 cash += float(e["dollars"])
-                applied.append({**e, "status": "APPLIED"})
+                applied.append({**e, "status": "APPLIED", "execution_date": str(d.date())})
                 continue
             ticker = e.get("ticker")
             if ticker not in shares or pd.isna(p.loc[d, ticker]):
@@ -246,8 +263,10 @@ def run_event_dated(prices, cfg):
 
         total = cash + sum(shares[t] * p.loc[d, t] for t in tickers if pd.notna(p.loc[d, t]))
         values[d] = total
+        performance.observe(d, total)
 
     s = pd.Series(values).sort_index()
+    legacy_metrics = stats_from_values(s)
     return {
         "test_type": "EVENT_DATED_SYSTEM",
         "anchor_date": str(anchor.date()),
@@ -264,7 +283,13 @@ def run_event_dated(prices, cfg):
         ),
         "exclude_exogenous": exclude_exogenous,
         "events_applied": applied,
-        "metrics": stats_from_values(s),
+        "metrics": legacy_metrics,
+        "report_metric_convention": "unitized_fee_inclusive_twr_v1",
+        "primary_metric_path": "performance.metrics",
+        "legacy_metric_notice": "metrics and legacy_metrics are compatibility-only value-growth statistics, not contribution-adjusted investment performance. Use performance.metrics; ending_value still includes cash flows.",
+        "legacy_metrics": dict(legacy_metrics),
+        "legacy_metric_convention": "historical_value_pct_change_v1",
+        "performance": performance.result(),
     }
 
 
@@ -301,7 +326,7 @@ def self_test():
     event = run_event_dated(prices, event_cfg)
     assert event["test_type"] == "EVENT_DATED_SYSTEM"
     assert any(x["status"] == "EXCLUDED_EXOGENOUS" for x in event["events_applied"])
-    print(json.dumps({"self_test": "PASS", "anchor": anchor["metrics"], "event": event["metrics"]}, indent=2))
+    print(json.dumps({"self_test": "PASS", "metric_convention": "unitized_fee_inclusive_twr_v1", "anchor": anchor["performance"]["metrics"], "event": event["performance"]["metrics"]}, indent=2))
 
 
 def main():
