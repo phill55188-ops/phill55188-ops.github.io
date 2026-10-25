@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install fixture dependencies
-        run: pip install jsonschema==4.26.0 pandas==2.2.3 numpy==2.3.5 PyYAML==6.0.3
+        run: pip install jsonschema==4.26.0 pandas==2.2.3 numpy==2.3.5 PyYAML==6.0.3 exchange-calendars==4.13.2
       - name: Reject malformed and incomplete result contracts
         run: python macro-backtest/acceptance/test_contract.py
       - name: Characterize preserved legacy financial formulas offline

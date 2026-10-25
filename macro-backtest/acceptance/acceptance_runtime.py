@@ -251,7 +251,12 @@ def price_coverage(raw,tickers,months,retrieved_at,path,calendar=None):
     import pandas as pd
     if calendar is None:
         import exchange_calendars as xc
-        calendar=xc.get_calendar('XNYS',start=months[0][:7]+'-01',end=months[-1])
+        # Calendar bounds are first/last *sessions*, not requested calendar dates.
+        # Surround the query interval so weekend/holiday boundaries stay in bounds.
+        # Do not clamp queries: that could hide a missing final required session.
+        first=pd.Timestamp(months[0][:7]+'-01')-pd.Timedelta(days=31)
+        last=pd.Timestamp(months[-1])+pd.Timedelta(days=31)
+        calendar=xc.get_calendar('XNYS',start=first,end=last)
     rows=[]
     for month in months:
         date=pd.Timestamp(month);start=date.replace(day=1)
