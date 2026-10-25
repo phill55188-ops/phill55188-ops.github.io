@@ -5,132 +5,132 @@
     "results": [
       {
         "strategy": "CURRENT_RSP7",
-        "ann_return": 0.970638724502199,
-        "ann_vol": 0.3320025867081439,
-        "sharpe": 2.2525961962643044,
-        "sortino": 5.889452090786372,
-        "max_drawdown": -0.12055781639503427,
-        "worst_month": -0.10678343787456523,
-        "ending_value": 10985.95919027318,
+        "ann_return": 0.9706386708106185,
+        "ann_vol": 0.3320025636562995,
+        "sharpe": 2.2525962453440074,
+        "sortino": 5.889453372681859,
+        "max_drawdown": -0.12055781421420186,
+        "worst_month": -0.10678344022955955,
+        "ending_value": 10985.959079084405,
         "months": 23,
         "legacy_metrics": {
-          "ann_return": 0.970638724502199,
-          "ann_vol": 0.3320025867081439,
-          "sharpe": 2.2525961962643044,
-          "sortino": 5.889452090786372,
-          "max_drawdown": -0.12055781639503427,
-          "worst_month": -0.10678343787456523,
-          "ending_value": 10985.95919027318,
+          "ann_return": 0.9706386708106185,
+          "ann_vol": 0.3320025636562995,
+          "sharpe": 2.2525962453440074,
+          "sortino": 5.889453372681859,
+          "max_drawdown": -0.12055781421420186,
+          "worst_month": -0.10678344022955955,
+          "ending_value": 10985.959079084405,
           "months": 23
         },
         "legacy_metric_convention": "core_pre_contribution_v1",
         "performance": {
           "metric_convention": "unitized_fee_inclusive_twr_v1",
           "metrics": {
-            "ann_return": 0.9705898712528598,
-            "ann_vol": 0.331841254327745,
-            "sharpe": 2.2502020318498457,
-            "sortino": 5.880818415145215,
-            "max_drawdown": -0.12066773188841495,
-            "worst_month": -0.10683728186826102,
-            "ending_value": 10985.95919027318,
+            "ann_return": 0.9705898174944794,
+            "ann_vol": 0.331841231332238,
+            "sharpe": 2.2502020804846463,
+            "sortino": 5.880819694838048,
+            "max_drawdown": -0.12066772970871997,
+            "worst_month": -0.10683728421840766,
+            "ending_value": 10985.959079084405,
             "months": 23,
             "undefined_reasons": {}
           },
           "initial_fee_return": -0.0004949999999995791,
-          "total_return": 2.66256916369335,
+          "total_return": 2.662568972478019,
           "monthly_returns": [
             {
               "month_end": "2024-11-30",
-              "return": 0.17669001030010367
+              "return": 0.17668996027665984
             },
             {
               "month_end": "2024-12-31",
-              "return": -0.036285747602555984
+              "return": -0.036285751592779025
             },
             {
               "month_end": "2025-01-31",
-              "return": 0.07631301193553841
+              "return": 0.07631302146245678
             },
             {
               "month_end": "2025-02-28",
-              "return": -0.01863603374684486
+              "return": -0.018636072067138798
             },
             {
               "month_end": "2025-03-31",
-              "return": -0.09585919636060292
+              "return": -0.09585916603518374
             },
             {
               "month_end": "2025-04-30",
-              "return": 0.04496350050985587
+              "return": 0.04496350844745778
             },
             {
               "month_end": "2025-05-31",
-              "return": 0.16227069749567402
+              "return": 0.1622706796984963
             },
             {
               "month_end": "2025-06-30",
-              "return": 0.18764142894830926
+              "return": 0.18764140791115236
             },
             {
               "month_end": "2025-07-31",
-              "return": 0.10384387491169256
+              "return": 0.10384388185822813
             },
             {
               "month_end": "2025-08-31",
-              "return": 0.03544937610737131
+              "return": 0.03544938664154218
             },
             {
               "month_end": "2025-09-30",
-              "return": 0.16827408180157
+              "return": 0.16827409091761858
             },
             {
               "month_end": "2025-10-31",
-              "return": 0.11867043330833171
+              "return": 0.11867042225439683
             },
             {
               "month_end": "2025-11-30",
-              "return": -0.04420333952750877
+              "return": -0.04420332752071143
             },
             {
               "month_end": "2025-12-31",
-              "return": 0.02288554482158789
+              "return": 0.022885536461622502
             },
             {
               "month_end": "2026-01-31",
-              "return": 0.07611301401070958
+              "return": 0.07611301731970355
             },
             {
               "month_end": "2026-02-28",
-              "return": 0.038741473133618864
+              "return": 0.03874146436256054
             },
             {
               "month_end": "2026-03-31",
-              "return": -0.03180482850919586
+              "return": -0.03180482118739991
             },
             {
               "month_end": "2026-04-30",
-              "return": 0.23126350956322073
+              "return": 0.23126350271236973
             },
             {
               "month_end": "2026-05-31",
-              "return": 0.17475020421721066
+              "return": 0.17475020156509924
             },
             {
               "month_end": "2026-06-30",
-              "return": -0.015484804436400545
+              "return": -0.015484799405458327
             },
             {
               "month_end": "2026-07-31",
-              "return": -0.10683728186826102
+              "return": -0.10683728421840766
             },
             {
               "month_end": "2026-08-31",
-              "return": 0.13314633882246385
+              "return": 0.13314633858798897
             },
             {
               "month_end": "2026-09-30",
-              "return": 0.02928863958224026
+              "return": 0.02928864072397075
             }
           ],
           "cashflow_timing": "External contributions issue units at contemporaneous pre-flow NAV; trades and fees then change NAV; same-date event order preserved.",
@@ -143,132 +143,132 @@
       },
       {
         "strategy": "EINC7_REPLACES_RSP",
-        "ann_return": 0.9828446835402529,
-        "ann_vol": 0.3278271612745712,
-        "sharpe": 2.297276420883283,
-        "sortino": 5.920240114663472,
-        "max_drawdown": -0.119282345653419,
-        "worst_month": -0.10567664680238498,
-        "ending_value": 11048.358033518816,
+        "ann_return": 0.9828446291367727,
+        "ann_vol": 0.3278271391207207,
+        "sharpe": 2.2972764684893696,
+        "sortino": 5.920240858415189,
+        "max_drawdown": -0.11928233834421453,
+        "worst_month": -0.10567664894814544,
+        "ending_value": 11048.357927089848,
         "months": 23,
         "legacy_metrics": {
-          "ann_return": 0.9828446835402529,
-          "ann_vol": 0.3278271612745712,
-          "sharpe": 2.297276420883283,
-          "sortino": 5.920240114663472,
-          "max_drawdown": -0.119282345653419,
-          "worst_month": -0.10567664680238498,
-          "ending_value": 11048.358033518816,
+          "ann_return": 0.9828446291367727,
+          "ann_vol": 0.3278271391207207,
+          "sharpe": 2.2972764684893696,
+          "sortino": 5.920240858415189,
+          "max_drawdown": -0.11928233834421453,
+          "worst_month": -0.10567664894814544,
+          "ending_value": 11048.357927089848,
           "months": 23
         },
         "legacy_metric_convention": "core_pre_contribution_v1",
         "performance": {
           "metric_convention": "unitized_fee_inclusive_twr_v1",
           "metrics": {
-            "ann_return": 0.9828115719987789,
-            "ann_vol": 0.3276584409208896,
-            "sharpe": 2.2949156157563126,
-            "sortino": 5.911394412080222,
-            "max_drawdown": -0.11939328857312337,
-            "worst_month": -0.10573130958132027,
-            "ending_value": 11048.358033518816,
+            "ann_return": 0.9828115175117991,
+            "ann_vol": 0.32765841882343866,
+            "sharpe": 2.2949156628873038,
+            "sortino": 5.911395154284808,
+            "max_drawdown": -0.11939328126927828,
+            "worst_month": -0.10573131172694428,
+            "ending_value": 11048.357927089848,
             "months": 23,
             "undefined_reasons": {}
           },
           "initial_fee_return": -0.0004949999999995791,
-          "total_return": 2.7061641792960747,
+          "total_return": 2.7061639843911154,
           "monthly_returns": [
             {
               "month_end": "2024-11-30",
-              "return": 0.18157471440206874
+              "return": 0.18157466464513905
             },
             {
               "month_end": "2024-12-31",
-              "return": -0.03606768565930152
+              "return": -0.036067689685081894
             },
             {
               "month_end": "2025-01-31",
-              "return": 0.07623520188116983
+              "return": 0.07623519918427624
             },
             {
               "month_end": "2025-02-28",
-              "return": -0.01681471411651425
+              "return": -0.016814740143004103
             },
             {
               "month_end": "2025-03-31",
-              "return": -0.0925274029191443
+              "return": -0.09252737842971281
             },
             {
               "month_end": "2025-04-30",
-              "return": 0.043007577432186084
+              "return": 0.0430075962822265
             },
             {
               "month_end": "2025-05-31",
-              "return": 0.1610335920757875
+              "return": 0.1610335684438633
             },
             {
               "month_end": "2025-06-30",
-              "return": 0.18703696098446887
+              "return": 0.18703693404731436
             },
             {
               "month_end": "2025-07-31",
-              "return": 0.10256407317620919
+              "return": 0.10256408599741307
             },
             {
               "month_end": "2025-08-31",
-              "return": 0.03409707259332029
+              "return": 0.034097077026046696
             },
             {
               "month_end": "2025-09-30",
-              "return": 0.168917598666259
+              "return": 0.1689176195672637
             },
             {
               "month_end": "2025-10-31",
-              "return": 0.1149324088604815
+              "return": 0.11493240333395494
             },
             {
               "month_end": "2025-11-30",
-              "return": -0.041166436676924545
+              "return": -0.0411664483943156
             },
             {
               "month_end": "2025-12-31",
-              "return": 0.022809062578313055
+              "return": 0.022809066254830146
             },
             {
               "month_end": "2026-01-31",
-              "return": 0.07903380710635677
+              "return": 0.07903381040047508
             },
             {
               "month_end": "2026-02-28",
-              "return": 0.043545577454800144
+              "return": 0.043545573901820456
             },
             {
               "month_end": "2026-03-31",
-              "return": -0.024668354587521146
+              "return": -0.02466834749190172
             },
             {
               "month_end": "2026-04-30",
-              "return": 0.2287116834981886
+              "return": 0.2287116763034518
             },
             {
               "month_end": "2026-05-31",
-              "return": 0.17014766720209606
+              "return": 0.1701476564736326
             },
             {
               "month_end": "2026-06-30",
-              "return": -0.015277264135689306
+              "return": -0.015277253605643915
             },
             {
               "month_end": "2026-07-31",
-              "return": -0.10573130958132027
+              "return": -0.10573131172694428
             },
             {
               "month_end": "2026-08-31",
-              "return": 0.1328854765406733
+              "return": 0.13288547641089266
             },
             {
               "month_end": "2026-09-30",
-              "return": 0.026955265906160486
+              "return": 0.02695526628736533
             }
           ],
           "cashflow_timing": "External contributions issue units at contemporaneous pre-flow NAV; trades and fees then change NAV; same-date event order preserved.",
@@ -281,132 +281,132 @@
       },
       {
         "strategy": "USAI7_REPLACES_RSP",
-        "ann_return": 0.978872692433679,
-        "ann_vol": 0.3280447592886545,
-        "sharpe": 2.2895003262918516,
-        "sortino": 5.928456266010925,
-        "max_drawdown": -0.11959156906107005,
-        "worst_month": -0.10561011388455055,
-        "ending_value": 11012.880493970182,
+        "ann_return": 0.9788726343413399,
+        "ann_vol": 0.32804473441038845,
+        "sharpe": 2.289500384485182,
+        "sortino": 5.928456148230573,
+        "max_drawdown": -0.1195915482341755,
+        "worst_month": -0.10561011343459126,
+        "ending_value": 11012.880370383373,
         "months": 23,
         "legacy_metrics": {
-          "ann_return": 0.978872692433679,
-          "ann_vol": 0.3280447592886545,
-          "sharpe": 2.2895003262918516,
-          "sortino": 5.928456266010925,
-          "max_drawdown": -0.11959156906107005,
-          "worst_month": -0.10561011388455055,
-          "ending_value": 11012.880493970182,
+          "ann_return": 0.9788726343413399,
+          "ann_vol": 0.32804473441038845,
+          "sharpe": 2.289500384485182,
+          "sortino": 5.928456148230573,
+          "max_drawdown": -0.1195915482341755,
+          "worst_month": -0.10561011343459126,
+          "ending_value": 11012.880370383373,
           "months": 23
         },
         "legacy_metric_convention": "core_pre_contribution_v1",
         "performance": {
           "metric_convention": "unitized_fee_inclusive_twr_v1",
           "metrics": {
-            "ann_return": 0.9788327237816878,
-            "ann_vol": 0.32787466007536725,
-            "sharpe": 2.287144673052835,
-            "sortino": 5.919607425620152,
-            "max_drawdown": -0.11970231087512839,
-            "worst_month": -0.10566444716863266,
-            "ending_value": 11012.880493970182,
+            "ann_return": 0.9788326655816917,
+            "ann_vol": 0.327874635269182,
+            "sharpe": 2.2871447306323907,
+            "sortino": 5.919607307402427,
+            "max_drawdown": -0.11970229006225697,
+            "worst_month": -0.10566444672895603,
+            "ending_value": 11012.880370383373,
             "months": 23,
             "undefined_reasons": {}
           },
           "initial_fee_return": -0.0004949999999995791,
-          "total_return": 2.6919445208857558,
+          "total_return": 2.69194431308076,
           "monthly_returns": [
             {
               "month_end": "2024-11-30",
-              "return": 0.1825413508484972
+              "return": 0.18254128658662427
             },
             {
               "month_end": "2024-12-31",
-              "return": -0.03523979234296526
+              "return": -0.03523978297810959
             },
             {
               "month_end": "2025-01-31",
-              "return": 0.07627721658532938
+              "return": 0.07627721147011979
             },
             {
               "month_end": "2025-02-28",
-              "return": -0.018137151529450724
+              "return": -0.01813717650693647
             },
             {
               "month_end": "2025-03-31",
-              "return": -0.09275546568282977
+              "return": -0.09275545652860773
             },
             {
               "month_end": "2025-04-30",
-              "return": 0.04204172936867012
+              "return": 0.04204176992228503
             },
             {
               "month_end": "2025-05-31",
-              "return": 0.1611812634909886
+              "return": 0.16118125396755056
             },
             {
               "month_end": "2025-06-30",
-              "return": 0.1882308731767579
+              "return": 0.18823082259543145
             },
             {
               "month_end": "2025-07-31",
-              "return": 0.10241656364971896
+              "return": 0.10241661020527726
             },
             {
               "month_end": "2025-08-31",
-              "return": 0.03340508554425847
+              "return": 0.03340505346362055
             },
             {
               "month_end": "2025-09-30",
-              "return": 0.16796956301031196
+              "return": 0.16796957904074428
             },
             {
               "month_end": "2025-10-31",
-              "return": 0.11465023635346627
+              "return": 0.11465023882966752
             },
             {
               "month_end": "2025-11-30",
-              "return": -0.04199642498243794
+              "return": -0.04199643951695331
             },
             {
               "month_end": "2025-12-31",
-              "return": 0.022563184118584934
+              "return": 0.022563189557934793
             },
             {
               "month_end": "2026-01-31",
-              "return": 0.07996826895126286
+              "return": 0.07996827948513396
             },
             {
               "month_end": "2026-02-28",
-              "return": 0.04314310753411332
+              "return": 0.043143089723645556
             },
             {
               "month_end": "2026-03-31",
-              "return": -0.024288851987102067
+              "return": -0.024288844785745778
             },
             {
               "month_end": "2026-04-30",
-              "return": 0.22740641755995727
+              "return": 0.22740641268767692
             },
             {
               "month_end": "2026-05-31",
-              "return": 0.16906414314645568
+              "return": 0.16906413093296568
             },
             {
               "month_end": "2026-06-30",
-              "return": -0.01569641692321566
+              "return": -0.01569639413524082
             },
             {
               "month_end": "2026-07-31",
-              "return": -0.10566444716863266
+              "return": -0.10566444672895603
             },
             {
               "month_end": "2026-08-31",
-              "return": 0.1339078126139568
+              "return": 0.13390780528777513
             },
             {
               "month_end": "2026-09-30",
-              "return": 0.026313900586709238
+              "return": 0.026313900788289768
             }
           ],
           "cashflow_timing": "External contributions issue units at contemporaneous pre-flow NAV; trades and fees then change NAV; same-date event order preserved.",
@@ -421,39 +421,39 @@
     "primary_results": [
       {
         "strategy": "CURRENT_RSP7",
-        "ann_return": 0.9705898712528598,
-        "ann_vol": 0.331841254327745,
-        "sharpe": 2.2502020318498457,
-        "sortino": 5.880818415145215,
-        "max_drawdown": -0.12066773188841495,
-        "worst_month": -0.10683728186826102,
-        "ending_value": 10985.95919027318,
+        "ann_return": 0.9705898174944794,
+        "ann_vol": 0.331841231332238,
+        "sharpe": 2.2502020804846463,
+        "sortino": 5.880819694838048,
+        "max_drawdown": -0.12066772970871997,
+        "worst_month": -0.10683728421840766,
+        "ending_value": 10985.959079084405,
         "months": 23,
         "undefined_reasons": {},
         "metric_convention": "unitized_fee_inclusive_twr_v1"
       },
       {
         "strategy": "EINC7_REPLACES_RSP",
-        "ann_return": 0.9828115719987789,
-        "ann_vol": 0.3276584409208896,
-        "sharpe": 2.2949156157563126,
-        "sortino": 5.911394412080222,
-        "max_drawdown": -0.11939328857312337,
-        "worst_month": -0.10573130958132027,
-        "ending_value": 11048.358033518816,
+        "ann_return": 0.9828115175117991,
+        "ann_vol": 0.32765841882343866,
+        "sharpe": 2.2949156628873038,
+        "sortino": 5.911395154284808,
+        "max_drawdown": -0.11939328126927828,
+        "worst_month": -0.10573131172694428,
+        "ending_value": 11048.357927089848,
         "months": 23,
         "undefined_reasons": {},
         "metric_convention": "unitized_fee_inclusive_twr_v1"
       },
       {
         "strategy": "USAI7_REPLACES_RSP",
-        "ann_return": 0.9788327237816878,
-        "ann_vol": 0.32787466007536725,
-        "sharpe": 2.287144673052835,
-        "sortino": 5.919607425620152,
-        "max_drawdown": -0.11970231087512839,
-        "worst_month": -0.10566444716863266,
-        "ending_value": 11012.880493970182,
+        "ann_return": 0.9788326655816917,
+        "ann_vol": 0.327874635269182,
+        "sharpe": 2.2871447306323907,
+        "sortino": 5.919607307402427,
+        "max_drawdown": -0.11970229006225697,
+        "worst_month": -0.10566444672895603,
+        "ending_value": 11012.880370383373,
         "months": 23,
         "undefined_reasons": {},
         "metric_convention": "unitized_fee_inclusive_twr_v1"
@@ -472,22 +472,22 @@
         "ending_value_vs_rsp": 0.0
       },
       "EINC7_REPLACES_RSP": {
-        "ann_return_points_vs_rsp": 1.2221700745919106,
-        "ann_vol_points_vs_rsp": -0.41828134068554457,
-        "sharpe_vs_rsp": 0.04471358390646696,
-        "sortino_vs_rsp": 0.030575996935007232,
-        "max_drawdown_points_vs_rsp": 0.12744433152915846,
-        "worst_month_points_vs_rsp": 0.11059722869407596,
-        "ending_value_vs_rsp": 62.39884324563536
+        "ann_return_points_vs_rsp": 1.2221700017319703,
+        "ann_vol_points_vs_rsp": -0.4182812508799316,
+        "sharpe_vs_rsp": 0.04471358240265744,
+        "sortino_vs_rsp": 0.030575459446759545,
+        "max_drawdown_points_vs_rsp": 0.12744484394416888,
+        "worst_month_points_vs_rsp": 0.11059724914633806,
+        "ending_value_vs_rsp": 62.39884800544314
       },
       "USAI7_REPLACES_RSP": {
-        "ann_return_points_vs_rsp": 0.824285252882806,
-        "ann_vol_points_vs_rsp": -0.39665942523777753,
-        "sharpe_vs_rsp": 0.03694264120298918,
-        "sortino_vs_rsp": 0.03878901047493688,
-        "max_drawdown_points_vs_rsp": 0.09654210132865604,
-        "worst_month_points_vs_rsp": 0.11728346996283667,
-        "ending_value_vs_rsp": 26.92130369700135
+        "ann_return_points_vs_rsp": 0.8242848087212318,
+        "ann_vol_points_vs_rsp": -0.3966596063055994,
+        "sharpe_vs_rsp": 0.03694265014774434,
+        "sortino_vs_rsp": 0.038787612564378904,
+        "max_drawdown_points_vs_rsp": 0.09654396464630066,
+        "worst_month_points_vs_rsp": 0.1172837489451628,
+        "ending_value_vs_rsp": 26.921291298967844
       }
     }
   },
@@ -513,81 +513,81 @@
     "correlation": {
       "RSP": {
         "vs_spy": {
-          "corr_full": 0.8674611176399483,
-          "beta_full": 0.770832108490508,
-          "downside_corr": 0.8099646369144742,
-          "rolling_60d_avg": 0.8057890316062191,
-          "rolling_60d_latest": 0.6799513382717131,
-          "rolling_60d_min": 0.6152487028634407,
-          "rolling_60d_max": 0.9787148059712352,
-          "rolling_120d_latest": 0.6796428521769611,
+          "corr_full": 0.8674608970252387,
+          "beta_full": 0.7708319526390307,
+          "downside_corr": 0.8099642689552411,
+          "rolling_60d_avg": 0.8057889380919347,
+          "rolling_60d_latest": 0.6799513382717193,
+          "rolling_60d_min": 0.6152487028634466,
+          "rolling_60d_max": 0.9787148047815919,
+          "rolling_120d_latest": 0.6796431746024181,
           "observations": 503
         },
         "vs_growth_sleeve": {
-          "corr_full": 0.5548271398753646,
-          "beta_full": 0.18842930349406903,
-          "downside_corr": 0.3777180492326543,
-          "rolling_60d_avg": 0.48341450329437713,
-          "rolling_60d_latest": 0.37881077080003056,
-          "rolling_60d_min": 0.13002745944772515,
-          "rolling_60d_max": 0.9180237301181768,
-          "rolling_120d_latest": 0.32046150389473593,
+          "corr_full": 0.5548271735892037,
+          "beta_full": 0.1884292813246751,
+          "downside_corr": 0.3777179940739273,
+          "rolling_60d_avg": 0.48341462836914406,
+          "rolling_60d_latest": 0.37881077080003506,
+          "rolling_60d_min": 0.13002742945255313,
+          "rolling_60d_max": 0.9180240263792413,
+          "rolling_120d_latest": 0.3204614971880978,
           "observations": 503
         },
-        "monthly_downside_capture_vs_spy": 76.89980138131148,
-        "monthly_downside_capture_vs_growth_sleeve": 12.553162267255102
+        "monthly_downside_capture_vs_spy": 76.8998399465909,
+        "monthly_downside_capture_vs_growth_sleeve": 12.553221775667406
       },
       "EINC": {
         "vs_spy": {
-          "corr_full": 0.32407695086524346,
-          "beta_full": 0.36811347003537914,
-          "downside_corr": 0.4847069770462931,
-          "rolling_60d_avg": 0.12644867611131244,
-          "rolling_60d_latest": -0.1768018922100648,
-          "rolling_60d_min": -0.47913170523339127,
-          "rolling_60d_max": 0.8034052619642902,
-          "rolling_120d_latest": -0.30179688568005364,
+          "corr_full": 0.3240771333283608,
+          "beta_full": 0.36811366692370895,
+          "downside_corr": 0.4847074339256657,
+          "rolling_60d_avg": 0.1264489427616562,
+          "rolling_60d_latest": -0.1768018922100677,
+          "rolling_60d_min": -0.4791318009671068,
+          "rolling_60d_max": 0.8034051755932288,
+          "rolling_120d_latest": -0.30179696687726415,
           "observations": 503
         },
         "vs_growth_sleeve": {
-          "corr_full": 0.261320874939326,
-          "beta_full": 0.11344585584859677,
-          "downside_corr": 0.33381182042727103,
-          "rolling_60d_avg": 0.15536880569504055,
-          "rolling_60d_latest": -0.13684286455412825,
-          "rolling_60d_min": -0.3506884792245687,
-          "rolling_60d_max": 0.7854520506593239,
-          "rolling_120d_latest": -0.20934116858827787,
+          "corr_full": 0.26132096451973563,
+          "beta_full": 0.11344586538685532,
+          "downside_corr": 0.33381171382668623,
+          "rolling_60d_avg": 0.15536914828041049,
+          "rolling_60d_latest": -0.13684286455412845,
+          "rolling_60d_min": -0.3506884805648928,
+          "rolling_60d_max": 0.7854512608529811,
+          "rolling_120d_latest": -0.20934116417562101,
           "observations": 503
         },
-        "monthly_downside_capture_vs_spy": -41.08382001823673,
-        "monthly_downside_capture_vs_growth_sleeve": -34.15450170339198
+        "monthly_downside_capture_vs_spy": -41.083754256210305,
+        "monthly_downside_capture_vs_growth_sleeve": -34.15450188938872
       },
       "USAI": {
         "vs_spy": {
-          "corr_full": 0.3582710392402223,
-          "beta_full": 0.432884599697016,
-          "downside_corr": 0.5211507590493452,
-          "rolling_60d_avg": 0.17139730120662286,
-          "rolling_60d_latest": -0.15626788281608284,
-          "rolling_60d_min": -0.4266259501102095,
-          "rolling_60d_max": 0.8146483873712028,
-          "rolling_120d_latest": -0.2757627673326139,
+          "corr_full": 0.35827129178733713,
+          "beta_full": 0.4328856455137363,
+          "downside_corr": 0.5211523999647897,
+          "rolling_60d_avg": 0.17139610572127117,
+          "rolling_60d_latest": -0.15626773613621223,
+          "rolling_60d_min": -0.4266268873597651,
+          "rolling_60d_max": 0.8146480347706863,
+          "rolling_120d_latest": -0.27576356657836004,
           "observations": 503
         },
         "vs_growth_sleeve": {
-          "corr_full": 0.30069293915202433,
-          "beta_full": 0.1388559931744369,
-          "downside_corr": 0.37699194975397365,
-          "rolling_60d_avg": 0.2044193236532107,
-          "rolling_60d_latest": -0.14989437235885167,
-          "rolling_60d_min": -0.3003857511467526,
-          "rolling_60d_max": 0.8142144532283417,
-          "rolling_120d_latest": -0.18426327011498822,
+          "corr_full": 0.30069275020210745,
+          "beta_full": 0.13885611149101118,
+          "downside_corr": 0.37699241275336504,
+          "rolling_60d_avg": 0.20441802735002376,
+          "rolling_60d_latest": -0.14989402495896317,
+          "rolling_60d_min": -0.30038570807038356,
+          "rolling_60d_max": 0.8142148136400708,
+          "rolling_120d_latest": -0.1842635334623284,
           "observations": 503
         },
-        "monthly_downside_capture_vs_spy": -22.006640089785257,
-        "monthly_downside_capture_vs_growth_sleeve": -31.22626415304622
+        "monthly_downside_capture_vs_spy": -22.006521781065864,
+        "monthly_downside_capture_vs_growth_sleeve": -31.22622803208816
       }
     },
     "worst_growth_sleeve_months": [
@@ -596,7 +596,7 @@
         "growth_sleeve": -0.13351708024601028,
         "RSP": 0.010527735778810499,
         "EINC": 0.026006780688099473,
-        "USAI": 0.027428108313226396,
+        "USAI": 0.02742802330673877,
         "SPY": 0.00034822442006920973
       },
       {
@@ -609,33 +609,33 @@
       },
       {
         "month": "2025-03-31",
-        "growth_sleeve": -0.11990141619590174,
+        "growth_sleeve": -0.11990141128279007,
         "RSP": -0.03395465842115808,
-        "EINC": 0.013790296408144886,
-        "USAI": 0.010256781824733885,
-        "SPY": -0.05571920548668341
+        "EINC": 0.013790463343917425,
+        "USAI": 0.01025617305224924,
+        "SPY": -0.05571910658300483
       },
       {
         "month": "2025-11-30",
-        "growth_sleeve": -0.05999358842938085,
-        "RSP": 0.01915617755152277,
+        "growth_sleeve": -0.0599935655127299,
+        "RSP": 0.019156010987585015,
         "EINC": 0.05857496273231333,
-        "USAI": 0.04654479790713162,
-        "SPY": 0.0019499627157142374
+        "USAI": 0.0465449105295459,
+        "SPY": 0.0019500531676446275
       },
       {
         "month": "2024-12-31",
-        "growth_sleeve": -0.039556302379648856,
-        "RSP": -0.06274839926309728,
-        "EINC": -0.05894131911615441,
-        "USAI": -0.04697752315511683,
-        "SPY": -0.024060018069341216
+        "growth_sleeve": -0.03955633145437071,
+        "RSP": -0.0627484045353166,
+        "EINC": -0.05894132396160878,
+        "USAI": -0.04697771259265793,
+        "SPY": -0.02406012170171823
       }
     ],
     "worst_growth_sleeve_month_average_candidate_returns": {
-      "RSP": -0.005212319555639366,
-      "EINC": 0.02154354832657048,
-      "USAI": 0.022452988726274947
+      "RSP": -0.005212353922870783,
+      "EINC": 0.021543580744634118,
+      "USAI": 0.02245283460745513
     },
     "worst_growth_sleeve_month_positive_counts": {
       "RSP": 3,
@@ -645,9 +645,9 @@
     "baseline_portfolio_worst_months_fixed_target_proxy": [
       {
         "month": "2026-07-31",
-        "CURRENT_RSP7": -0.1068867531104759,
-        "EINC7_REPLACES_RSP": -0.10580321996682567,
-        "USAI7_REPLACES_RSP": -0.10570372703306678
+        "CURRENT_RSP7": -0.10688675924684145,
+        "EINC7_REPLACES_RSP": -0.10580322610319122,
+        "USAI7_REPLACES_RSP": -0.10570373911988647
       },
       {
         "month": "2026-10-31",
@@ -657,21 +657,21 @@
       },
       {
         "month": "2025-03-31",
-        "CURRENT_RSP7": -0.09639746931555009,
-        "EINC7_REPLACES_RSP": -0.09305532247749888,
-        "USAI7_REPLACES_RSP": -0.09330266849833765
+        "CURRENT_RSP7": -0.0963974976820982,
+        "EINC7_REPLACES_RSP": -0.09305533915854292,
+        "USAI7_REPLACES_RSP": -0.09330273947895969
       },
       {
         "month": "2025-11-30",
-        "CURRENT_RSP7": -0.04540600685897503,
-        "EINC7_REPLACES_RSP": -0.042646691896319686,
-        "USAI7_REPLACES_RSP": -0.04348880343408241
+        "CURRENT_RSP7": -0.04540601256324759,
+        "EINC7_REPLACES_RSP": -0.042646685941116605,
+        "USAI7_REPLACES_RSP": -0.04348878959531032
       },
       {
         "month": "2024-12-31",
-        "CURRENT_RSP7": -0.03654402435293747,
-        "EINC7_REPLACES_RSP": -0.03627752874265147,
-        "USAI7_REPLACES_RSP": -0.035440063025378846
+        "CURRENT_RSP7": -0.03654408099859753,
+        "EINC7_REPLACES_RSP": -0.03627758535843798,
+        "USAI7_REPLACES_RSP": -0.03544013256261142
       }
     ],
     "limitations": [
