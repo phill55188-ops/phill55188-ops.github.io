@@ -1,0 +1,36 @@
+name: MACRO Acceptance Fixtures
+
+# Only offline synthetic fixtures. No market downloads or portfolio workflow dispatch.
+on:
+  pull_request:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/**'
+      - '.github/workflows/macro-acceptance-fixtures.yml'
+      - '.github/workflows/macro-defense-mix-test.yml'
+      - '.github/workflows/macro-historical-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install fixture dependencies
+        run: pip install jsonschema==4.26.0 pandas==2.2.3 numpy==2.3.5 PyYAML==6.0.3 exchange-calendars==4.13.2
+      - name: Reject malformed and incomplete result contracts
+        run: python macro-backtest/acceptance/test_contract.py
+      - name: Characterize preserved legacy financial formulas offline
+        run: python macro-backtest/acceptance/test_engine_metrics.py
+      - name: Verify corrected performance known answers offline
+        run: python macro-backtest/test_performance_metrics.py
+      - name: Test runtime integration without market data or real portfolio
+        run: python -m unittest discover -s macro-backtest/acceptance -p 'test_integration*.py' -v
+      - name: Verify workflow wiring and no-live-run boundaries
+        run: python macro-backtest/acceptance/test_workflow_wiring.py

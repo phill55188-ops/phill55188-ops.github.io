@@ -1,0 +1,134 @@
+{
+  "test": "v10.4 canonical vs v10.5 proposed Silicon Creation / Enablement layer",
+  "assumptions": {
+    "same_backtest_engine": true,
+    "same_smart_refill": true,
+    "same_defensive_liquidity_sleeve": 0.19,
+    "same_initial_capital": 500,
+    "same_monthly_contribution": 200,
+    "single_stock_cap": 0.1,
+    "new_holdings": [
+      "TSM",
+      "SNPS"
+    ],
+    "growth_sleeve": 0.81
+  },
+  "new_layers": {
+    "materials_fuel": [
+      "MP",
+      "FCX",
+      "LEU"
+    ],
+    "power_infrastructure": [
+      "VRT",
+      "BE",
+      "GEV"
+    ],
+    "silicon_creation_enablement": [
+      "TSM",
+      "SNPS"
+    ],
+    "compute": [
+      "NVDA",
+      "QCOM"
+    ],
+    "memory": [
+      "MU"
+    ],
+    "networking_optics": [
+      "AAOI",
+      "LITE",
+      "MRVL"
+    ],
+    "cloud_edge_execution": [
+      "ORCL",
+      "NBIS",
+      "NET"
+    ],
+    "orchestration": [
+      "PLTR",
+      "ADBE"
+    ]
+  },
+  "comparison": {
+    "annual_return_change_points": -12.000674460510385,
+    "sortino_change": -0.034706824215764875,
+    "max_drawdown_change_points": 0.1628871434098067,
+    "ending_value_change": -814.8818045328735
+  },
+  "results": [
+    {
+      "strategy": "CURRENT_V10_4",
+      "ann_return": 0.9879538281294917,
+      "ann_vol": 0.374269055055839,
+      "sharpe": 2.0574569769850517,
+      "sortino": 5.464693452245482,
+      "max_drawdown": -0.13407535705478624,
+      "worst_month": -0.11385858483452937,
+      "ending_value": 11128.178837468837,
+      "months": 23
+    },
+    {
+      "strategy": "V10_5_TSM_SNPS_DEP_CAP_10",
+      "ann_return": 0.8679470835243879,
+      "ann_vol": 0.34866934962319573,
+      "sharpe": 1.9971957656580273,
+      "sortino": 5.4299866280297175,
+      "max_drawdown": -0.13244648562068817,
+      "worst_month": -0.11042398389775387,
+      "ending_value": 10313.297032935963,
+      "months": 23
+    }
+  ],
+  "new_targets": {
+    "RSP": 0.07,
+    "SGOV": 0.08,
+    "GLD": 0.03,
+    "MP": 0.03380952380952381,
+    "FCX": 0.03380952380952381,
+    "LEU": 0.03380952380952381,
+    "VRT": 0.03380952380952381,
+    "BE": 0.03380952380952381,
+    "GEV": 0.03380952380952381,
+    "TSM": 0.05071428571428572,
+    "SNPS": 0.05071428571428572,
+    "NVDA": 0.05071428571428572,
+    "QCOM": 0.05071428571428572,
+    "MU": 0.1,
+    "AAOI": 0.03380952380952381,
+    "LITE": 0.03380952380952381,
+    "MRVL": 0.03380952380952381,
+    "ORCL": 0.03380952380952381,
+    "NBIS": 0.03380952380952381,
+    "NET": 0.03380952380952381,
+    "PLTR": 0.05071428571428572,
+    "ADBE": 0.05071428571428572
+  },
+  "new_growth_targets": {
+    "MP": 0.03380952380952381,
+    "FCX": 0.03380952380952381,
+    "LEU": 0.03380952380952381,
+    "VRT": 0.03380952380952381,
+    "BE": 0.03380952380952381,
+    "GEV": 0.03380952380952381,
+    "TSM": 0.05071428571428572,
+    "SNPS": 0.05071428571428572,
+    "NVDA": 0.05071428571428572,
+    "QCOM": 0.05071428571428572,
+    "MU": 0.1,
+    "AAOI": 0.03380952380952381,
+    "LITE": 0.03380952380952381,
+    "MRVL": 0.03380952380952381,
+    "ORCL": 0.03380952380952381,
+    "NBIS": 0.03380952380952381,
+    "NET": 0.03380952380952381,
+    "PLTR": 0.05071428571428572,
+    "ADBE": 0.05071428571428572
+  },
+  "limitations": [
+    "Current 2026 holdings are held fixed historically, so this tests weighting/universe mechanics rather than stock-selection foresight.",
+    "Smart refill uses the established lagged reported-earnings/surprise and trailing historical P/E proxy, not a paid point-in-time forward-estimate database.",
+    "The common sample remains constrained by the youngest holding in the portfolio and is short.",
+    "Adding TSM and SNPS uses their historical returns even though the decision to add them was made in 2026, so absolute returns contain hindsight/selection bias. Relative comparisons are the useful evidence."
+  ]
+}

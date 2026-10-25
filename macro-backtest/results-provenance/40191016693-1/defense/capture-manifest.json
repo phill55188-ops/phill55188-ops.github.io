@@ -1,0 +1,859 @@
+{
+  "argv": [],
+  "bundle_path": "macro-backtest/results-provenance/40191016693-1/defense",
+  "calls": [
+    {
+      "actual_start": "2024-10-31",
+      "config": {
+        "path": "0021-config.json",
+        "sha256": "7e3a21ebdcc361f3a09e0c9903ee9810a5059882b87968b51b528abd1801a59c"
+      },
+      "data": [
+        {
+          "path": "0022-engine-inputs.pickle",
+          "sha256": "58ad2caadd73e7697ba7442122e0dca08017ee44e6b73194b6c4b100741131ec"
+        }
+      ],
+      "data_coverage": [
+        {
+          "months": [
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2024-11-29",
+              "last_observation": "2024-11-29",
+              "month_end": "2024-11-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2024-12-31",
+              "last_observation": "2024-12-31",
+              "month_end": "2024-12-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-01-31",
+              "last_observation": "2025-01-31",
+              "month_end": "2025-01-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-02-28",
+              "last_observation": "2025-02-28",
+              "month_end": "2025-02-28"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-03-31",
+              "last_observation": "2025-03-31",
+              "month_end": "2025-03-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-04-30",
+              "last_observation": "2025-04-30",
+              "month_end": "2025-04-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-05-30",
+              "last_observation": "2025-05-30",
+              "month_end": "2025-05-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-06-30",
+              "last_observation": "2025-06-30",
+              "month_end": "2025-06-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-07-31",
+              "last_observation": "2025-07-31",
+              "month_end": "2025-07-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-08-29",
+              "last_observation": "2025-08-29",
+              "month_end": "2025-08-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-09-30",
+              "last_observation": "2025-09-30",
+              "month_end": "2025-09-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-10-31",
+              "last_observation": "2025-10-31",
+              "month_end": "2025-10-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-11-28",
+              "last_observation": "2025-11-28",
+              "month_end": "2025-11-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-12-31",
+              "last_observation": "2025-12-31",
+              "month_end": "2025-12-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-01-30",
+              "last_observation": "2026-01-30",
+              "month_end": "2026-01-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-02-27",
+              "last_observation": "2026-02-27",
+              "month_end": "2026-02-28"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-03-31",
+              "last_observation": "2026-03-31",
+              "month_end": "2026-03-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-04-30",
+              "last_observation": "2026-04-30",
+              "month_end": "2026-04-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-05-29",
+              "last_observation": "2026-05-29",
+              "month_end": "2026-05-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-06-30",
+              "last_observation": "2026-06-30",
+              "month_end": "2026-06-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-07-31",
+              "last_observation": "2026-07-31",
+              "month_end": "2026-07-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-08-31",
+              "last_observation": "2026-08-31",
+              "month_end": "2026-08-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-09-30",
+              "last_observation": "2026-09-30",
+              "month_end": "2026-09-30"
+            }
+          ],
+          "path": "0022-engine-inputs.pickle",
+          "retrieved_at": "2026-10-25T11:57:38.253730+00:00"
+        }
+      ],
+      "requested_start": "2024-01-01",
+      "return_month_ends": [
+        "2024-11-30",
+        "2024-12-31",
+        "2025-01-31",
+        "2025-02-28",
+        "2025-03-31",
+        "2025-04-30",
+        "2025-05-31",
+        "2025-06-30",
+        "2025-07-31",
+        "2025-08-31",
+        "2025-09-30",
+        "2025-10-31",
+        "2025-11-30",
+        "2025-12-31",
+        "2026-01-31",
+        "2026-02-28",
+        "2026-03-31",
+        "2026-04-30",
+        "2026-05-31",
+        "2026-06-30",
+        "2026-07-31",
+        "2026-08-31",
+        "2026-09-30"
+      ],
+      "scenario_id": "CURRENT_RSP7",
+      "test_type": "COMMON_WINDOW_ARCHITECTURE"
+    },
+    {
+      "actual_start": "2024-10-31",
+      "config": {
+        "path": "0023-config.json",
+        "sha256": "7cea60754dec20b2a8bfea5ef45fcd2b8c5d37ad64ee462acc74742247ceecce"
+      },
+      "data": [
+        {
+          "path": "0024-engine-inputs.pickle",
+          "sha256": "40311c8f9693066fe0576a7aa2659ca8060e8978246c57435694531dbadf9aea"
+        }
+      ],
+      "data_coverage": [
+        {
+          "months": [
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2024-11-29",
+              "last_observation": "2024-11-29",
+              "month_end": "2024-11-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2024-12-31",
+              "last_observation": "2024-12-31",
+              "month_end": "2024-12-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-01-31",
+              "last_observation": "2025-01-31",
+              "month_end": "2025-01-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-02-28",
+              "last_observation": "2025-02-28",
+              "month_end": "2025-02-28"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-03-31",
+              "last_observation": "2025-03-31",
+              "month_end": "2025-03-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-04-30",
+              "last_observation": "2025-04-30",
+              "month_end": "2025-04-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-05-30",
+              "last_observation": "2025-05-30",
+              "month_end": "2025-05-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-06-30",
+              "last_observation": "2025-06-30",
+              "month_end": "2025-06-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-07-31",
+              "last_observation": "2025-07-31",
+              "month_end": "2025-07-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-08-29",
+              "last_observation": "2025-08-29",
+              "month_end": "2025-08-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-09-30",
+              "last_observation": "2025-09-30",
+              "month_end": "2025-09-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-10-31",
+              "last_observation": "2025-10-31",
+              "month_end": "2025-10-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-11-28",
+              "last_observation": "2025-11-28",
+              "month_end": "2025-11-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-12-31",
+              "last_observation": "2025-12-31",
+              "month_end": "2025-12-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-01-30",
+              "last_observation": "2026-01-30",
+              "month_end": "2026-01-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-02-27",
+              "last_observation": "2026-02-27",
+              "month_end": "2026-02-28"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-03-31",
+              "last_observation": "2026-03-31",
+              "month_end": "2026-03-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-04-30",
+              "last_observation": "2026-04-30",
+              "month_end": "2026-04-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-05-29",
+              "last_observation": "2026-05-29",
+              "month_end": "2026-05-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-06-30",
+              "last_observation": "2026-06-30",
+              "month_end": "2026-06-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-07-31",
+              "last_observation": "2026-07-31",
+              "month_end": "2026-07-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-08-31",
+              "last_observation": "2026-08-31",
+              "month_end": "2026-08-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-09-30",
+              "last_observation": "2026-09-30",
+              "month_end": "2026-09-30"
+            }
+          ],
+          "path": "0024-engine-inputs.pickle",
+          "retrieved_at": "2026-10-25T11:57:38.253730+00:00"
+        }
+      ],
+      "requested_start": "2024-01-01",
+      "return_month_ends": [
+        "2024-11-30",
+        "2024-12-31",
+        "2025-01-31",
+        "2025-02-28",
+        "2025-03-31",
+        "2025-04-30",
+        "2025-05-31",
+        "2025-06-30",
+        "2025-07-31",
+        "2025-08-31",
+        "2025-09-30",
+        "2025-10-31",
+        "2025-11-30",
+        "2025-12-31",
+        "2026-01-31",
+        "2026-02-28",
+        "2026-03-31",
+        "2026-04-30",
+        "2026-05-31",
+        "2026-06-30",
+        "2026-07-31",
+        "2026-08-31",
+        "2026-09-30"
+      ],
+      "scenario_id": "EINC7_REPLACES_RSP",
+      "test_type": "COMMON_WINDOW_ARCHITECTURE"
+    },
+    {
+      "actual_start": "2024-10-31",
+      "config": {
+        "path": "0025-config.json",
+        "sha256": "c0521a1ef06aa908ec63ec888bbf52bb1cdc3eaad3a7f2fed8ba1d7b43b35734"
+      },
+      "data": [
+        {
+          "path": "0026-engine-inputs.pickle",
+          "sha256": "40311c8f9693066fe0576a7aa2659ca8060e8978246c57435694531dbadf9aea"
+        }
+      ],
+      "data_coverage": [
+        {
+          "months": [
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2024-11-29",
+              "last_observation": "2024-11-29",
+              "month_end": "2024-11-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2024-12-31",
+              "last_observation": "2024-12-31",
+              "month_end": "2024-12-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-01-31",
+              "last_observation": "2025-01-31",
+              "month_end": "2025-01-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-02-28",
+              "last_observation": "2025-02-28",
+              "month_end": "2025-02-28"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-03-31",
+              "last_observation": "2025-03-31",
+              "month_end": "2025-03-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-04-30",
+              "last_observation": "2025-04-30",
+              "month_end": "2025-04-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-05-30",
+              "last_observation": "2025-05-30",
+              "month_end": "2025-05-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-06-30",
+              "last_observation": "2025-06-30",
+              "month_end": "2025-06-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-07-31",
+              "last_observation": "2025-07-31",
+              "month_end": "2025-07-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-08-29",
+              "last_observation": "2025-08-29",
+              "month_end": "2025-08-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-09-30",
+              "last_observation": "2025-09-30",
+              "month_end": "2025-09-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-10-31",
+              "last_observation": "2025-10-31",
+              "month_end": "2025-10-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-11-28",
+              "last_observation": "2025-11-28",
+              "month_end": "2025-11-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2025-12-31",
+              "last_observation": "2025-12-31",
+              "month_end": "2025-12-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-01-30",
+              "last_observation": "2026-01-30",
+              "month_end": "2026-01-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-02-27",
+              "last_observation": "2026-02-27",
+              "month_end": "2026-02-28"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-03-31",
+              "last_observation": "2026-03-31",
+              "month_end": "2026-03-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-04-30",
+              "last_observation": "2026-04-30",
+              "month_end": "2026-04-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-05-29",
+              "last_observation": "2026-05-29",
+              "month_end": "2026-05-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-06-30",
+              "last_observation": "2026-06-30",
+              "month_end": "2026-06-30"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-07-31",
+              "last_observation": "2026-07-31",
+              "month_end": "2026-07-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-08-31",
+              "last_observation": "2026-08-31",
+              "month_end": "2026-08-31"
+            },
+            {
+              "calendar_source": "exchange_calendars:XNYS; US-equity-session assumption; XNYS",
+              "expected_last_session": "2026-09-30",
+              "last_observation": "2026-09-30",
+              "month_end": "2026-09-30"
+            }
+          ],
+          "path": "0026-engine-inputs.pickle",
+          "retrieved_at": "2026-10-25T11:57:38.253730+00:00"
+        }
+      ],
+      "requested_start": "2024-01-01",
+      "return_month_ends": [
+        "2024-11-30",
+        "2024-12-31",
+        "2025-01-31",
+        "2025-02-28",
+        "2025-03-31",
+        "2025-04-30",
+        "2025-05-31",
+        "2025-06-30",
+        "2025-07-31",
+        "2025-08-31",
+        "2025-09-30",
+        "2025-10-31",
+        "2025-11-30",
+        "2025-12-31",
+        "2026-01-31",
+        "2026-02-28",
+        "2026-03-31",
+        "2026-04-30",
+        "2026-05-31",
+        "2026-06-30",
+        "2026-07-31",
+        "2026-08-31",
+        "2026-09-30"
+      ],
+      "scenario_id": "USAI7_REPLACES_RSP",
+      "test_type": "COMMON_WINDOW_ARCHITECTURE"
+    }
+  ],
+  "execution": {
+    "branch": "macro-backtest-v08",
+    "code_commit": "873eb78b5091d83bdf2a2982852cef6a8b466545",
+    "repository": "phill55188-ops/phill55188-ops.github.io",
+    "workflow_path": ".github/workflows/macro-defense-mix-test.yml",
+    "workflow_run_attempt": 1,
+    "workflow_run_id": 40191016693
+  },
+  "files": [
+    {
+      "captured_at": "2026-10-25T11:57:38.254947+00:00",
+      "kind": "provider-prices",
+      "metadata": {
+        "args": "(['ADBE', 'BE', 'EINC', 'FCX', 'FN', 'GEV', 'GLD', 'LEU', 'LITE', 'MP', 'MRVL', 'MU', 'NBIS', 'NET', 'NVDA', 'ORCL', 'PLTR', 'QCOM', 'RSP', 'SGOV', 'SNPS', 'TSM', 'USAI', 'VRT', 'SPY', 'QQQ'],)",
+        "kwargs": "{'start': '2024-01-01', 'auto_adjust': True, 'progress': False, 'threads': True, 'group_by': 'ticker'}"
+      },
+      "path": "0001-provider-prices.pickle",
+      "sha256": "7b0c08fb6587839d52114d3c311e0e9d7f38e952bc8eeff299a49d389d935aab"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.372436+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "ADBE"
+      },
+      "path": "0002-provider-earnings.pickle",
+      "sha256": "ef434785043668e10e7de3ece510f19c1ce6d7e6c6827c4b4413bc2337484872"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.442516+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "SNPS"
+      },
+      "path": "0003-provider-earnings.pickle",
+      "sha256": "db7db419f447e748330801a8762f18341804e691da0cf164de3ffb5aeca0e053"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.509912+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "TSM"
+      },
+      "path": "0004-provider-earnings.pickle",
+      "sha256": "0b15db96fb098e277b119076fb0727fa48dd63063538649fb3850a6bfb0c6e0d"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.574482+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "MP"
+      },
+      "path": "0005-provider-earnings.pickle",
+      "sha256": "0ab284f38bbb2124f2025ce44e65ed7964f1a9dff46b4418a57a06fb09cd0872"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.641489+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "FCX"
+      },
+      "path": "0006-provider-earnings.pickle",
+      "sha256": "3c23f70e82483bda7672dbb7c17de84914469f533730d7235ec175010fb22c9f"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.707015+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "LEU"
+      },
+      "path": "0007-provider-earnings.pickle",
+      "sha256": "93af84f1161d659e8a8f161382bac4be6ce739fd3afaf8d32122313d42cce09c"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.773939+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "VRT"
+      },
+      "path": "0008-provider-earnings.pickle",
+      "sha256": "a64ea326840929deea4420419773e30f13957f7e96da78e3e5ea34276f704158"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.850221+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "BE"
+      },
+      "path": "0009-provider-earnings.pickle",
+      "sha256": "7932807d7ebe9811a430017734d2e269ace6ce1e45390b3b78898eb90b102d91"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.917993+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "GEV"
+      },
+      "path": "0010-provider-earnings.pickle",
+      "sha256": "499024f5e0c21b512441d51ca78f4ebfda97b17772a90dd84620afa98bee1448"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:38.985787+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "NVDA"
+      },
+      "path": "0011-provider-earnings.pickle",
+      "sha256": "03dd9e71aa9093d3402c48b1a2ea467a27ffa4ec12b7053e46c818d7b8c4fd06"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.057115+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "QCOM"
+      },
+      "path": "0012-provider-earnings.pickle",
+      "sha256": "6983d939c49846f6073809fc578fd8dc47eb2e2f7d9f12f06c1e765f1df2fb80"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.141624+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "MU"
+      },
+      "path": "0013-provider-earnings.pickle",
+      "sha256": "43da70be0aa52210c927ca5ba6845497e2e52e84574a1168dd9ab441601e6f05"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.209160+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "LITE"
+      },
+      "path": "0014-provider-earnings.pickle",
+      "sha256": "299d44c794b3588317de49a79585a922a08bf4dbe2ea3ef23fbb9c33eba97454"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.273633+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "MRVL"
+      },
+      "path": "0015-provider-earnings.pickle",
+      "sha256": "7a116fbfca3a1bb3e9f2d227fda61bfb5c8b4a0c10a3566dbfcd7610cd0d49bd"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.382082+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "ORCL"
+      },
+      "path": "0016-provider-earnings.pickle",
+      "sha256": "72b040fabc35f4b7e932b4ca609c819aea737f545026e12842fe52eb2ed5cd1a"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.450442+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "NBIS"
+      },
+      "path": "0017-provider-earnings.pickle",
+      "sha256": "0cf838b47a57eb5595e44bf392eea8a468325ded4f3b9d05e76a6160690745cd"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.525602+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "NET"
+      },
+      "path": "0018-provider-earnings.pickle",
+      "sha256": "3650d8d922928a5d5be62d40e50b67caee3ad224dcf7a844e308a10c977dccc6"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.590835+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "PLTR"
+      },
+      "path": "0019-provider-earnings.pickle",
+      "sha256": "c2e763fcd7f2105ae4b0285e374a434a10ae96691ec6d3d1683b9aadf95d37cf"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.657983+00:00",
+      "kind": "provider-earnings",
+      "metadata": {
+        "ticker": "FN"
+      },
+      "path": "0020-provider-earnings.pickle",
+      "sha256": "fde8257ccb70dbb03af277df5243a064a527572aefa1892f97fa6d859bd36b41"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.661003+00:00",
+      "kind": "config",
+      "metadata": {},
+      "path": "0021-config.json",
+      "sha256": "7e3a21ebdcc361f3a09e0c9903ee9810a5059882b87968b51b528abd1801a59c"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:39.661501+00:00",
+      "kind": "engine-inputs",
+      "metadata": {},
+      "path": "0022-engine-inputs.pickle",
+      "sha256": "58ad2caadd73e7697ba7442122e0dca08017ee44e6b73194b6c4b100741131ec"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:40.154767+00:00",
+      "kind": "config",
+      "metadata": {},
+      "path": "0023-config.json",
+      "sha256": "7cea60754dec20b2a8bfea5ef45fcd2b8c5d37ad64ee462acc74742247ceecce"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:40.155306+00:00",
+      "kind": "engine-inputs",
+      "metadata": {},
+      "path": "0024-engine-inputs.pickle",
+      "sha256": "40311c8f9693066fe0576a7aa2659ca8060e8978246c57435694531dbadf9aea"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:40.432372+00:00",
+      "kind": "config",
+      "metadata": {},
+      "path": "0025-config.json",
+      "sha256": "c0521a1ef06aa908ec63ec888bbf52bb1cdc3eaad3a7f2fed8ba1d7b43b35734"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:40.432862+00:00",
+      "kind": "engine-inputs",
+      "metadata": {},
+      "path": "0026-engine-inputs.pickle",
+      "sha256": "40311c8f9693066fe0576a7aa2659ca8060e8978246c57435694531dbadf9aea"
+    },
+    {
+      "captured_at": "2026-10-25T11:57:41.732677+00:00",
+      "kind": "provider-prices",
+      "metadata": {
+        "args": "(['ADBE', 'BE', 'EINC', 'FCX', 'FN', 'GEV', 'GLD', 'LEU', 'LITE', 'MP', 'MRVL', 'MU', 'NBIS', 'NET', 'NVDA', 'ORCL', 'PLTR', 'QCOM', 'RSP', 'SGOV', 'SNPS', 'SPY', 'TSM', 'USAI', 'VRT'],)",
+        "kwargs": "{'start': '2024-01-01', 'auto_adjust': True, 'progress': False, 'threads': True, 'group_by': 'ticker'}"
+      },
+      "path": "0027-provider-prices.pickle",
+      "sha256": "63157263eb36a397870abf75e9c660826db5e713744e49160d197b560693400b"
+    }
+  ],
+  "finished_at": "2026-10-25T11:57:41.772212+00:00",
+  "format": "macro-capture-1",
+  "harness": "macro-backtest/defense_mix_test.py",
+  "limitations": [
+    "Capture manifest is not workflow success or financial acceptance.",
+    "Pickle snapshots are opaque evidence; never load untrusted pickle."
+  ],
+  "outputs": [
+    {
+      "path": "output/correlation_stress_monthly_returns.csv",
+      "sha256": "632315a9d2d098c4f1033f6658f5925bb188db6c97612d4579c6169ce76cc6a8",
+      "source_path": "macro-backtest/results-defense-mix/correlation_stress_monthly_returns.csv"
+    },
+    {
+      "path": "output/correlation_stress_portfolio_monthly.csv",
+      "sha256": "ae0787fa275e8ad21ca44566920c6553e5de719a6f2e3153600d7138d0a7d932",
+      "source_path": "macro-backtest/results-defense-mix/correlation_stress_portfolio_monthly.csv"
+    },
+    {
+      "path": "output/correlation_stress_results.json",
+      "sha256": "e6079cfe28a32bcd80a47e8af74ab1b94c077d4b2304fd9a1dde8ffa56b35da8",
+      "source_path": "macro-backtest/results-defense-mix/correlation_stress_results.json"
+    },
+    {
+      "path": "output/rsp_replacement_summary.csv",
+      "sha256": "4a09a971aea9184b4a2978a9699172cc3613d5044c9ebc02aad42efc0cdcceef",
+      "source_path": "macro-backtest/results-defense-mix/rsp_replacement_summary.csv"
+    },
+    {
+      "path": "output/rsp_replacement_targets.csv",
+      "sha256": "4c95891413382e335e491d071c370f8cc45dfeaa551d5689a7af444b4779480e",
+      "source_path": "macro-backtest/results-defense-mix/rsp_replacement_targets.csv"
+    },
+    {
+      "path": "output/rsp_replacement_trades.csv",
+      "sha256": "da584bbfdbfd316af1787cc050e5d3c451228465c6e0fd5658ee68facb403f87",
+      "source_path": "macro-backtest/results-defense-mix/rsp_replacement_trades.csv"
+    }
+  ],
+  "runtime_versions": {
+    "exchange-calendars": "4.13.2",
+    "jsonschema": "4.26.0",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "python": "3.12.15",
+    "yfinance": "1.7.0"
+  },
+  "started_at": "2026-10-25T11:57:35.635894+00:00",
+  "status": "CAPTURED"
+}

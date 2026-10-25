@@ -1,0 +1,106 @@
+{
+  "test": "Current v10.16 overlay vs fixed 10% orchestration-layer allocation",
+  "method": {
+    "current": "ADBE/TSM/SNPS each 2%; original v08 growth backbone scaled pro-rata into remaining 75% growth sleeve",
+    "alternative": "PLTR 8% + ADBE 2% = fixed 10% orchestration layer; TSM and SNPS remain 2% each; all other legacy backbone names scaled pro-rata to preserve 81% growth sleeve",
+    "same_engine": true,
+    "same_smart_refill": true,
+    "same_price_dataset": true,
+    "same_common_window": true,
+    "same_initial_capital": 500,
+    "same_monthly_contribution": 200,
+    "same_defensive_sleeve": 0.19,
+    "same_growth_sleeve": 0.81,
+    "same_single_stock_cap": 0.1,
+    "only_architectural_change": "reduce total orchestration allocation from 11.2593% to 10.0% by moving PLTR from ~9.2593% to 8.0%; redistribute released 1.2593% pro-rata across the non-orchestration legacy backbone"
+  },
+  "results": [
+    {
+      "strategy": "CURRENT_OVERLAY_PLTR_9_2593_ADBE_2",
+      "ann_return": 1.0641090304444276,
+      "ann_vol": 0.3601758864141112,
+      "sharpe": 2.2361560744644056,
+      "sortino": 5.902311088776898,
+      "max_drawdown": -0.12767970670533246,
+      "worst_month": -0.1134979940353078,
+      "ending_value": 11656.547575191076,
+      "months": 23
+    },
+    {
+      "strategy": "FIXED_ORCH_10_PLTR_8_ADBE_2",
+      "ann_return": 1.0622104918773267,
+      "ann_vol": 0.36293615641086874,
+      "sharpe": 2.21899473880978,
+      "sortino": 5.701404073590931,
+      "max_drawdown": -0.13019604856207723,
+      "worst_month": -0.1164266165712129,
+      "ending_value": 11704.004735438273,
+      "months": 23
+    }
+  ],
+  "delta_fixed_minus_current": {
+    "ann_return_points_fixed_minus_current": -0.18985385671008714,
+    "ann_vol_points_fixed_minus_current": 0.2760269996757547,
+    "sharpe_fixed_minus_current": -0.01716133565462563,
+    "sortino_fixed_minus_current": -0.2009070151859671,
+    "max_drawdown_points_fixed_minus_current": -0.2516341856744764,
+    "worst_month_points_fixed_minus_current": -0.292862253590509,
+    "ending_value_fixed_minus_current": 47.45716024719695
+  },
+  "targets": {
+    "current": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "MP": 0.03765432098765432,
+      "FCX": 0.03765432098765432,
+      "LEU": 0.03765432098765432,
+      "VRT": 0.03765432098765432,
+      "BE": 0.03765432098765432,
+      "GEV": 0.03765432098765432,
+      "NVDA": 0.05648148148148148,
+      "QCOM": 0.05648148148148148,
+      "MU": 0.09259259259259259,
+      "AAOI": 0.03765432098765432,
+      "LITE": 0.03765432098765432,
+      "MRVL": 0.03765432098765432,
+      "ORCL": 0.03765432098765432,
+      "NBIS": 0.03765432098765432,
+      "NET": 0.03765432098765432,
+      "PLTR": 0.09259259259259259,
+      "ADBE": 0.02,
+      "TSM": 0.02,
+      "SNPS": 0.02
+    },
+    "fixed_orchestration_10": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03,
+      "MP": 0.038375586854460096,
+      "FCX": 0.038375586854460096,
+      "LEU": 0.038375586854460096,
+      "VRT": 0.038375586854460096,
+      "BE": 0.038375586854460096,
+      "GEV": 0.038375586854460096,
+      "NVDA": 0.05756338028169015,
+      "QCOM": 0.05756338028169015,
+      "MU": 0.09436619718309859,
+      "AAOI": 0.038375586854460096,
+      "LITE": 0.038375586854460096,
+      "MRVL": 0.038375586854460096,
+      "ORCL": 0.038375586854460096,
+      "NBIS": 0.038375586854460096,
+      "NET": 0.038375586854460096,
+      "PLTR": 0.08,
+      "ADBE": 0.02,
+      "TSM": 0.02,
+      "SNPS": 0.02
+    }
+  },
+  "limitations": [
+    "Current 2026 holdings are applied retrospectively, so survivorship/selection bias remains.",
+    "Smart refill uses lagged reported earnings/surprise and trailing historical P/E as a proxy for the live forward-estimate ranking rule.",
+    "The common sample is constrained by NBIS and is short; absolute annualized returns are not expected future returns.",
+    "This comparison is intended to isolate allocation architecture, not forecast PLTR or ADBE."
+  ]
+}

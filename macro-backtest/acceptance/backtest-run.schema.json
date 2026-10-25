@@ -1,0 +1,837 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:vera:macro-backtest:result:1.4",
+  "title": "Macro Backtest acceptance sidecar (not raw engine output)",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.4"
+    },
+    "scenario_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "INCOMPLETE",
+        "INVALID"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "const": "phill55188-ops/phill55188-ops.github.io"
+        },
+        "branch": {
+          "const": "macro-backtest-v08"
+        },
+        "code_commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "workflow_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflow_run_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "workflow_run_attempt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "test_type": {
+          "enum": [
+            "COMMON_WINDOW_ARCHITECTURE",
+            "ANCHOR_FORWARD_THESIS",
+            "EVENT_DATED_SYSTEM"
+          ]
+        },
+        "information_set": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "repository",
+        "branch",
+        "code_commit",
+        "workflow_path",
+        "workflow_run_id",
+        "workflow_run_attempt",
+        "test_type",
+        "information_set"
+      ],
+      "additionalProperties": false
+    },
+    "requested_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "actual_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "actual_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "checked_as_of": {
+      "type": "string",
+      "format": "date"
+    },
+    "anchor_date": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "start_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bias_classification": {
+      "enum": [
+        "RETROSPECTIVE_SELECTION_SURVIVORSHIP",
+        "HISTORICAL_SCOPE_LIMITED",
+        "SUPPORTED_SUBSET_ONLY"
+      ]
+    },
+    "return_month_ends": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "date"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "ann_return": {
+          "type": "number"
+        },
+        "ann_vol": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_drawdown": {
+          "type": "number"
+        },
+        "worst_month": {
+          "type": "number"
+        },
+        "ending_value": {
+          "type": "number"
+        },
+        "sharpe": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "sortino": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "months": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "undefined_reasons": {
+          "type": "object",
+          "properties": {
+            "sharpe": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sortino": {
+              "type": "string",
+              "minLength": 1
+            },
+            "ann_vol": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "ann_return",
+        "ann_vol",
+        "max_drawdown",
+        "worst_month",
+        "ending_value",
+        "sharpe",
+        "sortino",
+        "months",
+        "undefined_reasons"
+      ],
+      "additionalProperties": false
+    },
+    "metric_convention": {
+      "const": "unitized_fee_inclusive_twr_v1"
+    },
+    "inputs": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        },
+        "data": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "historical_manifest": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "config",
+        "data",
+        "historical_manifest"
+      ],
+      "additionalProperties": false
+    },
+    "historical_evidence": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "COMPLETE",
+            "INCOMPLETE",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "missing_items": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "bounded_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "known_at": {
+                "type": "string",
+                "format": "date"
+              },
+              "effective_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "applied_date": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "classification": {
+                "enum": [
+                  "ANCHOR",
+                  "EVENT",
+                  "EXOGENOUS"
+                ]
+              },
+              "check": {
+                "const": "PASS"
+              }
+            },
+            "required": [
+              "event_sha256",
+              "source_ref",
+              "source_version",
+              "bounded_sha256",
+              "known_at",
+              "effective_date",
+              "applied_date",
+              "classification",
+              "check"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "status",
+        "scope",
+        "missing_items",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "git_file",
+            "actions_artifact"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result_commit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "result_commit",
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "trade_authority": {
+      "const": false
+    },
+    "data_coverage": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "months": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "month_end": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "last_observation": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "expected_last_session": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "calendar_source": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "month_end",
+                "last_observation",
+                "expected_last_session",
+                "calendar_source"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "path",
+          "retrieved_at",
+          "months"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "performance": {
+      "type": "object",
+      "properties": {
+        "metric_convention": {
+          "const": "unitized_fee_inclusive_twr_v1"
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "ann_return": {
+              "type": "number"
+            },
+            "ann_vol": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max_drawdown": {
+              "type": "number"
+            },
+            "worst_month": {
+              "type": "number"
+            },
+            "ending_value": {
+              "type": "number"
+            },
+            "sharpe": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "sortino": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "months": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "undefined_reasons": {
+              "type": "object",
+              "properties": {
+                "sharpe": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sortino": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ann_vol": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "ann_return",
+            "ann_vol",
+            "max_drawdown",
+            "worst_month",
+            "ending_value",
+            "sharpe",
+            "sortino",
+            "months",
+            "undefined_reasons"
+          ],
+          "additionalProperties": false
+        },
+        "initial_fee_return": {
+          "type": "number",
+          "minimum": -1,
+          "maximum": 0
+        },
+        "total_return": {
+          "type": "number",
+          "minimum": -1
+        },
+        "monthly_returns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "month_end": {
+                "type": "string",
+                "format": "date"
+              },
+              "return": {
+                "type": "number",
+                "minimum": -1
+              }
+            },
+            "required": [
+              "month_end",
+              "return"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "cashflow_timing": {
+          "type": "string",
+          "minLength": 1
+        },
+        "annualization_basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inception_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "final_observation_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "elapsed_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "first_period_partial": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "metric_convention",
+        "metrics",
+        "initial_fee_return",
+        "total_return",
+        "monthly_returns",
+        "cashflow_timing",
+        "annualization_basis",
+        "inception_date",
+        "final_observation_date",
+        "elapsed_days",
+        "first_period_partial"
+      ],
+      "additionalProperties": false
+    },
+    "bias_profile": {
+      "type": "object",
+      "properties": {
+        "primary_test_type": {
+          "enum": [
+            "COMMON_WINDOW_ARCHITECTURE",
+            "ANCHOR_FORWARD_THESIS",
+            "EVENT_DATED_SYSTEM"
+          ]
+        },
+        "completeness": {
+          "enum": [
+            "COMPLETE",
+            "SUPPORTED_SUBSET",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "variant": {
+          "enum": [
+            "FULL_SCOPE",
+            "SUPPORTED_SUBSET",
+            "RETROSPECTIVE"
+          ]
+        },
+        "claim": {
+          "enum": [
+            "HISTORICAL_SCOPE_ONLY",
+            "SUPPORTED_SUBSET_ONLY",
+            "RETROSPECTIVE_ARCHITECTURE_ONLY"
+          ]
+        },
+        "risks": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "SELECTION_SURVIVORSHIP",
+              "DECLARED_EVIDENCE_NOT_INDEPENDENTLY_AUTHENTICATED",
+              "OMITTED_HISTORY"
+            ]
+          }
+        },
+        "omitted_scope": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "primary_test_type",
+        "completeness",
+        "variant",
+        "claim",
+        "risks",
+        "omitted_scope"
+      ],
+      "additionalProperties": false
+    },
+    "anchor_controls": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "const": "EVIDENCED_ANCHOR_V1"
+            },
+            "controls": {
+              "type": "object",
+              "minProperties": 1,
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "value": {},
+                  "source_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "source_version": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "bounded_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "known_at": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "value",
+                  "source_ref",
+                  "source_version",
+                  "bounded_sha256",
+                  "known_at"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "profile",
+            "controls"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "scenario_id",
+    "status",
+    "limitations",
+    "identity",
+    "requested_start",
+    "actual_start",
+    "actual_end",
+    "checked_as_of",
+    "anchor_date",
+    "start_reason",
+    "bias_classification",
+    "return_month_ends",
+    "metrics",
+    "metric_convention",
+    "inputs",
+    "historical_evidence",
+    "artifact",
+    "trade_authority",
+    "data_coverage",
+    "performance",
+    "bias_profile",
+    "anchor_controls"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "identity": {
+            "properties": {
+              "test_type": {
+                "enum": [
+                  "ANCHOR_FORWARD_THESIS",
+                  "EVENT_DATED_SYSTEM"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "anchor_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "historical_evidence": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "COMPLETE",
+                  "INCOMPLETE"
+                ]
+              },
+              "items": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "anchor_date": {
+            "type": "null"
+          },
+          "historical_evidence": {
+            "properties": {
+              "status": {
+                "const": "NOT_APPLICABLE"
+              },
+              "items": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "COMPLETE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "historical_evidence": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "COMPLETE",
+                  "NOT_APPLICABLE"
+                ]
+              },
+              "missing_items": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

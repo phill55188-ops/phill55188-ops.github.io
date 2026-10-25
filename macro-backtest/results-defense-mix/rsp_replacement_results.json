@@ -1,0 +1,119 @@
+{
+  "test": "RSP 7% replacement sensitivity under canonical v10.29 architecture",
+  "method": {
+    "canon": "09.30.2026_v.10.29",
+    "growth_architecture": "FN_2_GLOBAL canonical v10.29 exact engine targets",
+    "growth_sleeve": 0.81,
+    "defense_assets_total": 0.18,
+    "cash_target": 0.01,
+    "baseline": "RSP 7% + SGOV 8% + GLD 3%",
+    "scenario_1": "EINC 7% + SGOV 8% + GLD 3%",
+    "scenario_2": "USAI 7% + SGOV 8% + GLD 3%",
+    "only_change": "replace the 7% RSP sleeve one-for-one with EINC or USAI",
+    "same_engine": true,
+    "same_smart_refill": true,
+    "same_price_dataset": true,
+    "same_common_window": true,
+    "same_initial_capital": 500,
+    "same_monthly_contribution": 200,
+    "same_fee": 0.0005,
+    "same_drift_threshold": 0.1,
+    "start_request": "2024-01-01",
+    "common_start": "2024-10-31",
+    "common_end": "2026-09-30"
+  },
+  "scenarios": {
+    "CURRENT_RSP7": {
+      "RSP": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03
+    },
+    "EINC7_REPLACES_RSP": {
+      "EINC": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03
+    },
+    "USAI7_REPLACES_RSP": {
+      "USAI": 0.07,
+      "SGOV": 0.08,
+      "GLD": 0.03
+    }
+  },
+  "results": [
+    {
+      "strategy": "CURRENT_RSP7",
+      "ann_return": 0.971632636535666,
+      "ann_vol": 0.3318338270043658,
+      "sharpe": 2.25519691147613,
+      "sortino": 5.889062563964117,
+      "max_drawdown": -0.12055469553581444,
+      "worst_month": -0.10678383411999892,
+      "ending_value": 10993.99656192436,
+      "months": 23
+    },
+    {
+      "strategy": "EINC7_REPLACES_RSP",
+      "ann_return": 0.9843022448523084,
+      "ann_vol": 0.32754588655488787,
+      "sharpe": 2.3013873196325942,
+      "sortino": 5.9327991419641455,
+      "max_drawdown": -0.1192514360764716,
+      "worst_month": -0.10567615815063847,
+      "ending_value": 11059.765203583207,
+      "months": 23
+    },
+    {
+      "strategy": "USAI7_REPLACES_RSP",
+      "ann_return": 0.9802160751428384,
+      "ann_vol": 0.3277226966485766,
+      "sharpe": 2.2936712668901205,
+      "sortino": 5.940438911009565,
+      "max_drawdown": -0.11956051170754367,
+      "worst_month": -0.10561037265614481,
+      "ending_value": 11023.192685140637,
+      "months": 23
+    }
+  ],
+  "deltas_vs_current_rsp": {
+    "CURRENT_RSP7": {
+      "ann_return_points_vs_rsp": 0.0,
+      "ann_vol_points_vs_rsp": 0.0,
+      "sharpe_vs_rsp": 0.0,
+      "sortino_vs_rsp": 0.0,
+      "max_drawdown_points_vs_rsp": 0.0,
+      "worst_month_points_vs_rsp": 0.0,
+      "ending_value_vs_rsp": 0.0
+    },
+    "EINC7_REPLACES_RSP": {
+      "ann_return_points_vs_rsp": 1.2669608316642433,
+      "ann_vol_points_vs_rsp": -0.4287940449477945,
+      "sharpe_vs_rsp": 0.04619040815646436,
+      "sortino_vs_rsp": 0.04373657800002828,
+      "max_drawdown_points_vs_rsp": 0.13032594593428426,
+      "worst_month_points_vs_rsp": 0.11076759693604554,
+      "ending_value_vs_rsp": 65.76864165884763
+    },
+    "USAI7_REPLACES_RSP": {
+      "ann_return_points_vs_rsp": 0.8583438607172367,
+      "ann_vol_points_vs_rsp": -0.41111303557891943,
+      "sharpe_vs_rsp": 0.03847435541399058,
+      "sortino_vs_rsp": 0.0513763470454478,
+      "max_drawdown_points_vs_rsp": 0.09941838282707671,
+      "worst_month_points_vs_rsp": 0.11734614638541085,
+      "ending_value_vs_rsp": 29.196123216277556
+    }
+  },
+  "ranking_by_annual_return_then_sortino_then_drawdown": [
+    "EINC7_REPLACES_RSP",
+    "USAI7_REPLACES_RSP",
+    "CURRENT_RSP7"
+  ],
+  "limitations": [
+    "Current 2026 holdings are applied retrospectively, so survivorship/selection bias remains.",
+    "The common sample is forced to begin only when RSP, EINC, USAI, and every current v10.29 holding all have usable data; a recent ETF inception can materially shorten the test.",
+    "Absolute annualized returns are not forward forecasts.",
+    "Smart refill uses lagged reported earnings/surprise and trailing historical P/E as a proxy for the live forward-estimate ranking rule.",
+    "The engine's Sortino is the system's simplified internal variant and should only be compared within this engine unless outside methodology matches.",
+    "A narrow historical win does not prove a superior future defensive/diversification sleeve."
+  ]
+}
