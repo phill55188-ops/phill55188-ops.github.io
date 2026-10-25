@@ -19,6 +19,15 @@ class Wiring(unittest.TestCase):
    self.assertIn('results-provenance/',text)
    self.assertIn('actions/upload-artifact@v4',text)
    self.assertNotIn('acceptance_runtime.py verify',text) # cannot certify own completion
+ def test_historical_evidence_optional_and_not_shell_interpolated(self):
+  d=workflow(ROOT/'.github/workflows/macro-historical-validation.yml')
+  i=d['on']['workflow_dispatch']['inputs']['historical_evidence']
+  self.assertEqual(i['required'],'false');self.assertEqual(i['default'],'')
+  step=next(s for s in d['jobs']['historical-validation']['steps'] if s.get('name')=='Run March 2026 frozen-thesis validation')
+  self.assertEqual(step['env']['HISTORICAL_EVIDENCE'],'${{ inputs.historical_evidence }}')
+  self.assertNotIn('${{ inputs.',step['run'])
+  self.assertIn('"${evidence_args[@]}"',step['run'])
+  self.assertIn('--historical-evidence "$HISTORICAL_EVIDENCE"',step['run'])
  def test_observer_exact_allowlist(self):
   d=workflow(HERE/'observer-workflow.yml')
   self.assertEqual(set(d['on']),{'workflow_run','pull_request'})

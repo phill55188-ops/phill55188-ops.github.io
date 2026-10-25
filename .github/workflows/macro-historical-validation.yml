@@ -9,6 +9,12 @@ on:
       - 'macro-backtest/configs/2026-03-27_pre_bull_run_anchor.json'
       - '.github/workflows/macro-historical-validation.yml'
   workflow_dispatch:
+    inputs:
+      historical_evidence:
+        description: 'Optional tracked PUBLIC historical evidence manifest path; absent evidence keeps acceptance incomplete'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -30,12 +36,18 @@ jobs:
       - name: Run harness self-test
         run: python macro-backtest/historical_validation.py --self-test
       - name: Run March 2026 frozen-thesis validation
+        env:
+          HISTORICAL_EVIDENCE: ${{ inputs.historical_evidence }}
         run: |
+          evidence_args=()
+          if [[ -n "$HISTORICAL_EVIDENCE" ]]; then
+            evidence_args=(--historical-evidence "$HISTORICAL_EVIDENCE")
+          fi
           python macro-backtest/acceptance/acceptance_runtime.py capture \
             --root . \
             --bundle macro-backtest/results-provenance/${{ github.run_id }}-${{ github.run_attempt }}/historical \
             --harness macro-backtest/historical_validation.py \
-            --output macro-backtest/results-historical-validation -- \
+            --output macro-backtest/results-historical-validation "${evidence_args[@]}" -- \
             --config macro-backtest/configs/2026-03-27_pre_bull_run_anchor.json \
             --output macro-backtest/results-historical-validation/march_2026_anchor_results.json
       - name: Run March 2026 benchmark comparison
