@@ -8,11 +8,13 @@ rtests=module('runtime_fixtures','test_integration_runtime.py')
 check=module('persisted_fixture','verify_persisted_capture.py')
 observer=module('observed_fixture','accept_observed_capture.py')
 class ObserverOrchestration(unittest.TestCase):
+ historical_kind=None
  def setUp(self):
   self.f=rtests.RuntimeTests('test_end_to_end_supplied_completed_run');self.f.setUp()
+  if self.historical_kind:self.f.historical_fixture(self.historical_kind)
   f=self.f;self.job=f.root/'job';self.job.mkdir();self.capture=self.job/'captured';self.capture.mkdir();shutil.copytree(f.bundle,self.capture/'bundle')
-  (self.capture/'seal.json').write_text(json.dumps({'result_commit':f.result_commit,'bundle_path':f.manifest['bundle_path'],'kind':'defense'}))
-  self.run={**f.provider,'head_repository':{'full_name':rtests.r.REPOSITORY},'event':'push','workflow_id':369746177,'name':'MACRO Defense Mix Test'}
+  (self.capture/'seal.json').write_text(json.dumps({'result_commit':f.result_commit,'bundle_path':f.manifest['bundle_path'],'kind':'historical' if self.historical_kind else 'defense'}))
+  self.run={**f.provider,'head_repository':{'full_name':rtests.r.REPOSITORY},'event':'push','workflow_id':374956997 if self.historical_kind else 369746177,'name':'MACRO Historical Validation' if self.historical_kind else 'MACRO Defense Mix Test'}
   self.art={'id':321,'name':'macro-capture-123-1','expired':False,'workflow_run':{'id':123,'head_sha':f.code}}
   f.g('checkout','-q','--detach',f.code)
   (self.job/'provider-run.json').write_text(json.dumps(self.run));(self.job/'artifact.json').write_text(json.dumps(self.art))
@@ -25,4 +27,8 @@ class ObserverOrchestration(unittest.TestCase):
  def test_forged_proof_rejected_and_recorded(self):
   self.proof['files_verified']=0;(self.job/'proof.json').write_text(json.dumps(self.proof))
   self.assertEqual(self.evaluate(),1);self.assertEqual(json.loads((self.job/'gate-result.json').read_text())['status'],'INCOMPLETE_OR_REJECTED')
+class HistoricalAnchorObserver(ObserverOrchestration):
+ historical_kind='ANCHOR_FORWARD_THESIS'
+class HistoricalEventObserver(ObserverOrchestration):
+ historical_kind='EVENT_DATED_SYSTEM'
 if __name__=='__main__':unittest.main(verbosity=2)

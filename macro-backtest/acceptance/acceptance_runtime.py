@@ -46,7 +46,7 @@ def provider_receipt(run,manifest):
     return run['html_url']
 
 class Capture:
-    def __init__(self,root,bundle,harness,argv,env=None):
+    def __init__(self,root,bundle,harness,argv,env=None,historical_evidence=None):
         self.root=Path(root).resolve();self.bundle=Path(bundle).resolve();self.env=dict(os.environ if env is None else env)
         require(harness in HARNESS,'unsupported harness: explicit review required')
         require(not self.bundle.exists(),'run bundle already exists; never overwrite an attempt')
@@ -65,6 +65,9 @@ class Capture:
                 value=argv[n+1] if arg=='--output' else arg.split('=',1)[1];relative(self.root/value,self.root)
         self.bundle.mkdir(parents=True);self.started=time.time_ns();self.counter=0
         self.manifest={'format':'macro-capture-1','runtime_versions':runtime_versions(),'status':'CAPTURING','started_at':utc(),'execution':{'repository':REPOSITORY,'branch':'macro-backtest-v08','code_commit':commit,'workflow_path':HARNESS[harness][0],'workflow_run_id':int(self.env['GITHUB_RUN_ID']),'workflow_run_attempt':int(self.env['GITHUB_RUN_ATTEMPT'])},'bundle_path':relative(self.bundle,self.root),'harness':harness,'argv':argv,'files':[],'calls':[],'outputs':[],'limitations':['Capture manifest is not workflow success or financial acceptance.','Pickle snapshots are opaque evidence; never load untrusted pickle.']}
+        if historical_evidence:
+            require(harness.endswith('historical_validation.py'),'historical evidence only for historical harness')
+            self.manifest['historical_transport']=capture_history(self,historical_evidence)
     def save_bytes(self,name,data,kind,metadata=None):
         path=self.bundle/name;require(not path.exists(),'duplicate capture path');path.write_bytes(data)
         item={'path':name,'sha256':sha(data),'kind':kind,'captured_at':utc(),'metadata':metadata or {}}
@@ -129,6 +132,67 @@ class Capture:
             sys.path.pop(0)
 
 
+def public_source_path(root,path):
+    require(isinstance(path,str) and path,'historical source path required')
+    parts=Path(path).parts
+    require(not Path(path).is_absolute() and '..' not in parts,'historical source path must be relative without traversal')
+    current=root
+    for part in parts:
+        current=current/part
+        require(not current.is_symlink(),'historical source symlinks prohibited')
+    return relative(current,root)
+
+def capture_history(capture,transport_path):
+    """Opt-in reviewed PUBLIC bytes already tracked at code commit; no discovery/upload."""
+    root=capture.root;code=capture.manifest['execution']['code_commit']
+    def original(path):
+        rel=public_source_path(root,path)
+        require(git(root,'ls-files','--',rel)==rel,'historical source must be tracked')
+        data=(root/rel).read_bytes()
+        committed=subprocess.check_output(['git','-C',str(root),'show',code+':'+rel])
+        require(data==committed,'historical source differs from code commit')
+        return rel,data
+    rel,data=original(transport_path);t=json.loads(data)
+    require(t.get('visibility')=='PUBLIC_REVIEWED','historical transport not explicitly public reviewed')
+    require(isinstance(t.get('reviewer_assertion'),str) and t['reviewer_assertion'].strip(),'public source reviewer assertion required')
+    require(isinstance(t.get('information_set'),str) and t['information_set'].strip(),'historical information set required')
+    h=t['historical_evidence'];require(h['status']=='COMPLETE' and not h['missing_items'],'historical evidence incomplete')
+    refs={(x['source_ref'],x['source_version'],x['bounded_sha256']) for x in h['items']}
+    require(refs,'historical source references missing')
+    sources=t['sources'];require(len(sources)==len({x['path'] for x in sources}),'duplicate historical source paths')
+    require(len(sources)==len({(x['source_ref'],x['source_version'],x['sha256']) for x in sources}),'duplicate historical source identity')
+    require(refs=={(x['source_ref'],x['source_version'],x['sha256']) for x in sources},'historical source reference coverage mismatch')
+    transport=capture.save_bytes('historical-transport.json',data,'public-historical-transport',{'source_path':rel})
+    saved=[]
+    for i,item in enumerate(sources):
+        source_path,b=original(item['path']);require(sha(b)==item['sha256'],'historical source digest mismatch')
+        saved.append({**item,'source_path':source_path,'captured':capture.save_bytes(f'historical-source-{i:03d}.bin',b,'public-historical-source')})
+    evidence=capture.save_bytes('historical-evidence.json',(json.dumps(h,sort_keys=True,allow_nan=False)+'\n').encode(),'historical-evidence')
+    return {'transport':transport,'source_path':rel,'sources':saved,'evidence':evidence,'information_set':t['information_set']}
+
+def verify_history(root,bundle,m,captured):
+    h=m.get('historical_transport');require(h,'historical evidence transport missing; cannot accept supplied-only manifest')
+    def retained(info):
+        require(captured.get(info['path'])==info['sha256'],'historical evidence not persisted in capture')
+        return (bundle/info['path']).read_bytes()
+    code=m['execution']['code_commit']
+    require(public_source_path(root,h['source_path'])==h['source_path'],'noncanonical historical transport path')
+    transport=retained(h['transport']);require(transport==subprocess.check_output(['git','-C',str(root),'show',code+':'+h['source_path']]),'historical transport not from executed source commit')
+    t=json.loads(transport);require(t.get('visibility')=='PUBLIC_REVIEWED','historical transport not public reviewed')
+    require(isinstance(t.get('reviewer_assertion'),str) and t['reviewer_assertion'].strip(),'public source reviewer assertion required')
+    require(t['information_set']==h['information_set'],'historical transport information set mismatch')
+    evidence=json.loads(retained(h['evidence']));require(evidence==t['historical_evidence'],'historical transport evidence mismatch')
+    require(len(t['sources'])==len(h['sources']),'historical source coverage mismatch')
+    require(len(t['sources'])==len({x['path'] for x in t['sources']})==len({(x['source_ref'],x['source_version'],x['sha256']) for x in t['sources']}),'duplicate historical source mapping')
+    refs={(x['source_ref'],x['source_version'],x['bounded_sha256']) for x in evidence['items']}
+    require(refs=={(x['source_ref'],x['source_version'],x['sha256']) for x in t['sources']},'historical source references mismatch')
+    for orig,item in zip(t['sources'],h['sources']):
+        require(public_source_path(root,orig['path'])==orig['path'],'noncanonical historical source path')
+        require(all(item[k]==v for k,v in orig.items()) and item['source_path']==orig['path'],'historical source mapping mismatch')
+        b=retained(item['captured']);require(sha(b)==orig['sha256'],'historical source bytes mismatch')
+        require(b==subprocess.check_output(['git','-C',str(root),'show',code+':'+item['source_path']]),'historical source differs from executed source commit')
+    return h
+
 def verify_bundle(bundle,run,record_paths,contract_dir,result_commit):
     """Post-success gate. Sidecars must be prepared from inspected evidence.
     No self-signed receipt substitutes for the independently fetched provider run.
@@ -151,7 +215,10 @@ def verify_bundle(bundle,run,record_paths,contract_dir,result_commit):
     for path in record_paths:
         r=load(path);ident=r['identity'];require(all(ident.get(k)==v for k,v in m['execution'].items()),'sidecar runtime identity mismatch')
         calls=[c for c in m['calls'] if c['scenario_id']==r['scenario_id'] and c['test_type']==ident['test_type']];require(len(calls)==1,'scenario capture missing or ambiguous');call=calls[0]
-        require(ident['test_type']=='COMMON_WINDOW_ARCHITECTURE','historical evidence capture/authority not integrated; cannot accept supplied-only manifest')
+        if ident['test_type']!='COMMON_WINDOW_ARCHITECTURE':
+            h=verify_history(root,bundle,m,captured)
+            require(r['inputs']['historical_manifest']==pref(h['evidence']),'historical manifest differs from captured evidence')
+            require(ident['information_set']==h['information_set'],'historical information set differs from captured evidence')
         require(r['inputs']['config']==pref(call['config']) and r['inputs']['data']==[pref(x) for x in call['data']],'sidecar not bound to actual engine inputs')
         require(r['requested_start']==call['requested_start'] and r['actual_start']==call['actual_start'] and r['return_month_ends']==call['return_month_ends'],'sidecar temporal labels differ from engine observations')
         expected_coverage=[{**x,'path':prefix+'/'+x['path']} for x in call['data_coverage']]
@@ -197,15 +264,26 @@ def price_coverage(raw,tickers,months,retrieved_at,path,calendar=None):
     return {'path':path,'retrieved_at':retrieved_at,'months':rows}
 
 def prepare_common(bundle,result_commit,output_dir):
+    return prepare_records(bundle,result_commit,output_dir,False)
+
+def prepare_historical(bundle,result_commit,output_dir):
+    return prepare_records(bundle,result_commit,output_dir,True)
+
+def prepare_records(bundle,result_commit,output_dir,historical=False):
     """Generate sidecars only from captured public retrospective configuration.
     Historical approval/evidence is deliberately not inferred by this operation.
     """
     bundle=Path(bundle).resolve();m=load(bundle/'capture-manifest.json');require(m['status']=='CAPTURED','capture incomplete');root=evidence_root(bundle,m);prefix=m['bundle_path']
-    require(m['calls'] and all(c['test_type']=='COMMON_WINDOW_ARCHITECTURE' for c in m['calls']),'historical manifests must be supplied from genuine reviewed evidence')
+    require(m['calls'] and all((c['test_type']!='COMMON_WINDOW_ARCHITECTURE')==historical for c in m['calls']),'historical manifests must be supplied from genuine reviewed evidence')
     out=Path(output_dir).resolve();require(out.is_relative_to(root),'sidecars outside checkout');out.mkdir(parents=True,exist_ok=True)
     history={'status':'NOT_APPLICABLE','scope':'Retrospective captured public engine configuration; not historical thesis/event evidence.','missing_items':[],'items':[]}
     dump(out/'historical-manifest.json',history);h={'path':relative(out/'historical-manifest.json',root),'sha256':sha((out/'historical-manifest.json').read_bytes())}
     info='Retrospective public engine configuration captured for this exact run; current-canon alignment is not independently verified.'
+    if historical:
+        transport=verify_history(root,bundle,m,{x['path']:x['sha256'] for x in m['files']+m['outputs']})
+        h={**transport['evidence'],'path':prefix+'/'+transport['evidence']['path']}
+        history=load(bundle/transport['evidence']['path']);info=transport['information_set']
+        dump(out/'historical-manifest.json',history)
     records=[]
     for i,call in enumerate(m['calls']):
         matches=[]
@@ -214,6 +292,7 @@ def prepare_common(bundle,result_commit,output_dir):
             payload=json.loads((bundle/raw['path']).read_text())
             if not isinstance(payload,dict):continue
             candidates=payload.get('summary',[])+payload.get('results',[])+payload.get('smart_refill_backtest',{}).get('results',[])
+            if historical and 'metrics' in payload:candidates=[{**payload['metrics'],'strategy':'historical_single_run'}]
             for metric in candidates:
                 if metric.get('strategy')==call['scenario_id']:matches.append((raw,metric))
         require(len(matches)==1,'raw scenario missing/ambiguous '+call['scenario_id']);raw,metric=matches[0]
@@ -225,16 +304,20 @@ def prepare_common(bundle,result_commit,output_dir):
         def pref(x):return {'path':prefix+'/'+x['path'],'sha256':x['sha256']}
         coverage=[{**x,'path':prefix+'/'+x['path']} for x in call['data_coverage']]
         record={'schema_version':'1.3','scenario_id':call['scenario_id'],'status':'COMPLETE','limitations':['Retrospective selection/survivorship exposure; not a current-canon portfolio claim.','Core return statistics exclude contemporaneous trading fees; ending value includes fees.','No trade authority; provider completion independently checked in downstream gate.'],'identity':identity,'requested_start':call['requested_start'],'actual_start':call['actual_start'],'actual_end':call['return_month_ends'][-1],'checked_as_of':dt.datetime.now(dt.timezone.utc).date().isoformat(),'anchor_date':None,'start_reason':'Captured first common valid observation across actual scenario tickers','bias_classification':'RETROSPECTIVE SELECTION / SURVIVORSHIP EXPOSURE','return_month_ends':call['return_month_ends'],'metrics':metrics,'metric_convention':'core_pre_contribution_v1','inputs':{'config':pref(call['config']),'data':[pref(x) for x in call['data']],'historical_manifest':h},'historical_evidence':history,'artifact':{'kind':'git_file','id':f'{REPOSITORY}@{result_commit}:{artpath}','result_commit':result_commit,'path':artpath,'sha256':raw['sha256']},'data_coverage':coverage,'trade_authority':False}
+        if historical:
+            record.update(anchor_date=call['requested_start'],metric_convention='historical_value_pct_change_v1',bias_classification='HISTORICAL EVIDENCE: tracked reviewed public source provenance, not independent source truth',start_reason='Captured first valid historical engine observation',limitations=['Public reviewed source bytes bound to executed code and output commit; historical factual truth is not independently authenticated.','Historical value growth includes contributions and is not contribution-adjusted investment performance.','No trade authority; source completeness remains a reviewed claim.'])
         path=out/f'result-{i:03d}.json';dump(path,record);records.append(str(path))
     return records
 
 def main():
     p=argparse.ArgumentParser();sub=p.add_subparsers(dest='cmd',required=True)
-    c=sub.add_parser('capture');c.add_argument('--root',default='.');c.add_argument('--bundle',required=True);c.add_argument('--harness',choices=list(HARNESS),required=True);c.add_argument('--output',required=True);c.add_argument('harness_args',nargs=argparse.REMAINDER)
+    c=sub.add_parser('capture');c.add_argument('--root',default='.');c.add_argument('--bundle',required=True);c.add_argument('--harness',choices=list(HARNESS),required=True);c.add_argument('--output',required=True);c.add_argument('--historical-evidence');c.add_argument('harness_args',nargs=argparse.REMAINDER)
     a=sub.add_parser('prepare-common');a.add_argument('--bundle',required=True);a.add_argument('--result-commit',required=True);a.add_argument('--contract-dir');a.add_argument('--output-dir',required=True)
+    a=sub.add_parser('prepare-historical');a.add_argument('--bundle',required=True);a.add_argument('--result-commit',required=True);a.add_argument('--output-dir',required=True)
     v=sub.add_parser('verify');v.add_argument('--bundle',required=True);v.add_argument('--provider-run',required=True);v.add_argument('--contract-dir',required=True);v.add_argument('--result-commit',required=True);v.add_argument('--records',nargs='+',required=True);v.add_argument('--output',required=True)
     a=p.parse_args()
-    if a.cmd=='capture':Capture(a.root,a.bundle,a.harness,a.harness_args[1:] if a.harness_args[:1]==['--'] else a.harness_args).run(a.output)
+    if a.cmd=='capture':Capture(a.root,a.bundle,a.harness,a.harness_args[1:] if a.harness_args[:1]==['--'] else a.harness_args,historical_evidence=a.historical_evidence).run(a.output)
     elif a.cmd=='prepare-common':print(json.dumps(prepare_common(a.bundle,a.result_commit,a.output_dir)))
+    elif a.cmd=='prepare-historical':print(json.dumps(prepare_records(a.bundle,a.result_commit,a.output_dir,True)))
     else:dump(a.output,verify_bundle(a.bundle,load(a.provider_run),a.records,a.contract_dir,a.result_commit))
 if __name__=='__main__':main()

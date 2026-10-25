@@ -22,9 +22,8 @@ def evaluate(checkout,capture,provider_run,verified_capture,output):
         if proof['kind']=='defense':
             paths=module.prepare_common(bundle,proof['result_commit'],record_dir)
         else:
-            # Historical evidence cannot be fabricated from today's canon or the run itself.
-            paths=sorted(str(x) for x in (bundle/'acceptance-records').glob('result-*.json'))
-            if not paths:raise ValueError('INCOMPLETE: genuine reviewed historical acceptance records are absent')
+            # Only captured, tracked PUBLIC_REVIEWED source evidence can support historical acceptance.
+            paths=module.prepare_historical(bundle,proof['result_commit'],record_dir)
         result=module.verify_bundle(bundle,run,paths,HERE,proof['result_commit'])
         result['persisted_capture']=proof
         result['scope']='primary captured harness only; supplemental benchmark/stress outputs are not certified'

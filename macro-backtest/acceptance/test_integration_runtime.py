@@ -55,7 +55,65 @@ class RuntimeTests(unittest.TestCase):
   self.manifest['calls'][0]['test_type']='ANCHOR_FORWARD_THESIS';r.dump(self.bundle/'capture-manifest.json',self.manifest)
   self.g('add','.');self.g('commit','-qm','historical fixture');self.result_commit=self.g('rev-parse','HEAD')
   v=r.load(self.records[0]);v['identity']['test_type']='ANCHOR_FORWARD_THESIS';r.dump(self.records[0],v)
-  with self.assertRaisesRegex(ValueError,'historical evidence capture/authority not integrated'):self.verify()
+  with self.assertRaisesRegex(ValueError,'historical evidence transport missing'):self.verify()
+ def historical_fixture(self,kind='ANCHOR_FORWARD_THESIS'):
+  evidence=self.root/'public-evidence.txt';evidence.write_text('SYNTHETIC PUBLIC FIXTURE: historical reviewed record, not real user history')
+  digest=r.sha(evidence.read_bytes());item={'source_ref':'fixture:public-record','source_version':'synthetic-v1','bounded_sha256':digest,'known_at':'2026-06-01','effective_date':'2026-06-01','applied_date':None,'classification':'ANCHOR','check':'PASS','event_sha256':None}
+  event={'date':'2026-07-02','type':'BUY_DOLLARS','ticker':'SYNTHETIC','dollars':5}
+  items=[item]
+  if kind=='EVENT_DATED_SYSTEM':items.append({**item,'known_at':'2026-07-01','effective_date':'2026-07-02','applied_date':'2026-07-02','classification':'EVENT','event_sha256':r.sha(json.dumps(event,sort_keys=True,separators=(',',':')).encode())})
+  history={'status':'COMPLETE','scope':'Synthetic reviewed public evidence only','missing_items':[],'items':items}
+  transport={'visibility':'PUBLIC_REVIEWED','reviewer_assertion':'Fixture author asserts public synthetic bytes; not source truth authentication','information_set':'Synthetic frozen public fixture','historical_evidence':history,'sources':[{'path':'public-evidence.txt','sha256':digest,'source_ref':'fixture:public-record','source_version':'synthetic-v1'}]}
+  r.dump(self.root/'public-history.json',transport);self.g('add','.');self.g('commit','-qm','public synthetic source');self.code=self.g('rev-parse','HEAD')
+  bundle=self.root/'macro-backtest/results-provenance/123-1/historical'
+  env={'GITHUB_REPOSITORY':r.REPOSITORY,'GITHUB_REF_NAME':'macro-backtest-v08','GITHUB_SHA':self.code,'GITHUB_RUN_ID':'123','GITHUB_RUN_ATTEMPT':'1'}
+  cap=r.Capture(self.root,bundle,'macro-backtest/historical_validation.py',[],env,historical_evidence='public-history.json')
+  config=cap.config({'test_type':kind,'information_set':transport['information_set'],'anchor_date':'2026-06-01','events':[event] if kind=='EVENT_DATED_SYSTEM' else []})
+  data=cap.save_bytes('inputs.json',b'{"synthetic":true}','engine-prices');call=copy.deepcopy(self.manifest['calls'][0]);call.update(scenario_id='historical_single_run',test_type=kind,config=config,data=[data]);cap.manifest['calls']=[call]
+  raw={'metrics':{'ann_return':.1,'ann_vol':.2,'sharpe':.5,'sortino':None,'max_drawdown':-.1,'worst_month':-.05,'ending_value':120.,'months':3},'test_type':kind}
+  if kind=='EVENT_DATED_SYSTEM':raw['events_applied']=[{**event,'status':'APPLIED','execution_date':'2026-07-02'}]
+  output=self.root/'historical-output';output.mkdir();r.dump(output/'raw.json',raw);cap.finish(output)
+  self.bundle=bundle;self.manifest=cap.manifest;self.provider.update(head_sha=self.code,path='.github/workflows/macro-historical-validation.yml')
+  self.g('add','.');self.g('commit','-qm','historical captured synthetic result');self.result_commit=self.g('rev-parse','HEAD');self.records=r.prepare_historical(self.bundle,self.result_commit,self.root/'historical-acceptance')
+ def test_historical_anchor_positive(self):
+  self.historical_fixture();self.assertEqual(self.verify()['status'],'ACCEPTED')
+ def test_historical_event_positive(self):
+  self.historical_fixture('EVENT_DATED_SYSTEM');self.assertEqual(self.verify()['status'],'ACCEPTED')
+ def test_historical_source_tampered(self):
+  self.historical_fixture();(self.bundle/'historical-source-000.bin').write_bytes(b'changed');self.assertRaises(ValueError,self.verify)
+ def test_historical_supplied_manifest_override(self):
+  self.historical_fixture();v=r.load(self.records[0]);v['inputs']['historical_manifest']['path']='other.json';r.dump(self.records[0],v);self.assertRaises(ValueError,self.verify)
+ def test_historical_known_date_override(self):
+  self.historical_fixture();v=r.load(self.records[0]);v['historical_evidence']['items'][0]['known_at']='2026-12-01';r.dump(self.records[0],v);self.assertRaises(ValueError,self.verify)
+ def test_historical_config_override(self):
+  self.historical_fixture();v=r.load(self.records[0]);v['inputs']['config']['sha256']='f'*64;r.dump(self.records[0],v);self.assertRaises(ValueError,self.verify)
+ def historical_recapture(self,mutation=None,untracked=False):
+  self.historical_fixture();t=r.load(self.root/'public-history.json')
+  if mutation:mutation(t)
+  if untracked:
+   (self.root/'untracked-source.txt').write_text('not tracked');t['sources'][0]['path']='untracked-source.txt'
+  r.dump(self.root/'public-history.json',t);self.g('add','public-history.json');self.g('commit','-qm','changed fixture transport')
+  code=self.g('rev-parse','HEAD');env={'GITHUB_REPOSITORY':r.REPOSITORY,'GITHUB_REF_NAME':'macro-backtest-v08','GITHUB_SHA':code,'GITHUB_RUN_ID':'124','GITHUB_RUN_ATTEMPT':'1'}
+  return r.Capture(self.root,self.root/'macro-backtest/results-provenance/124-1/historical','macro-backtest/historical_validation.py',[],env,historical_evidence='public-history.json')
+ def test_historical_private_marker_rejected(self):
+  with self.assertRaisesRegex(ValueError,'public reviewed'):self.historical_recapture(lambda t:t.update(visibility='PRIVATE'))
+ def test_historical_no_reviewer_rejected(self):
+  with self.assertRaisesRegex(ValueError,'reviewer assertion'):self.historical_recapture(lambda t:t.update(reviewer_assertion=''))
+ def test_historical_untracked_source_rejected(self):
+  with self.assertRaisesRegex(ValueError,'must be tracked'):self.historical_recapture(untracked=True)
+ def test_historical_source_ref_mismatch_rejected(self):
+  with self.assertRaisesRegex(ValueError,'reference coverage'):self.historical_recapture(lambda t:t['sources'][0].update(source_version='different'))
+ def test_historical_absolute_path_rejected(self):
+  with self.assertRaisesRegex(ValueError,'relative without traversal'):self.historical_recapture(lambda t:t['sources'][0].update(path=str(self.root/'public-evidence.txt')))
+ def test_historical_traversal_rejected(self):
+  with self.assertRaisesRegex(ValueError,'relative without traversal'):self.historical_recapture(lambda t:t['sources'][0].update(path='../'+self.root.name+'/public-evidence.txt'))
+ def test_historical_symlink_rejected(self):
+  def mutate(t):
+   (self.root/'linked-source').symlink_to(self.root/'public-evidence.txt');t['sources'][0]['path']='linked-source'
+  with self.assertRaisesRegex(ValueError,'symlinks prohibited'):self.historical_recapture(mutate)
+ def test_historical_duplicate_identity_rejected(self):
+  def mutate(t):t['sources'].append({**t['sources'][0],'path':'another-path'})
+  with self.assertRaisesRegex(ValueError,'duplicate historical source identity'):self.historical_recapture(mutate)
  def test_capture_failed(self):self.manifest['status']='FAILED';r.dump(self.bundle/'capture-manifest.json',self.manifest);self.assertRaises(ValueError,self.verify)
  def test_price_calendar_coverage(self):
   import pandas as pd
