@@ -46,14 +46,17 @@ CANDIDATES = ["RSP", "EINC", "USAI"]
 
 
 def metric_delta(row, base):
+    def delta(name,scale=1):
+        a,b=row[name],base[name]
+        return None if pd.isna(a) or pd.isna(b) else float((a-b)*scale)
     return {
-        "ann_return_points_vs_rsp": float((row.ann_return - base.ann_return) * 100),
-        "ann_vol_points_vs_rsp": float((row.ann_vol - base.ann_vol) * 100),
-        "sharpe_vs_rsp": float(row.sharpe - base.sharpe),
-        "sortino_vs_rsp": float(row.sortino - base.sortino),
-        "max_drawdown_points_vs_rsp": float((row.max_drawdown - base.max_drawdown) * 100),
-        "worst_month_points_vs_rsp": float((row.worst_month - base.worst_month) * 100),
-        "ending_value_vs_rsp": float(row.ending_value - base.ending_value),
+        "ann_return_points_vs_rsp": delta("ann_return", 100),
+        "ann_vol_points_vs_rsp": delta("ann_vol", 100),
+        "sharpe_vs_rsp": delta("sharpe", 1),
+        "sortino_vs_rsp": delta("sortino", 1),
+        "max_drawdown_points_vs_rsp": delta("max_drawdown", 100),
+        "worst_month_points_vs_rsp": delta("worst_month", 100),
+        "ending_value_vs_rsp": delta("ending_value", 1),
     }
 
 
@@ -185,7 +188,7 @@ def main():
                 }
             )
 
-    df = pd.DataFrame(rows).set_index("strategy")
+    df = pd.DataFrame(bt.performance_rows(rows)).set_index("strategy")
     base = df.loc["CURRENT_RSP7"]
     deltas = {name: metric_delta(df.loc[name], base) for name in df.index}
 
@@ -312,7 +315,10 @@ def main():
         "smart_refill_backtest": {
             "common_start": str(common_start.date()),
             "common_end": str(common_end.date()),
-            "results": df.reset_index().to_dict(orient="records"),
+            "results": rows,
+            "primary_results": df.reset_index().to_dict(orient="records"),
+            "report_metric_convention": "unitized_fee_inclusive_twr_v1",
+            "legacy_metric_notice": "results top-level scalars retained only for compatibility; comparisons use performance.metrics",
             "deltas_vs_current_rsp": deltas,
         },
         "stress_test": stress_result,
@@ -322,7 +328,7 @@ def main():
     print("CORRELATION STRESS TEST")
     print("MONTHLY ENGINE WINDOW", common_start.date(), "to", common_end.date())
     print("DAILY STRESS WINDOW", daily_start.date(), "to", daily_end.date())
-    print("\nSMART-REFILL BACKTEST")
+    print("\nSMART-REFILL BACKTEST — fee-inclusive external-flow-adjusted unitized metrics v1.4; ending value includes contributions")
     print(df.to_string())
     print("\nCORRELATION METRICS")
     print(json.dumps(correlation, indent=2))

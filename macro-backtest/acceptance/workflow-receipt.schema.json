@@ -186,5 +186,6 @@
     "receipt_source",
     "verified_at"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$id": "urn:vera:macro-backtest:receipt:1.4"
 }

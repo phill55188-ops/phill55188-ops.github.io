@@ -9,6 +9,23 @@ class ContractTests(unittest.TestCase):
  def tearDown(self):self.tmp.cleanup()
  def save(self,path,value):
   b=json.dumps(value,sort_keys=True).encode();(self.root/path).write_bytes(b);return {'path':path,'sha256':hashlib.sha256(b).hexdigest()}
+ def performance_fixture(self,returns):
+  import sys
+  sys.path.insert(0,str(P.parent))
+  try:
+   from performance_metrics import UnitizedPerformance
+  finally:sys.path.remove(str(P.parent))
+  perf=UnitizedPerformance(100,'2026-06-30');perf.initial(99.95);nav=1.
+  dates=['2026-07-31','2026-08-31','2026-09-30']
+  for date,x in zip(dates,returns):nav*=1+x;perf.observe(date,100*nav)
+  return perf.result(as_of='2026-10-25')
+ def replace_performance(self,r,q,returns):
+  perf=self.performance_fixture(returns);r['performance']=perf;r['metrics']=perf['metrics'];r['return_month_ends']=[x['month_end'] for x in perf['monthly_returns']];r['actual_end']=r['return_month_ends'][-1]
+  for c in r['data_coverage']:c['months']=c['months'][:len(returns)]
+  raw=json.loads((self.root/'raw.json').read_text());row=raw if 'metrics' in raw else raw['summary'][0];row['performance']=copy.deepcopy(perf)
+  if 'metrics' in raw:row['metrics']={k:x for k,x in r['metrics'].items() if k!='undefined_reasons'}
+  else:row.update({k:x for k,x in r['metrics'].items() if k!='undefined_reasons'})
+  r['artifact'].update(self.save('raw.json',raw));q['artifact']=copy.deepcopy(r['artifact'])
  def fixture(self,kind='COMMON_WINDOW_ARCHITECTURE'):
   historical=kind!='COMMON_WINDOW_ARCHITECTURE';repo='phill55188-ops/phill55188-ops.github.io'
   identity={'repository':repo,'branch':'macro-backtest-v08','code_commit':'a'*40,'workflow_path':'.github/workflows/macro-historical-validation.yml' if historical else '.github/workflows/macro-defense-mix-test.yml','workflow_run_id':123,'workflow_run_attempt':1,'test_type':kind,'information_set':'synthetic frozen information set'}
@@ -24,12 +41,36 @@ class ContractTests(unittest.TestCase):
   artifact={'kind':'git_file','id':repo+'@'+'d'*40+':raw.json','result_commit':'d'*40,**self.save('raw.json',raw)}
   r={'schema_version':'1.3','scenario_id':'historical_single_run' if historical else 'synthetic','status':'COMPLETE','limitations':['synthetic fixture; no remote authentication'],'identity':identity,'requested_start':'2026-06-01','actual_start':'2026-06-30','actual_end':'2026-09-30','checked_as_of':'2026-10-25','anchor_date':'2026-06-01' if historical else None,'start_reason':'fixture','bias_classification':'synthetic','return_month_ends':['2026-07-31','2026-08-31','2026-09-30'],'metrics':metrics,'metric_convention':'historical_value_pct_change_v1' if historical else 'core_pre_contribution_v1','inputs':{'config':self.save('config.json',{'fixture':True,**({'events':[event]} if kind=='EVENT_DATED_SYSTEM' else {})}),'data':[self.save('data.json',[1,2,3])],'historical_manifest':self.save('history.json',history)},'historical_evidence':history,'artifact':artifact,'trade_authority':False}
   r['data_coverage']=[{'path':'data.json','retrieved_at':'2026-10-24T00:00:00Z','months':[{'month_end':d,'last_observation':d,'expected_last_session':d,'calendar_source':'synthetic calendar'} for d in r['return_month_ends']]}]
+  config={'test_type':kind,'information_set':identity['information_set']}
+  controls={'targets':{'SYNTHETIC':1.0},'cash_target':0,'initial_capital':100,'monthly_contribution':0,'fee':0.0005,'refill_method':'cash_only','max_anchor_slippage_days':7} if kind=='ANCHOR_FORWARD_THESIS' else {'initial_targets':{'SYNTHETIC':1.0},'cash_target':0,'initial_capital':100,'fee':0.0005,'exclude_exogenous':False}
+  if historical:config.update(controls,anchor_date=r['anchor_date'])
+  if kind=='EVENT_DATED_SYSTEM':config['events']=[event]
+  r['inputs']['config']=self.save('config.json',config)
+  r['schema_version']='1.4';r['metric_convention']='unitized_fee_inclusive_twr_v1'
+  r['performance']=self.performance_fixture([-.05,-.02,.1])
+  metrics.clear();metrics.update(r['performance']['metrics']);r['performance']['metrics']=metrics
+  rawmetrics={k:x for k,x in metrics.items() if k!='undefined_reasons'}
+  if historical:raw['metrics']=rawmetrics
+  else:raw['summary'][0].update(rawmetrics)
+  r['bias_classification']='HISTORICAL_SCOPE_LIMITED' if historical else 'RETROSPECTIVE_SELECTION_SURVIVORSHIP'
+  r['bias_profile']={'primary_test_type':kind,'completeness':'COMPLETE' if historical else 'NOT_APPLICABLE','variant':'FULL_SCOPE' if historical else 'RETROSPECTIVE','claim':'HISTORICAL_SCOPE_ONLY' if historical else 'RETROSPECTIVE_ARCHITECTURE_ONLY','risks':['DECLARED_EVIDENCE_NOT_INDEPENDENTLY_AUTHENTICATED'] if historical else ['SELECTION_SURVIVORSHIP'],'omitted_scope':[]}
+  r['anchor_controls']={'profile':'EVIDENCED_ANCHOR_V1','controls':{k:{'value':val,**{n:history['items'][0][n] for n in ['source_ref','source_version','bounded_sha256','known_at']}} for k,val in controls.items()}} if historical else None
+  (raw if historical else raw['summary'][0])['performance']=copy.deepcopy(r['performance'])
+  r['artifact'].update(self.save('raw.json',raw))
   q={'identity':copy.deepcopy(identity),'status':'completed','conclusion':'success','artifact':copy.deepcopy(artifact),'receipt_source':'fixture:github-not-called','verified_at':'2026-10-25T00:00:00Z','inputs':copy.deepcopy(r['inputs'])}
   return r,q
  def reject(self,r,q):
   with self.assertRaises(Exception):v.validate(r,q,self.root,NOW)
  def raw_update(self,r,q,func):
-  raw=json.loads((self.root/'raw.json').read_text());func(raw);info=self.save('raw.json',raw);r['artifact'].update(info);q['artifact'].update(info)
+  raw=json.loads((self.root/'raw.json').read_text());func(raw)
+  candidates=[raw] if 'metrics' in raw else raw.get('summary',[])+raw.get('results',[])
+  for c in candidates:
+   if 'performance' in c:
+    m=c.get('metrics',c)
+    for k in ['ann_return','ann_vol','sharpe','sortino','max_drawdown','worst_month','ending_value','months']:
+     if k in m:c['performance']['metrics'][k]=m[k]
+    c['performance']['metrics']['undefined_reasons']=copy.deepcopy(r['metrics']['undefined_reasons'])
+  info=self.save('raw.json',raw);r['artifact'].update(info);q['artifact'].update(info)
  def history_update(self,r,q):
   r['inputs']['historical_manifest']=self.save('history.json',r['historical_evidence']);q['inputs']=copy.deepcopy(r['inputs'])
  def test_positive_all_three(self):
@@ -46,7 +87,7 @@ class ContractTests(unittest.TestCase):
  def test_null_needs_reason(self):
   r,q=self.fixture();r['metrics']['sortino']=None;self.raw_update(r,q,lambda x:x['summary'][0].update(sortino=None));self.reject(r,q)
  def test_null_with_reason_passes(self):
-  r,q=self.fixture();r['metrics']['sortino']=None;r['metrics']['undefined_reasons']['sortino']='Fewer than two negative observations';self.raw_update(r,q,lambda x:x['summary'][0].update(sortino=None));self.assertEqual(v.validate(r,q,self.root,NOW)['contract'],'PASS')
+  r,q=self.fixture();self.replace_performance(r,q,[.01,.02,.03]);self.assertEqual(v.validate(r,q,self.root,NOW)['contract'],'PASS')
  def test_extraneous_null_reason(self):
   r,q=self.fixture();r['metrics']['undefined_reasons']['sortino']='reason';self.reject(r,q)
  def test_nonfinite(self):
@@ -126,8 +167,8 @@ class ContractTests(unittest.TestCase):
   r,q=self.fixture();r['data_coverage'][0]['path']='other.json';self.reject(r,q)
  def test_future_retrieved(self):
   r,q=self.fixture();r['data_coverage'][0]['retrieved_at']='2026-10-26T00:00:00Z';self.reject(r,q)
- def test_legacy_nan_ratio_passes(self):
-  r,q=self.fixture();r['metrics']['sortino']=None;r['metrics']['undefined_reasons']['sortino']='Fewer than two negative observations';self.raw_update(r,q,lambda x:x['summary'][0].update(sortino=float('nan')));self.assertEqual(v.validate(r,q,self.root,NOW)['contract'],'PASS')
+ def test_corrected_nan_ratio_rejected(self):
+  r,q=self.fixture();r['metrics']['sortino']=None;r['metrics']['undefined_reasons']['sortino']='Fewer than two negative observations';self.raw_update(r,q,lambda x:x['summary'][0].update(sortino=float('nan')));self.reject(r,q)
  def test_raw_nan_nonratio_rejected(self):
   r,q=self.fixture();self.raw_update(r,q,lambda x:x['summary'][0].update(ann_return=float('nan')));self.reject(r,q)
  def test_raw_anchor_mismatch(self):
@@ -165,11 +206,74 @@ class ContractTests(unittest.TestCase):
   event={'date':'2026-07-02','type':'SELL_DOLLARS','ticker':'SYNTHETIC','dollars':5}
   if documented:event['classification']='EXOGENOUS'
   h=r['historical_evidence']['items'][1];h['classification']='EXOGENOUS';h['applied_date']=None;h['event_sha256']=hashlib.sha256(json.dumps(event,sort_keys=True,separators=(',',':')).encode()).hexdigest()
-  r['inputs']['config']=self.save('config.json',{'events':[event],'exclude_exogenous':True})
+  cfg=json.loads((self.root/'config.json').read_text());cfg.update(events=[event],exclude_exogenous=True);r['inputs']['config']=self.save('config.json',cfg);r['anchor_controls']['controls']['exclude_exogenous']['value']=True
   self.history_update(r,q);self.raw_update(r,q,lambda x:x.update(events_applied=[{**event,'status':'EXCLUDED_EXOGENOUS'}]))
   return r,q
  def test_documented_exogenous_exclusion_passes(self):
   r,q=self.excluded_fixture();self.assertEqual(v.validate(r,q,self.root,NOW)['contract'],'PASS')
  def test_undocumented_exogenous_exclusion_rejected(self):
   r,q=self.excluded_fixture(False);self.reject(r,q)
+ def test_no_bias_guarantee_rejected(self):
+  r,q=self.fixture();r['bias_classification']='NO BIAS - GUARANTEED';self.reject(r,q)
+ def test_bias_primary_mismatch(self):
+  r,q=self.fixture();r['bias_profile']['primary_test_type']='EVENT_DATED_SYSTEM';self.reject(r,q)
+ def test_common_cannot_claim_history(self):
+  r,q=self.fixture();r['bias_profile']['claim']='HISTORICAL_SCOPE_ONLY';self.reject(r,q)
+ def test_missing_bias_risk(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');r['bias_profile']['risks']=[];self.reject(r,q)
+ def test_supported_subset_explicit_passes(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');r['bias_classification']='SUPPORTED_SUBSET_ONLY';r['bias_profile'].update(completeness='SUPPORTED_SUBSET',variant='SUPPORTED_SUBSET',claim='SUPPORTED_SUBSET_ONLY',risks=['DECLARED_EVIDENCE_NOT_INDEPENDENTLY_AUTHENTICATED','OMITTED_HISTORY'],omitted_scope=['Unimplemented cash routing rule']);self.assertEqual(v.validate(r,q,self.root,NOW)['contract'],'PASS')
+ def test_subset_cannot_claim_full_scope(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');r['bias_profile']['completeness']='SUPPORTED_SUBSET';self.reject(r,q)
+ def test_incomplete_cannot_relabel_full_history(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');r['historical_evidence']['status']='INCOMPLETE';self.history_update(r,q);self.reject(r,q)
+ def test_no_anchor_control_proof_rejected(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');r['anchor_controls']=None;self.reject(r,q)
+ def test_anchor_control_missing_key(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');del r['anchor_controls']['controls']['fee'];self.reject(r,q)
+ def test_anchor_control_extra_key(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');r['anchor_controls']['controls']['unsupported']=r['anchor_controls']['controls']['fee'];self.reject(r,q)
+ def test_anchor_control_wrong_value(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');r['anchor_controls']['controls']['monthly_contribution']['value']=100;self.reject(r,q)
+ def test_anchor_control_unreferenced_source(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');r['anchor_controls']['controls']['fee']['source_ref']='invented';self.reject(r,q)
+ def test_anchor_control_post_anchor(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');r['anchor_controls']['controls']['fee']['known_at']='2026-07-01';self.reject(r,q)
+ def test_anchor_control_missing_config_cannot_default(self):
+  r,q=self.fixture('ANCHOR_FORWARD_THESIS');c=json.loads((self.root/'config.json').read_text());del c['monthly_contribution'];r['inputs']['config']=self.save('config.json',c);q['inputs']=copy.deepcopy(r['inputs']);self.reject(r,q)
+ def test_primary_type_case_sensitive(self):
+  r,q=self.fixture();r['identity']['test_type']='common_window_architecture';self.reject(r,q)
+ def test_corrected_performance_required(self):
+  r,q=self.fixture();del r['performance'];self.reject(r,q)
+ def test_raw_legacy_cannot_substitute(self):
+  r,q=self.fixture();raw=json.loads((self.root/'raw.json').read_text());del raw['summary'][0]['performance'];r['artifact'].update(self.save('raw.json',raw));q['artifact']=copy.deepcopy(r['artifact']);self.reject(r,q)
+ def test_performance_series_tamper(self):
+  r,q=self.fixture();r['performance']['monthly_returns'][0]['return']=0.9;self.reject(r,q)
+ def test_performance_window_tamper(self):
+  r,q=self.fixture();r['performance']['elapsed_days']=999;self.reject(r,q)
+ def test_no_new_nonfinite_metric(self):
+  r,q=self.fixture();r['performance']['initial_fee_return']=float('nan');self.reject(r,q)
+ def test_legacy_schema_rejected_by_current(self):
+  r,q=self.fixture();r['schema_version']='1.3';self.reject(r,q)
+ def test_ann_vol_null_with_reason(self):
+  r,q=self.fixture();self.replace_performance(r,q,[.01]);self.assertEqual(v.validate(r,q,self.root,NOW)['contract'],'PASS')
+ def rebind_performance(self,r,q):
+  raw=json.loads((self.root/'raw.json').read_text());row=raw if 'metrics' in raw else raw['summary'][0];row['performance']=copy.deepcopy(r['performance']);r['artifact'].update(self.save('raw.json',raw));q['artifact']=copy.deepcopy(r['artifact'])
+ def test_rehashed_scalar_inconsistency_rejected(self):
+  for key in ['ann_return','ann_vol','sharpe','sortino','max_drawdown','worst_month']:
+   with self.subTest(metric=key):
+    r,q=self.fixture();r['metrics'][key]+=.01;self.rebind_performance(r,q);self.reject(r,q)
+ def test_rehashed_total_inconsistent_rejected(self):
+  r,q=self.fixture();r['performance']['total_return']+=.01;self.rebind_performance(r,q);self.reject(r,q)
+ def test_rehashed_series_inconsistent_rejected(self):
+  r,q=self.fixture();r['performance']['monthly_returns'][0]['return']+=.01;self.rebind_performance(r,q);self.reject(r,q)
+ def test_rehashed_drawdown_baseline_rejected(self):
+  r,q=self.fixture();r['performance']['initial_fee_return']=-.9;self.rebind_performance(r,q);self.reject(r,q)
+ def test_rehashed_false_null_rejected(self):
+  r,q=self.fixture();r['metrics']['ann_vol']=None;r['metrics']['undefined_reasons']['ann_vol']='Pretend unavailable';self.rebind_performance(r,q);self.reject(r,q)
+ def test_contribution_execution_date_bound(self):
+  r,q=self.fixture('EVENT_DATED_SYSTEM');event={'date':'2026-07-02','type':'CONTRIBUTION','dollars':5}
+  h=r['historical_evidence']['items'][1];h['event_sha256']=hashlib.sha256(json.dumps(event,sort_keys=True,separators=(',',':')).encode()).hexdigest();cfg=json.loads((self.root/'config.json').read_text());cfg['events']=[event];r['inputs']['config']=self.save('config.json',cfg);self.history_update(r,q)
+  self.raw_update(r,q,lambda raw:raw.update(events_applied=[{**event,'status':'APPLIED','execution_date':'2026-07-02'}]));self.assertEqual(v.validate(r,q,self.root,NOW)['contract'],'PASS')
+  self.raw_update(r,q,lambda raw:raw['events_applied'][0].update(execution_date='2026-07-03'));self.reject(r,q)
 if __name__=='__main__':unittest.main(verbosity=2)
