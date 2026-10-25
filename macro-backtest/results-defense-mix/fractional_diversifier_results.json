@@ -12,132 +12,132 @@
     {
       "candidate": "RSP",
       "fractionable": true,
-      "ann_return": 0.9706386821528037,
-      "ann_vol": 0.3320025744695553,
-      "sharpe": 2.252596201569494,
-      "sortino": 5.889452117623283,
-      "max_drawdown": -0.12055781763563134,
-      "worst_month": -0.10678344386887084,
-      "ending_value": 10985.95910900741,
+      "ann_return": 0.970638669169303,
+      "ann_vol": 0.33200255196214934,
+      "sharpe": 2.252596314148551,
+      "sortino": 5.88945102188015,
+      "max_drawdown": -0.12055781135312227,
+      "worst_month": -0.10678343178011962,
+      "ending_value": 10985.959080495422,
       "months": 23,
       "legacy_metrics": {
-        "ann_return": 0.9706386821528037,
-        "ann_vol": 0.3320025744695553,
-        "sharpe": 2.252596201569494,
-        "sortino": 5.889452117623283,
-        "max_drawdown": -0.12055781763563134,
-        "worst_month": -0.10678344386887084,
-        "ending_value": 10985.95910900741,
+        "ann_return": 0.970638669169303,
+        "ann_vol": 0.33200255196214934,
+        "sharpe": 2.252596314148551,
+        "sortino": 5.88945102188015,
+        "max_drawdown": -0.12055781135312227,
+        "worst_month": -0.10678343178011962,
+        "ending_value": 10985.959080495422,
         "months": 23
       },
       "legacy_metric_convention": "core_pre_contribution_v1",
       "performance": {
         "metric_convention": "unitized_fee_inclusive_twr_v1",
         "metrics": {
-          "ann_return": 0.9705898288501966,
-          "ann_vol": 0.3318412421305525,
-          "sharpe": 2.2502020368462543,
-          "sortino": 5.880818441875692,
-          "max_drawdown": -0.12066773312563672,
-          "worst_month": -0.10683728785875779,
-          "ending_value": 10985.95910900741,
+          "ann_return": 0.9705898158519111,
+          "ann_vol": 0.33184121965544505,
+          "sharpe": 2.250202149139142,
+          "sortino": 5.880817347427389,
+          "max_drawdown": -0.12066772684163385,
+          "worst_month": -0.10683727576697322,
+          "ending_value": 10985.959080495422,
           "months": 23,
           "undefined_reasons": {}
         },
         "initial_fee_return": -0.0004949999999995791,
-        "total_return": 2.6625690128696227,
+        "total_return": 2.6625689666355017,
         "monthly_returns": [
           {
             "month_end": "2024-11-30",
-            "return": 0.17668997693126998
+            "return": 0.17668993928902976
           },
           {
             "month_end": "2024-12-31",
-            "return": -0.03628574401116191
+            "return": -0.0362857372598846
           },
           {
             "month_end": "2025-01-31",
-            "return": 0.07631302475505053
+            "return": 0.07631303356245
           },
           {
             "month_end": "2025-02-28",
-            "return": -0.0186360632172351
+            "return": -0.018636043674772562
           },
           {
             "month_end": "2025-03-31",
-            "return": -0.09585919626383943
+            "return": -0.09585922295545879
           },
           {
             "month_end": "2025-04-30",
-            "return": 0.044963493488537676
+            "return": 0.04496351836003876
           },
           {
             "month_end": "2025-05-31",
-            "return": 0.16227069979029896
+            "return": 0.16227072436812096
           },
           {
             "month_end": "2025-06-30",
-            "return": 0.18764140160817133
+            "return": 0.18764137067774733
           },
           {
             "month_end": "2025-07-31",
-            "return": 0.10384389541326144
+            "return": 0.10384388677959722
           },
           {
             "month_end": "2025-08-31",
-            "return": 0.03544939564841143
+            "return": 0.03544939890809351
           },
           {
             "month_end": "2025-09-30",
-            "return": 0.1682740581683808
+            "return": 0.16827405979743992
           },
           {
             "month_end": "2025-10-31",
-            "return": 0.11867044433983098
+            "return": 0.11867041878370688
           },
           {
             "month_end": "2025-11-30",
-            "return": -0.04420334793496872
+            "return": -0.044203317581773094
           },
           {
             "month_end": "2025-12-31",
-            "return": 0.022885575833469174
+            "return": 0.02288556646161588
           },
           {
             "month_end": "2026-01-31",
-            "return": 0.07611300300269352
+            "return": 0.07611300795079301
           },
           {
             "month_end": "2026-02-28",
-            "return": 0.03874146056421046
+            "return": 0.03874145452901856
           },
           {
             "month_end": "2026-03-31",
-            "return": -0.03180482362959158
+            "return": -0.03180481477350494
           },
           {
             "month_end": "2026-04-30",
-            "return": 0.23126350066743084
+            "return": 0.2312634836274261
           },
           {
             "month_end": "2026-05-31",
-            "return": 0.17475020320879175
+            "return": 0.17475020861395452
           },
           {
             "month_end": "2026-06-30",
-            "return": -0.015484799218411394
+            "return": -0.015484805511265742
           },
           {
             "month_end": "2026-07-31",
-            "return": -0.10683728785875779
+            "return": -0.10683727576697322
           },
           {
             "month_end": "2026-08-31",
-            "return": 0.13314634615243848
+            "return": 0.13314633784808105
           },
           {
             "month_end": "2026-09-30",
-            "return": 0.029288640552592504
+            "return": 0.02928864044632329
           }
         ],
         "cashflow_timing": "External contributions issue units at contemporaneous pre-flow NAV; trades and fees then change NAV; same-date event order preserved.",
@@ -151,132 +151,132 @@
     {
       "candidate": "EINC",
       "fractionable": false,
-      "ann_return": 0.9828446460194247,
-      "ann_vol": 0.3278271556311561,
-      "sharpe": 2.2972763962685803,
-      "sortino": 5.92024014907101,
-      "max_drawdown": -0.11928234181944697,
-      "worst_month": -0.10567665258666659,
-      "ending_value": 11048.35791174738,
+      "ann_return": 0.9828446321945483,
+      "ann_vol": 0.3278271345237482,
+      "sharpe": 2.2972765040163745,
+      "sortino": 5.920238874644764,
+      "max_drawdown": -0.1192823355976238,
+      "worst_month": -0.10567664049642456,
+      "ending_value": 11048.357935380334,
       "months": 23,
       "legacy_metrics": {
-        "ann_return": 0.9828446460194247,
-        "ann_vol": 0.3278271556311561,
-        "sharpe": 2.2972763962685803,
-        "sortino": 5.92024014907101,
-        "max_drawdown": -0.11928234181944697,
-        "worst_month": -0.10567665258666659,
-        "ending_value": 11048.35791174738,
+        "ann_return": 0.9828446321945483,
+        "ann_vol": 0.3278271345237482,
+        "sharpe": 2.2972765040163745,
+        "sortino": 5.920238874644764,
+        "max_drawdown": -0.1192823355976238,
+        "worst_month": -0.10567664049642456,
+        "ending_value": 11048.357935380334,
         "months": 23
       },
       "legacy_metric_convention": "core_pre_contribution_v1",
       "performance": {
         "metric_convention": "unitized_fee_inclusive_twr_v1",
         "metrics": {
-          "ann_return": 0.9828115344344026,
-          "ann_vol": 0.3276584352994679,
-          "sharpe": 2.2949155909796803,
-          "sortino": 5.911394446403623,
-          "max_drawdown": -0.11939328473994004,
-          "worst_month": -0.10573131536651525,
-          "ending_value": 11048.35791174738,
+          "ann_return": 0.9828115205830263,
+          "ann_vol": 0.3276584142322685,
+          "sharpe": 2.2949156983785928,
+          "sortino": 5.911393173364347,
+          "max_drawdown": -0.11939327851650738,
+          "worst_month": -0.10573130327324387,
+          "ending_value": 11048.357935380334,
           "months": 23,
           "undefined_reasons": {}
         },
         "initial_fee_return": -0.0004949999999995791,
-        "total_return": 2.7061640449248303,
+        "total_return": 2.706163995377179,
         "monthly_returns": [
           {
             "month_end": "2024-11-30",
-            "return": 0.18157470087294358
+            "return": 0.18157465657226668
           },
           {
             "month_end": "2024-12-31",
-            "return": -0.036067687808138404
+            "return": -0.03606768674780558
           },
           {
             "month_end": "2025-01-31",
-            "return": 0.07623520876469025
+            "return": 0.07623522389311876
           },
           {
             "month_end": "2025-02-28",
-            "return": -0.01681473740931505
+            "return": -0.0168147180019117
           },
           {
             "month_end": "2025-03-31",
-            "return": -0.09252740282149796
+            "return": -0.09252743540008568
           },
           {
             "month_end": "2025-04-30",
-            "return": 0.04300757612361217
+            "return": 0.04300760056050423
           },
           {
             "month_end": "2025-05-31",
-            "return": 0.16103358789066946
+            "return": 0.16103361264882743
           },
           {
             "month_end": "2025-06-30",
-            "return": 0.18703692808026995
+            "return": 0.187036903192767
           },
           {
             "month_end": "2025-07-31",
-            "return": 0.10256410537244065
+            "return": 0.10256409678971745
           },
           {
             "month_end": "2025-08-31",
-            "return": 0.0340970801780891
+            "return": 0.03409708915389453
           },
           {
             "month_end": "2025-09-30",
-            "return": 0.16891758695550907
+            "return": 0.16891758258097078
           },
           {
             "month_end": "2025-10-31",
-            "return": 0.11493242541785165
+            "return": 0.11493239994989413
           },
           {
             "month_end": "2025-11-30",
-            "return": -0.041166469478410295
+            "return": -0.04116643291542177
           },
           {
             "month_end": "2025-12-31",
-            "return": 0.02280910471807518
+            "return": 0.022809090301252555
           },
           {
             "month_end": "2026-01-31",
-            "return": 0.07903379608580785
+            "return": 0.07903380104153346
           },
           {
             "month_end": "2026-02-28",
-            "return": 0.043545570055743665
+            "return": 0.04354556414571831
           },
           {
             "month_end": "2026-03-31",
-            "return": -0.024668354754655897
+            "return": -0.02466834577549426
           },
           {
             "month_end": "2026-04-30",
-            "return": 0.2287116735777639
+            "return": 0.2287116591576226
           },
           {
             "month_end": "2026-05-31",
-            "return": 0.17014765942485255
+            "return": 0.17014766745237586
           },
           {
             "month_end": "2026-06-30",
-            "return": -0.015277253478940933
+            "return": -0.015277259836187551
           },
           {
             "month_end": "2026-07-31",
-            "return": -0.10573131536651525
+            "return": -0.10573130327324387
           },
           {
             "month_end": "2026-08-31",
-            "return": 0.13288548396753974
+            "return": 0.13288547567325115
           },
           {
             "month_end": "2026-09-30",
-            "return": 0.026955266027397062
+            "return": 0.026955266014084156
           }
         ],
         "cashflow_timing": "External contributions issue units at contemporaneous pre-flow NAV; trades and fees then change NAV; same-date event order preserved.",
@@ -290,132 +290,132 @@
     {
       "candidate": "AMLP",
       "fractionable": true,
-      "ann_return": 0.9793930337218211,
-      "ann_vol": 0.32827085845325055,
-      "sharpe": 2.288925142132907,
-      "sortino": 6.050245737123232,
-      "max_drawdown": -0.11796955042245238,
-      "worst_month": -0.10308467323800952,
-      "ending_value": 11025.40151605942,
+      "ann_return": 0.9793930224583793,
+      "ann_vol": 0.32827083449362987,
+      "sharpe": 2.2889252705675616,
+      "sortino": 6.050244414270493,
+      "max_drawdown": -0.11796954387601466,
+      "worst_month": -0.1030846607955721,
+      "ending_value": 11025.401531237878,
       "months": 23,
       "legacy_metrics": {
-        "ann_return": 0.9793930337218211,
-        "ann_vol": 0.32827085845325055,
-        "sharpe": 2.288925142132907,
-        "sortino": 6.050245737123232,
-        "max_drawdown": -0.11796955042245238,
-        "worst_month": -0.10308467323800952,
-        "ending_value": 11025.40151605942,
+        "ann_return": 0.9793930224583793,
+        "ann_vol": 0.32827083449362987,
+        "sharpe": 2.2889252705675616,
+        "sortino": 6.050244414270493,
+        "max_drawdown": -0.11796954387601466,
+        "worst_month": -0.1030846607955721,
+        "ending_value": 11025.401531237878,
         "months": 23
       },
       "legacy_metric_convention": "core_pre_contribution_v1",
       "performance": {
         "metric_convention": "unitized_fee_inclusive_twr_v1",
         "metrics": {
-          "ann_return": 0.9793566507617082,
-          "ann_vol": 0.32810221878817875,
-          "sharpe": 2.286566009418334,
-          "sortino": 6.041341460134999,
-          "max_drawdown": -0.11807898965221852,
-          "worst_month": -0.10313747191258438,
-          "ending_value": 11025.40151605942,
+          "ann_return": 0.979356639475119,
+          "ann_vol": 0.3281021948672371,
+          "sharpe": 2.286566137505261,
+          "sortino": 6.041340138667853,
+          "max_drawdown": -0.11807898310451104,
+          "worst_month": -0.10313745946739428,
+          "ending_value": 11025.401531237878,
           "months": 23,
           "undefined_reasons": {}
         },
         "initial_fee_return": -0.0004949999999995791,
-        "total_return": 2.6938154456706283,
+        "total_return": 2.693815405361741,
         "monthly_returns": [
           {
             "month_end": "2024-11-30",
-            "return": 0.1810097484278672
+            "return": 0.18100970412719186
           },
           {
             "month_end": "2024-12-31",
-            "return": -0.03624641098049197
+            "return": -0.03624641013887375
           },
           {
             "month_end": "2025-01-31",
-            "return": 0.07886917391699
+            "return": 0.07886918954389
           },
           {
             "month_end": "2025-02-28",
-            "return": -0.016466427020332186
+            "return": -0.016466401449080736
           },
           {
             "month_end": "2025-03-31",
-            "return": -0.09348127044951793
+            "return": -0.09348129730367605
           },
           {
             "month_end": "2025-04-30",
-            "return": 0.04174423284300799
+            "return": 0.041744252496598744
           },
           {
             "month_end": "2025-05-31",
-            "return": 0.15980570667804717
+            "return": 0.15980573104390094
           },
           {
             "month_end": "2025-06-30",
-            "return": 0.1867417066817454
+            "return": 0.18674166947995374
           },
           {
             "month_end": "2025-07-31",
-            "return": 0.10500228203236439
+            "return": 0.10500228571056858
           },
           {
             "month_end": "2025-08-31",
-            "return": 0.03302726233058961
+            "return": 0.03302726630652897
           },
           {
             "month_end": "2025-09-30",
-            "return": 0.1650840639072253
+            "return": 0.1650840657310253
           },
           {
             "month_end": "2025-10-31",
-            "return": 0.11893557114294717
+            "return": 0.11893553946586422
           },
           {
             "month_end": "2025-11-30",
-            "return": -0.04241084736668588
+            "return": -0.04241081094260757
           },
           {
             "month_end": "2025-12-31",
-            "return": 0.02158911169544364
+            "return": 0.021589089730889688
           },
           {
             "month_end": "2026-01-31",
-            "return": 0.07821266978672758
+            "return": 0.07821268116487756
           },
           {
             "month_end": "2026-02-28",
-            "return": 0.040539700461058814
+            "return": 0.040539694523317626
           },
           {
             "month_end": "2026-03-31",
-            "return": -0.026643574505948897
+            "return": -0.026643564800365893
           },
           {
             "month_end": "2026-04-30",
-            "return": 0.22939938771174373
+            "return": 0.22939937312236514
           },
           {
             "month_end": "2026-05-31",
-            "return": 0.17149959916295043
+            "return": 0.17149960667890451
           },
           {
             "month_end": "2026-06-30",
-            "return": -0.016659763644599312
+            "return": -0.016659769989104123
           },
           {
             "month_end": "2026-07-31",
-            "return": -0.10313747191258438
+            "return": -0.10313745946739428
           },
           {
             "month_end": "2026-08-31",
-            "return": 0.1334453781959446
+            "return": 0.1334453696793001
           },
           {
             "month_end": "2026-09-30",
-            "return": 0.028075984672432996
+            "return": 0.028075984766364304
           }
         ],
         "cashflow_timing": "External contributions issue units at contemporaneous pre-flow NAV; trades and fees then change NAV; same-date event order preserved.",
@@ -429,132 +429,132 @@
     {
       "candidate": "MLPX",
       "fractionable": true,
-      "ann_return": 0.9815337869671885,
-      "ann_vol": 0.32814321454775025,
-      "sharpe": 2.293243998042349,
-      "sortino": 5.881932714903676,
-      "max_drawdown": -0.11974534099695755,
-      "worst_month": -0.10615558382476065,
-      "ending_value": 11034.34887653695,
+      "ann_return": 0.9815337784429794,
+      "ann_vol": 0.32814319301903644,
+      "sharpe": 2.29324411626838,
+      "sortino": 5.881931448571758,
+      "max_drawdown": -0.11974533477540072,
+      "worst_month": -0.10615557173790935,
+      "ending_value": 11034.348904503162,
       "months": 23,
       "legacy_metrics": {
-        "ann_return": 0.9815337869671885,
-        "ann_vol": 0.32814321454775025,
-        "sharpe": 2.293243998042349,
-        "sortino": 5.881932714903676,
-        "max_drawdown": -0.11974534099695755,
-        "worst_month": -0.10615558382476065,
-        "ending_value": 11034.34887653695,
+        "ann_return": 0.9815337784429794,
+        "ann_vol": 0.32814319301903644,
+        "sharpe": 2.29324411626838,
+        "sortino": 5.881931448571758,
+        "max_drawdown": -0.11974533477540072,
+        "worst_month": -0.10615557173790935,
+        "ending_value": 11034.348904503162,
         "months": 23
       },
       "legacy_metric_convention": "core_pre_contribution_v1",
       "performance": {
         "metric_convention": "unitized_fee_inclusive_twr_v1",
         "metrics": {
-          "ann_return": 0.9814988134905309,
-          "ann_vol": 0.3279735049625497,
-          "sharpe": 2.2908897901264043,
-          "sortino": 5.873153857485279,
-          "max_drawdown": -0.11985594796126031,
-          "worst_month": -0.10620991616626074,
-          "ending_value": 11034.34887653695,
+          "ann_return": 0.981498804951044,
+          "ann_vol": 0.3279734834658792,
+          "sharpe": 2.290889908063078,
+          "sortino": 5.87315259284289,
+          "max_drawdown": -0.119855941738091,
+          "worst_month": -0.10620990407637787,
+          "ending_value": 11034.348904503162,
           "months": 23,
           "undefined_reasons": {}
         },
         "initial_fee_return": -0.0004949999999995791,
-        "total_return": 2.701469741248102,
+        "total_return": 2.701469710720048,
         "monthly_returns": [
           {
             "month_end": "2024-11-30",
-            "return": 0.18236700505130687
+            "return": 0.1823669666586729
           },
           {
             "month_end": "2024-12-31",
-            "return": -0.03598320881110573
+            "return": -0.035983197549660284
           },
           {
             "month_end": "2025-01-31",
-            "return": 0.07628241574683514
+            "return": 0.07628241960820348
           },
           {
             "month_end": "2025-02-28",
-            "return": -0.016758956678010972
+            "return": -0.016758937030442955
           },
           {
             "month_end": "2025-03-31",
-            "return": -0.09282757169589129
+            "return": -0.09282760286184555
           },
           {
             "month_end": "2025-04-30",
-            "return": 0.0427156481430524
+            "return": 0.042715672516402625
           },
           {
             "month_end": "2025-05-31",
-            "return": 0.16050987715831644
+            "return": 0.16050990659526265
           },
           {
             "month_end": "2025-06-30",
-            "return": 0.18755927900874125
+            "return": 0.18755924815447034
           },
           {
             "month_end": "2025-07-31",
-            "return": 0.10269998502216038
+            "return": 0.10269997173213197
           },
           {
             "month_end": "2025-08-31",
-            "return": 0.03368295958210488
+            "return": 0.03368296286862127
           },
           {
             "month_end": "2025-09-30",
-            "return": 0.16893098537463325
+            "return": 0.16893099161841163
           },
           {
             "month_end": "2025-10-31",
-            "return": 0.11467623592103382
+            "return": 0.1146762058367583
           },
           {
             "month_end": "2025-11-30",
-            "return": -0.041606642167809516
+            "return": -0.041606606869961316
           },
           {
             "month_end": "2025-12-31",
-            "return": 0.02281660459979884
+            "return": 0.022816596092429142
           },
           {
             "month_end": "2026-01-31",
-            "return": 0.07930660006505041
+            "return": 0.07930660501200393
           },
           {
             "month_end": "2026-02-28",
-            "return": 0.04335080499338928
+            "return": 0.04335079893684424
           },
           {
             "month_end": "2026-03-31",
-            "return": -0.024471386295063735
+            "return": -0.024471377487251478
           },
           {
             "month_end": "2026-04-30",
-            "return": 0.22830855173281983
+            "return": 0.22830853730292144
           },
           {
             "month_end": "2026-05-31",
-            "return": 0.16972642177174246
+            "return": 0.16972642981024522
           },
           {
             "month_end": "2026-06-30",
-            "return": -0.015267602585685047
+            "return": -0.0152676089430277
           },
           {
             "month_end": "2026-07-31",
-            "return": -0.10620991616626074
+            "return": -0.10620990407637787
           },
           {
             "month_end": "2026-08-31",
-            "return": 0.13332548838866431
+            "return": 0.13332548009033562
           },
           {
             "month_end": "2026-09-30",
-            "return": 0.026956133578974528
+            "return": 0.026956133471380372
           }
         ],
         "cashflow_timing": "External contributions issue units at contemporaneous pre-flow NAV; trades and fees then change NAV; same-date event order preserved.",
@@ -568,132 +568,132 @@
     {
       "candidate": "MLPA",
       "fractionable": true,
-      "ann_return": 0.9792840771168088,
-      "ann_vol": 0.3287313038350559,
-      "sharpe": 2.285939021266923,
-      "sortino": 6.066271143898997,
-      "max_drawdown": -0.11812930399458288,
-      "worst_month": -0.10294442507541834,
-      "ending_value": 11022.913469326337,
+      "ann_return": 0.9792840720826488,
+      "ann_vol": 0.32873128184075356,
+      "sharpe": 2.2859391477094557,
+      "sortino": 6.066270185892948,
+      "max_drawdown": -0.11812929759671853,
+      "worst_month": -0.10294441277890454,
+      "ending_value": 11022.913516767994,
       "months": 23,
       "legacy_metrics": {
-        "ann_return": 0.9792840771168088,
-        "ann_vol": 0.3287313038350559,
-        "sharpe": 2.285939021266923,
-        "sortino": 6.066271143898997,
-        "max_drawdown": -0.11812930399458288,
-        "worst_month": -0.10294442507541834,
-        "ending_value": 11022.913469326337,
+        "ann_return": 0.9792840720826488,
+        "ann_vol": 0.32873128184075356,
+        "sharpe": 2.2859391477094557,
+        "sortino": 6.066270185892948,
+        "max_drawdown": -0.11812929759671853,
+        "worst_month": -0.10294441277890454,
+        "ending_value": 11022.913516767994,
         "months": 23
       },
       "legacy_metric_convention": "core_pre_contribution_v1",
       "performance": {
         "metric_convention": "unitized_fee_inclusive_twr_v1",
         "metrics": {
-          "ann_return": 0.9792473122022547,
-          "ann_vol": 0.328562489375201,
-          "sharpe": 2.283582240945924,
-          "sortino": 6.057352761625105,
-          "max_drawdown": -0.11823883196470986,
-          "worst_month": -0.10299726330714842,
-          "ending_value": 11022.913469326337,
+          "ann_return": 0.9792473071568988,
+          "ann_vol": 0.3285624674113775,
+          "sharpe": 2.2835823671086253,
+          "sortino": 6.057351804282194,
+          "max_drawdown": -0.11823882556512733,
+          "worst_month": -0.10299725100744539,
+          "ending_value": 11022.913516767994,
           "months": 23,
           "undefined_reasons": {}
         },
         "initial_fee_return": -0.0004949999999995791,
-        "total_return": 2.6934249641585697,
+        "total_return": 2.6934249461405115,
         "monthly_returns": [
           {
             "month_end": "2024-11-30",
-            "return": 0.18127604617802318
+            "return": 0.18127600927294907
           },
           {
             "month_end": "2024-12-31",
-            "return": -0.03619658467978648
+            "return": -0.03619658953101712
           },
           {
             "month_end": "2025-01-31",
-            "return": 0.07895629925550018
+            "return": 0.07895632747675263
           },
           {
             "month_end": "2025-02-28",
-            "return": -0.016543143040840036
+            "return": -0.016543129414448576
           },
           {
             "month_end": "2025-03-31",
-            "return": -0.09365221752462383
+            "return": -0.09365224435328234
           },
           {
             "month_end": "2025-04-30",
-            "return": 0.0414750411541307
+            "return": 0.041475066177236064
           },
           {
             "month_end": "2025-05-31",
-            "return": 0.16029661034962417
+            "return": 0.16029664101307084
           },
           {
             "month_end": "2025-06-30",
-            "return": 0.18669101060363502
+            "return": 0.1866909676536761
           },
           {
             "month_end": "2025-07-31",
-            "return": 0.10515189964456684
+            "return": 0.10515189090363819
           },
           {
             "month_end": "2025-08-31",
-            "return": 0.03289358317528679
+            "return": 0.032893592630125035
           },
           {
             "month_end": "2025-09-30",
-            "return": 0.16524410629056763
+            "return": 0.16524410199397366
           },
           {
             "month_end": "2025-10-31",
-            "return": 0.11883099149273746
+            "return": 0.11883096597653409
           },
           {
             "month_end": "2025-11-30",
-            "return": -0.04249704329221726
+            "return": -0.042497006569963025
           },
           {
             "month_end": "2025-12-31",
-            "return": 0.021555887847174215
+            "return": 0.02155587240997825
           },
           {
             "month_end": "2026-01-31",
-            "return": 0.07818548773332701
+            "return": 0.07818549889482429
           },
           {
             "month_end": "2026-02-28",
-            "return": 0.040432134306826795
+            "return": 0.040432128210632357
           },
           {
             "month_end": "2026-03-31",
-            "return": -0.026978440401276393
+            "return": -0.026978430931214215
           },
           {
             "month_end": "2026-04-30",
-            "return": 0.229663595387138
+            "return": 0.22966358077740767
           },
           {
             "month_end": "2026-05-31",
-            "return": 0.1717310598899977
+            "return": 0.17173106749289335
           },
           {
             "month_end": "2026-06-30",
-            "return": -0.016991663496764065
+            "return": -0.016991669841369128
           },
           {
             "month_end": "2026-07-31",
-            "return": -0.10299726330714842
+            "return": -0.10299725100744539
           },
           {
             "month_end": "2026-08-31",
-            "return": 0.13376958298289376
+            "return": 0.1337695745348313
           },
           {
             "month_end": "2026-09-30",
-            "return": 0.027776995526097137
+            "return": 0.027776995622670997
           }
         ],
         "cashflow_timing": "External contributions issue units at contemporaneous pre-flow NAV; trades and fees then change NAV; same-date event order preserved.",
@@ -707,132 +707,132 @@
     {
       "candidate": "TPYP",
       "fractionable": true,
-      "ann_return": 0.980203422244645,
-      "ann_vol": 0.3275535301270947,
-      "sharpe": 2.294669859771159,
-      "sortino": 5.935479025508214,
-      "max_drawdown": -0.11952003680124479,
-      "worst_month": -0.1058021633766022,
-      "ending_value": 11023.952872141685,
+      "ann_return": 0.9802034013076153,
+      "ann_vol": 0.32755350981398357,
+      "sharpe": 2.2946699514991233,
+      "sortino": 5.935478050583491,
+      "max_drawdown": -0.11952003058525984,
+      "worst_month": -0.10580215128582893,
+      "ending_value": 11023.952870689733,
       "months": 23,
       "legacy_metrics": {
-        "ann_return": 0.980203422244645,
-        "ann_vol": 0.3275535301270947,
-        "sharpe": 2.294669859771159,
-        "sortino": 5.935479025508214,
-        "max_drawdown": -0.11952003680124479,
-        "worst_month": -0.1058021633766022,
-        "ending_value": 11023.952872141685,
+        "ann_return": 0.9802034013076153,
+        "ann_vol": 0.32755350981398357,
+        "sharpe": 2.2946699514991233,
+        "sortino": 5.935478050583491,
+        "max_drawdown": -0.11952003058525984,
+        "worst_month": -0.10580215128582893,
+        "ending_value": 11023.952870689733,
         "months": 23
       },
       "legacy_metric_convention": "core_pre_contribution_v1",
       "performance": {
         "metric_convention": "unitized_fee_inclusive_twr_v1",
         "metrics": {
-          "ann_return": 0.9801655794868782,
-          "ann_vol": 0.3273846392831944,
-          "sharpe": 2.2923059994431543,
-          "sortino": 5.92661266642853,
-          "max_drawdown": -0.11963081872081438,
-          "worst_month": -0.1058566131886921,
-          "ending_value": 11023.952872141685,
+          "ann_return": 0.980165558515111,
+          "ann_vol": 0.3273846190160395,
+          "sharpe": 2.2923060907879944,
+          "sortino": 5.92661169253171,
+          "max_drawdown": -0.1196308125032225,
+          "worst_month": -0.10585660109489103,
+          "ending_value": 11023.952870689733,
           "months": 23,
           "undefined_reasons": {}
         },
         "initial_fee_return": -0.0004949999999995791,
-        "total_return": 2.6967049904506775,
+        "total_return": 2.696704915524209,
         "monthly_returns": [
           {
             "month_end": "2024-11-30",
-            "return": 0.1814445954970325
+            "return": 0.1814445461978058
           },
           {
             "month_end": "2024-12-31",
-            "return": -0.036468266651711434
+            "return": -0.036468267589674475
           },
           {
             "month_end": "2025-01-31",
-            "return": 0.0761307262914499
+            "return": 0.07613074370894202
           },
           {
             "month_end": "2025-02-28",
-            "return": -0.016658752826301693
+            "return": -0.016658741561642043
           },
           {
             "month_end": "2025-03-31",
-            "return": -0.09198708721784987
+            "return": -0.09198712167580736
           },
           {
             "month_end": "2025-04-30",
-            "return": 0.043885754434235924
+            "return": 0.04388579393165948
           },
           {
             "month_end": "2025-05-31",
-            "return": 0.16010473414621273
+            "return": 0.16010475934666868
           },
           {
             "month_end": "2025-06-30",
-            "return": 0.18666193170247647
+            "return": 0.18666190890224832
           },
           {
             "month_end": "2025-07-31",
-            "return": 0.10275592219322749
+            "return": 0.10275589780292727
           },
           {
             "month_end": "2025-08-31",
-            "return": 0.034296431459578836
+            "return": 0.0342964505885448
           },
           {
             "month_end": "2025-09-30",
-            "return": 0.16942360672514845
+            "return": 0.16942359996082956
           },
           {
             "month_end": "2025-10-31",
-            "return": 0.115196351309792
+            "return": 0.11519633345710667
           },
           {
             "month_end": "2025-11-30",
-            "return": -0.04179897009528688
+            "return": -0.041798947824472465
           },
           {
             "month_end": "2025-12-31",
-            "return": 0.022354848563120422
+            "return": 0.02235484819046918
           },
           {
             "month_end": "2026-01-31",
-            "return": 0.0787036227718132
+            "return": 0.07870361163564388
           },
           {
             "month_end": "2026-02-28",
-            "return": 0.04308000667966572
+            "return": 0.043080016153033585
           },
           {
             "month_end": "2026-03-31",
-            "return": -0.025202852650783703
+            "return": -0.025202850281814237
           },
           {
             "month_end": "2026-04-30",
-            "return": 0.22831551791764304
+            "return": 0.22831550195213413
           },
           {
             "month_end": "2026-05-31",
-            "return": 0.16942081214793636
+            "return": 0.1694208203544152
           },
           {
             "month_end": "2026-06-30",
-            "return": -0.015404917975453403
+            "return": -0.015404924338979886
           },
           {
             "month_end": "2026-07-31",
-            "return": -0.1058566131886921
+            "return": -0.10585660109489103
           },
           {
             "month_end": "2026-08-31",
-            "return": 0.13266969406659568
+            "return": 0.13266968577138627
           },
           {
             "month_end": "2026-09-30",
-            "return": 0.02732563581274916
+            "return": 0.027325635798284065
           }
         ],
         "cashflow_timing": "External contributions issue units at contemporaneous pre-flow NAV; trades and fees then change NAV; same-date event order preserved.",
@@ -848,189 +848,189 @@
     "RSP": {
       "fractionable": true,
       "vs_spy": {
-        "corr_full": 0.8674610787409965,
-        "beta_full": 0.7708321113521072,
-        "downside_corr": 0.809964489801635,
-        "rolling_60d_avg": 0.8057887360965583,
-        "rolling_60d_latest": 0.6799513382717144,
-        "rolling_60d_min": 0.6152487028634419,
-        "rolling_60d_max": 0.9787147424767003,
-        "rolling_120d_latest": 0.6796428521769636,
+        "corr_full": 0.8674610521974736,
+        "beta_full": 0.7708326819229522,
+        "downside_corr": 0.8099650163436747,
+        "rolling_60d_avg": 0.8057885498419344,
+        "rolling_60d_latest": 0.6799513382717179,
+        "rolling_60d_min": 0.615248702863445,
+        "rolling_60d_max": 0.9787150382421397,
+        "rolling_120d_latest": 0.6796431746024126,
         "observations": 503
       },
       "vs_growth": {
-        "corr_full": 0.5548274372028373,
-        "beta_full": 0.1884293346893008,
-        "downside_corr": 0.37771834759580575,
-        "rolling_60d_avg": 0.48341462098249166,
-        "rolling_60d_latest": 0.3788107708000331,
-        "rolling_60d_min": 0.13002584567396117,
-        "rolling_60d_max": 0.9180244038010001,
-        "rolling_120d_latest": 0.32046152452155424,
+        "corr_full": 0.5548269971908597,
+        "beta_full": 0.18842946647900308,
+        "downside_corr": 0.37771756639343346,
+        "rolling_60d_avg": 0.4834143215812539,
+        "rolling_60d_latest": 0.37881077080003245,
+        "rolling_60d_min": 0.1300262784241321,
+        "rolling_60d_max": 0.91802376588524,
+        "rolling_120d_latest": 0.3204615134265277,
         "observations": 503
       },
-      "downside_capture_spy": 76.89976227768086,
-      "downside_capture_growth": 12.553190564769501
+      "downside_capture_spy": 76.8996997267339,
+      "downside_capture_growth": 12.553193708911905
     },
     "EINC": {
       "fractionable": false,
       "vs_spy": {
-        "corr_full": 0.32407671768741947,
-        "beta_full": 0.36811334091616793,
-        "downside_corr": 0.48470712917518627,
-        "rolling_60d_avg": 0.12644842473692638,
-        "rolling_60d_latest": -0.17680189221006534,
-        "rolling_60d_min": -0.47913170523339116,
-        "rolling_60d_max": 0.8034053045411225,
-        "rolling_120d_latest": -0.30179688568005,
+        "corr_full": 0.32407774092852626,
+        "beta_full": 0.3681143384064277,
+        "downside_corr": 0.48470703021582995,
+        "rolling_60d_avg": 0.12644940550173148,
+        "rolling_60d_latest": -0.17680189221006673,
+        "rolling_60d_min": -0.47913180096710706,
+        "rolling_60d_max": 0.8034054997868599,
+        "rolling_120d_latest": -0.30179696687726454,
         "observations": 503
       },
       "vs_growth": {
-        "corr_full": 0.261320977672956,
-        "beta_full": 0.11344589475986955,
-        "downside_corr": 0.3338121959555751,
-        "rolling_60d_avg": 0.1553689164322264,
-        "rolling_60d_latest": -0.13684286455412795,
-        "rolling_60d_min": -0.3506884765603502,
-        "rolling_60d_max": 0.7854523439536424,
-        "rolling_120d_latest": -0.20934118163487667,
+        "corr_full": 0.26132103372276994,
+        "beta_full": 0.11344595017745673,
+        "downside_corr": 0.333812008529643,
+        "rolling_60d_avg": 0.1553689185418814,
+        "rolling_60d_latest": -0.13684286455412745,
+        "rolling_60d_min": -0.35068849352845494,
+        "rolling_60d_max": 0.7854513037329575,
+        "rolling_120d_latest": -0.20934118156056325,
         "observations": 503
       },
-      "downside_capture_spy": -41.08384523613943,
-      "downside_capture_growth": -34.15450113383793
+      "downside_capture_spy": -41.08375241949753,
+      "downside_capture_growth": -34.15449223509835
     },
     "AMLP": {
       "fractionable": true,
       "vs_spy": {
-        "corr_full": 0.39023489621656576,
-        "beta_full": 0.363886424411011,
-        "downside_corr": 0.5079854095316267,
-        "rolling_60d_avg": 0.2047002599355315,
-        "rolling_60d_latest": -0.12576459708758359,
-        "rolling_60d_min": -0.3874549272631469,
-        "rolling_60d_max": 0.7966062934258534,
-        "rolling_120d_latest": -0.2265726436812511,
+        "corr_full": 0.39023583999214495,
+        "beta_full": 0.3638873447889041,
+        "downside_corr": 0.5079851207405184,
+        "rolling_60d_avg": 0.20470097762874886,
+        "rolling_60d_latest": -0.12576459708758436,
+        "rolling_60d_min": -0.3874549949909617,
+        "rolling_60d_max": 0.7966070379043092,
+        "rolling_120d_latest": -0.22657272243232834,
         "observations": 503
       },
       "vs_growth": {
-        "corr_full": 0.2557752723211679,
-        "beta_full": 0.09115470527215905,
-        "downside_corr": 0.25321333821651754,
-        "rolling_60d_avg": 0.1553513834278769,
-        "rolling_60d_latest": -0.1286000412606839,
-        "rolling_60d_min": -0.3850068332997007,
-        "rolling_60d_max": 0.7874109090154231,
-        "rolling_120d_latest": -0.2227048709096695,
+        "corr_full": 0.2557753763020376,
+        "beta_full": 0.0911548182150754,
+        "downside_corr": 0.2532122427024212,
+        "rolling_60d_avg": 0.1553513147358949,
+        "rolling_60d_latest": -0.12860004126068372,
+        "rolling_60d_min": -0.385006857063524,
+        "rolling_60d_max": 0.7874112144240931,
+        "rolling_120d_latest": -0.22270483020194845,
         "observations": 503
       },
-      "downside_capture_spy": 40.5650150324746,
-      "downside_capture_growth": -21.241139838423404
+      "downside_capture_spy": 40.56505437499869,
+      "downside_capture_growth": -21.24110956471484
     },
     "MLPX": {
       "fractionable": true,
       "vs_spy": {
-        "corr_full": 0.3431811115545216,
-        "beta_full": 0.3994902853314066,
-        "downside_corr": 0.48638381978699025,
-        "rolling_60d_avg": 0.1608449826234734,
-        "rolling_60d_latest": -0.18330026010258837,
-        "rolling_60d_min": -0.38017567285412707,
-        "rolling_60d_max": 0.8013219747596085,
-        "rolling_120d_latest": -0.2451218683569529,
+        "corr_full": 0.3431818686235276,
+        "beta_full": 0.3994909047888612,
+        "downside_corr": 0.4863836336310646,
+        "rolling_60d_avg": 0.16084548147846378,
+        "rolling_60d_latest": -0.18330026010259418,
+        "rolling_60d_min": -0.38017572472728106,
+        "rolling_60d_max": 0.8013228695315002,
+        "rolling_120d_latest": -0.2451219795366559,
         "observations": 503
       },
       "vs_growth": {
-        "corr_full": 0.2805540772089649,
-        "beta_full": 0.12481886111607177,
-        "downside_corr": 0.3462054605964229,
-        "rolling_60d_avg": 0.17850062932075114,
-        "rolling_60d_latest": -0.13460863062808273,
-        "rolling_60d_min": -0.25613886972301275,
-        "rolling_60d_max": 0.7833634809375194,
-        "rolling_120d_latest": -0.1471334831899776,
+        "corr_full": 0.280554411297323,
+        "beta_full": 0.12481901802293409,
+        "downside_corr": 0.34620551158346974,
+        "rolling_60d_avg": 0.1785010548647186,
+        "rolling_60d_latest": -0.1346086306280809,
+        "rolling_60d_min": -0.2561388874482974,
+        "rolling_60d_max": 0.7833635897892921,
+        "rolling_120d_latest": -0.14713360058439348,
         "observations": 503
       },
-      "downside_capture_spy": -37.416448927092986,
-      "downside_capture_growth": -31.785437192826375
+      "downside_capture_spy": -37.41636849121831,
+      "downside_capture_growth": -31.78548949640782
     },
     "MLPA": {
       "fractionable": true,
       "vs_spy": {
-        "corr_full": 0.38604300365836847,
-        "beta_full": 0.35730242409719853,
-        "downside_corr": 0.49960593686891563,
-        "rolling_60d_avg": 0.20422038671376647,
-        "rolling_60d_latest": -0.08114433802961989,
-        "rolling_60d_min": -0.3229718877835123,
-        "rolling_60d_max": 0.7629724559513924,
-        "rolling_120d_latest": -0.1904441280397996,
+        "corr_full": 0.38604408803911017,
+        "beta_full": 0.35730334994332125,
+        "downside_corr": 0.4996057236282843,
+        "rolling_60d_avg": 0.20422153130474385,
+        "rolling_60d_latest": -0.08114433802961744,
+        "rolling_60d_min": -0.32297222852028673,
+        "rolling_60d_max": 0.7629728589120981,
+        "rolling_120d_latest": -0.19044429651257994,
         "observations": 503
       },
       "vs_growth": {
-        "corr_full": 0.2764402676082692,
-        "beta_full": 0.09778728000753219,
-        "downside_corr": 0.2521118866339243,
-        "rolling_60d_avg": 0.17738035555573892,
-        "rolling_60d_latest": -0.05112637722899518,
-        "rolling_60d_min": -0.3044338425247146,
-        "rolling_60d_max": 0.7714187822542882,
-        "rolling_120d_latest": -0.16065470010533242,
+        "corr_full": 0.2764406541750296,
+        "beta_full": 0.09778746602784835,
+        "downside_corr": 0.25211177767457205,
+        "rolling_60d_avg": 0.17738055660520174,
+        "rolling_60d_latest": -0.05112637722899203,
+        "rolling_60d_min": -0.30443386566742114,
+        "rolling_60d_max": 0.7714193817016755,
+        "rolling_120d_latest": -0.16065470706917656,
         "observations": 503
       },
-      "downside_capture_spy": 52.45295905103927,
-      "downside_capture_growth": -19.356703099648822
+      "downside_capture_spy": 52.45307236949963,
+      "downside_capture_growth": -19.35664366919762
     },
     "TPYP": {
       "fractionable": true,
       "vs_spy": {
-        "corr_full": 0.3281313182476639,
-        "beta_full": 0.3366878995716919,
-        "downside_corr": 0.4699606319206059,
-        "rolling_60d_avg": 0.14292745127988643,
-        "rolling_60d_latest": -0.20409523273261432,
-        "rolling_60d_min": -0.44063702092344664,
-        "rolling_60d_max": 0.7972433155495392,
-        "rolling_120d_latest": -0.30109646416720515,
+        "corr_full": 0.32813268648399413,
+        "beta_full": 0.33668911104170784,
+        "downside_corr": 0.46995981608300785,
+        "rolling_60d_avg": 0.14292852127572905,
+        "rolling_60d_latest": -0.20409523273261884,
+        "rolling_60d_min": -0.44063707965668514,
+        "rolling_60d_max": 0.7972443248042497,
+        "rolling_120d_latest": -0.30109643094204436,
         "observations": 503
       },
       "vs_growth": {
-        "corr_full": 0.23823348338380454,
-        "beta_full": 0.09342506546438772,
-        "downside_corr": 0.3317611018529604,
-        "rolling_60d_avg": 0.13926688349674735,
-        "rolling_60d_latest": -0.20287089339141623,
-        "rolling_60d_min": -0.35697798817202403,
-        "rolling_60d_max": 0.7584378993575261,
-        "rolling_120d_latest": -0.2470673372832934,
+        "corr_full": 0.23823390706596595,
+        "beta_full": 0.09342524563685381,
+        "downside_corr": 0.3317602978035734,
+        "rolling_60d_avg": 0.13926718330384566,
+        "rolling_60d_latest": -0.202870893391416,
+        "rolling_60d_min": -0.3569780033075741,
+        "rolling_60d_max": 0.7584378882941755,
+        "rolling_120d_latest": -0.247067338049052,
         "observations": 503
       },
-      "downside_capture_spy": -50.39011793763537,
-      "downside_capture_growth": -33.36951533793947
+      "downside_capture_spy": -50.39018259912107,
+      "downside_capture_growth": -33.369581327385326
     }
   },
   "worst_growth_stress": {
     "RSP": {
-      "avg_return_worst_growth_months": -0.0052123017724916565,
+      "avg_return_worst_growth_months": -0.005212352541894583,
       "positive_count": 3
     },
     "EINC": {
-      "avg_return_worst_growth_months": 0.021543547579289824,
+      "avg_return_worst_growth_months": 0.021543547716928634,
       "positive_count": 4
     },
     "AMLP": {
-      "avg_return_worst_growth_months": 0.014854257409264649,
+      "avg_return_worst_growth_months": 0.014854221858402017,
       "positive_count": 4
     },
     "MLPX": {
-      "avg_return_worst_growth_months": 0.018249429865652235,
+      "avg_return_worst_growth_months": 0.018249442569867002,
       "positive_count": 4
     },
     "MLPA": {
-      "avg_return_worst_growth_months": 0.014899692878316984,
+      "avg_return_worst_growth_months": 0.01489965890298186,
       "positive_count": 3
     },
     "TPYP": {
-      "avg_return_worst_growth_months": 0.021936350370298972,
+      "avg_return_worst_growth_months": 0.021936349088016182,
       "positive_count": 4
     }
   }
