@@ -1,0 +1,10 @@
+{
+  "name": "signalbrief-regression-tests",
+  "private": true,
+  "scripts": {
+    "test": "node --test followup-worker.test.mjs && node followup-frontend.cjs && node followup-evidence.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "31.0.1"
+  }
+}

@@ -27,6 +27,8 @@
 #sb .followup-turn { border-bottom:1px solid var(--rule); margin-bottom:16px; padding-bottom:16px; }
 #sb .followup-turn:last-child { border-bottom:0; margin-bottom:0; padding-bottom:0; }
 #sb .followup-turn h3 { margin:0 0 10px; font-size:13px; color:var(--inference); text-transform:none; letter-spacing:0; }
+#sb .followup-turn h4 { margin:16px 0 7px; font-size:14px; }
+#sb .followup-turn a { color:var(--inference); }
 #sb .followup-sources { padding-top:10px; border-top:1px solid var(--rule); font-size:12px; }
 #sb .followup-sources a { display:block; color:var(--inference); margin-top:5px; }
 #sb .followup-answer-heading { display:flex; justify-content:space-between; align-items:center; margin:18px 0 7px; font-weight:600; font-size:12.5px; }

@@ -1,8 +1,10 @@
-const CACHE = 'signalbrief-v030-oai-shell-1';
+const CACHE = 'signalbrief-v031-oai-followup-1';
 const SHELL = [
   './',
   './index.html',
   './manifest.json',
+  './followup.js',
+  './followup.css',
   './icon-192.png',
   './icon-512.png'
 ];

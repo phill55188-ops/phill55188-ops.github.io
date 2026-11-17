@@ -8,10 +8,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SignalBrief">
-<title>SignalBrief v0.3-OAI</title>
+<title>SignalBrief v0.3.1-OAI</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="stylesheet" href="./followup.css">
 </head>
 <body>
 <style>
@@ -271,7 +272,7 @@
 <div id="sb">
   <div class="masthead">
     <h1 class="wordmark">SignalBrief</h1>
-    <span class="version">v0.3-OAI</span>
+    <span class="version">v0.3.1-OAI</span>
     <span class="tagline">Separates what a source supports from what it merely suggests</span>
   </div>
 
@@ -315,7 +316,7 @@
           <button type="button" id="sb-mode-source" aria-pressed="true">Source analysis</button>
           <button type="button" id="sb-mode-evidence" aria-pressed="false">Evidence check</button>
         </div>
-        <div class="modenote" id="sb-modenote">Examines only the primary material you supply. No outside research.</div>
+        <div class="modenote" id="sb-modenote">Examines only the primary material you supply. No outside research in the original analysis. Section follow-ups can research the web.</div>
       </div>
 
       <div class="field">
@@ -365,7 +366,7 @@
     <div class="results" id="sb-results">
       <div class="empty">
         <h2>Nothing analyzed yet</h2>
-        <p>SignalBrief reads only what you provide. It does not search, retrieve, or fill gaps with outside knowledge.</p>
+        <p>SignalBrief reads only what you provide. The original analysis does not search the web. After analysis, use Ask a follow-up in any section for separate web research.</p>
         <p>Every claim is labeled by what the supplied evidence actually establishes — source-supported, inferred, opinion, or unsupported. A source-supported label means the source states it, not that it is independently verified.</p>
         <p style="margin-bottom:0">Load the example to see it work.</p>
       </div>
@@ -373,6 +374,7 @@
   </div>
 </div>
 
+<script src="./followup.js" defer></script>
 <script>
 (function () {
   const $ = id => document.getElementById(id);
@@ -643,7 +645,7 @@
     $('sb-mode-source').setAttribute('aria-pressed', String(m === 'source'));
     $('sb-mode-evidence').setAttribute('aria-pressed', String(m === 'evidence'));
     $('sb-modenote').textContent = m === 'source'
-      ? 'Examines only the primary material you supply. No outside research.'
+      ? 'Examines only the primary material you supply. No outside research in the original analysis. Section follow-ups can research the web.'
       : 'Tests the primary source\u2019s claims against the supporting evidence you supply. Still no outside research.';
     $('sb-support-field').style.display = m === 'evidence' ? '' : 'none';
     if (m === 'evidence' && supportCount === 0) addSupport();
@@ -1393,6 +1395,7 @@ HARD LIMITS: at most 5 questions.`;
       }
     }
 
+    window.SignalBriefFollowup?.begin({subject,source,support,thesis});
     shell();
     let summary = null, claims = [], checks = [], deps = null, risks = null;
 
@@ -1527,6 +1530,7 @@ Regarding the state utility commission review, the filing indicates that the tim
   });
 
   clearBtn.addEventListener('click', () => {
+    window.SignalBriefFollowup?.clear();
     subjectEl.value = ''; sourceEl.value = ''; thesisEl.value = ''; urlEl.value = '';
     sourceMeta = null;
     $('sb-support-list').innerHTML = '';

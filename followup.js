@@ -39,13 +39,36 @@
     });
   }
   function safeURL(value) { try {const u=new URL(value); return /^https?:$/.test(u.protocol) ? u.href : null;} catch {return null;} }
+  function inlineText(parent,text) {
+    // Minimal Markdown via DOM nodes: never interpret model output as HTML.
+    const pattern=/(\*\*([^*]+)\*\*|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\))/g;
+    let start=0,match;
+    while((match=pattern.exec(text))) {
+      parent.append(document.createTextNode(text.slice(start,match.index)));
+      if(match[2]) {const strong=document.createElement('strong');strong.textContent=match[2];parent.append(strong);}
+      else {const url=safeURL(match[4]);if(url){const link=document.createElement('a');link.href=url;link.textContent=match[3];link.target='_blank';link.rel='noopener noreferrer';parent.append(link);}else parent.append(document.createTextNode(match[3]));}
+      start=pattern.lastIndex;
+    }
+    parent.append(document.createTextNode(text.slice(start)));
+  }
+  function answerText(parent,text) {
+    let list=null;
+    String(text).split(/\n\s*\n/).forEach(block=>{
+      const lines=block.split('\n');
+      for(const line of lines){
+        if(/^\s*[-*]\s+/.test(line)){if(!list){list=document.createElement('ul');parent.append(list);}const li=document.createElement('li');inlineText(li,line.replace(/^\s*[-*]\s+/,''));list.append(li);}
+        else {list=null;const heading=line.match(/^#{1,6}\s+(.+)$/);const p=document.createElement(heading?'h4':'p');inlineText(p,heading?heading[1]:line);parent.append(p);}
+      }
+      list=null;
+    });
+  }
   function renderAnswers() {
     answer.replaceChildren();
     if (!active.history.length) { const p=document.createElement('p'); p.textContent='Your answer will appear here. No evidence attachment is required.'; answer.append(p); }
     active.history.forEach(turn=>{
       const article=document.createElement('article'); article.className='followup-turn';
       const heading=document.createElement('h3'); heading.textContent=turn.question; article.append(heading);
-      const p=document.createElement('p'); p.textContent=turn.answer; article.append(p);
+      answerText(article,turn.answer);
       if (turn.citations.length) {
         const sources=document.createElement('div'); sources.className='followup-sources'; sources.textContent='Sources consulted';
         turn.citations.forEach((c,i)=>{ const url=safeURL(c.url); if(!url)return; const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=(i+1)+'. '+(c.title||new URL(url).hostname); sources.append(link); }); article.append(sources);
@@ -97,8 +120,8 @@
     const backend=document.getElementById('sb-backend-url').value.trim().replace(/\/+$/,''),access=document.getElementById('sb-access-token').value.trim();
     if(!backend||!access){message('Open Backend connection on the main page, enter your existing access code, and test the connection.',true);return;}
     const session=active, current=++generation;
-    controller=new AbortController(); const signal=controller.signal;
-    const timer=setTimeout(()=>controller?.abort(),240000);
+    controller=new AbortController(); const requestController=controller,signal=requestController.signal;
+    const timer=setTimeout(()=>requestController.abort(),240000);
     busy(true);message('Researching the evidence, alternatives, and counterarguments…');
     try {
       const response=await fetch(backend+'/api/followup',{method:'POST',headers:{'Content-Type':'application/json','X-SignalBrief-Access':access},signal,body:JSON.stringify({question:text,section:session.section,context,history:session.history.slice(-6).map(t=>({question:t.question,answer:t.answer})),evidence:session.evidence})});
