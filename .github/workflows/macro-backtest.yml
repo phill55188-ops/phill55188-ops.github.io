@@ -1,0 +1,40 @@
+name: MACRO v08 Backtest
+
+on:
+  push:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/**'
+      - '.github/workflows/macro-backtest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: macro-backtest-v08-results-writer
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    if: github.actor != 'github-actions[bot]' && github.ref == 'refs/heads/macro-backtest-v08'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r macro-backtest/requirements.txt
+      - name: Run test
+        run: python macro-backtest/backtest.py
+      - name: Save results to branch
+        run: >-
+          python macro-backtest/persist_results.py
+          macro-backtest/results
+          "Run MACRO v08 backtest"

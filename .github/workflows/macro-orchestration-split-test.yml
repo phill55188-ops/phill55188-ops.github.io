@@ -1,0 +1,46 @@
+name: MACRO Orchestration Split Test
+
+on:
+  push:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/backtest.py'
+      - 'macro-backtest/dependency_cap_test.py'
+      - 'macro-backtest/performance_metrics.py'
+      - 'macro-backtest/persist_results.py'
+      - 'macro-backtest/requirements.txt'
+      - 'macro-backtest/satellite_weight_test.py'
+      - 'macro-backtest/orchestration_split_test.py'
+      - '.github/workflows/macro-orchestration-split-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: macro-backtest-v08-results-writer
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  orchestration-split-test:
+    if: github.actor != 'github-actions[bot]' && github.ref == 'refs/heads/macro-backtest-v08'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r macro-backtest/requirements.txt
+      - name: Run orchestration split comparison
+        run: python macro-backtest/orchestration_split_test.py
+      - name: Save orchestration comparison results
+        run: >-
+          python macro-backtest/persist_results.py
+          macro-backtest/results-orchestration
+          "Run orchestration split comparison"

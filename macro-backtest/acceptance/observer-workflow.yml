@@ -1,0 +1,127 @@
+name: MACRO Completed Run Acceptance
+
+# GitHub requires workflow_run observers on the repository's default branch.
+# This observer never executes a backtest or changes repository contents.
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/macro-acceptance-observer.yml']
+  workflow_run:
+    workflows: [MACRO Defense Mix Test, MACRO Historical Validation]
+    types: [completed]
+    branches: [macro-backtest-v08]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  observer-definition-fixture:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install PyYAML==6.0.3
+      - name: Check read-only observer definition only
+        run: |
+          python - <<'PYFIXTURE'
+          from pathlib import Path
+          import yaml
+          p=Path('.github/workflows/macro-acceptance-observer.yml')
+          d=yaml.load(p.read_text(),Loader=yaml.BaseLoader)
+          assert d['permissions']=={'contents':'read','actions':'read'}
+          assert set(d['on'])=={'workflow_run','pull_request'}
+          assert d['on']['workflow_run']['branches']==['macro-backtest-v08']
+          assert d['on']['workflow_run']['workflows']==['MACRO Defense Mix Test','MACRO Historical Validation']
+          assert d['on']['workflow_run']['types']==['completed']
+          gate=d['jobs']['completed-run-gate']
+          assert "github.event_name == 'workflow_run'" in gate['if']
+          assert "head_repository.full_name == github.repository" in gate['if']
+          assert 'verify_persisted_capture.py' in str(gate)
+          assert 'accept_observed_capture.py' in str(gate)
+          assert '369746177' in str(gate) and '374956997' in str(gate)
+          print('Read-only observer definition fixture passed; no backtest executed')
+          PYFIXTURE
+  completed-run-gate:
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.head_branch == 'macro-backtest-v08'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fetch and bind actual completed generation receipt
+        id: provider
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN: ${{ github.event.workflow_run.id }}
+          SOURCE_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN/attempts/$SOURCE_ATTEMPT" > provider-run.json
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN/artifacts?per_page=100" > artifact-pages.json
+          python - <<'PY'
+          import json, os, re
+          run=json.load(open('provider-run.json'))
+          approved={369746177:('MACRO Defense Mix Test','.github/workflows/macro-defense-mix-test.yml'),374956997:('MACRO Historical Validation','.github/workflows/macro-historical-validation.yml')}
+          assert run['repository']['full_name']==os.environ['GITHUB_REPOSITORY']=='phill55188-ops/phill55188-ops.github.io'
+          assert run['head_repository']['full_name']==os.environ['GITHUB_REPOSITORY']
+          assert run['id']==int(os.environ['SOURCE_RUN']) and run['run_attempt']==int(os.environ['SOURCE_ATTEMPT'])
+          assert run['status']=='completed' and run['conclusion']=='success'
+          assert run['head_branch']=='macro-backtest-v08' and run['event'] in ('push','workflow_dispatch')
+          assert run['head_sha']==os.environ['SOURCE_SHA'] and re.fullmatch('[a-f0-9]{40}',run['head_sha'])
+          assert approved[run['workflow_id']]==(run['name'],run['path'])
+          name=f"macro-capture-{run['id']}-{run['run_attempt']}"
+          artifacts=[a for page in json.load(open('artifact-pages.json')) for a in page['artifacts'] if a['name']==name and not a['expired']]
+          assert len(artifacts)==1, 'Missing or ambiguous captured evidence artifact'
+          artifact=artifacts[0]
+          assert artifact['workflow_run']['id']==run['id'] and artifact['workflow_run']['head_sha']==run['head_sha']
+          json.dump(artifact,open('artifact.json','w'),indent=2)
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write(f"code_sha={run['head_sha']}\nartifact_id={artifact['id']}\n")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.provider.outputs.code_sha }}
+          path: engine
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ steps.provider.outputs.artifact_id }}
+          path: captured
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+          merge-multiple: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install acceptance-only dependencies
+        run: pip install jsonschema==4.26.0 pandas==2.2.3 numpy==2.3.5 'exchange-calendars>=4,<5'
+      - name: Verify persisted capture bytes and identity
+        run: >-
+          python engine/macro-backtest/acceptance/verify_persisted_capture.py
+          --checkout engine --capture captured --provider-run provider-run.json
+          --artifact artifact.json --output capture-verification.json
+      - name: Prepare and evaluate acceptance records
+        run: python engine/macro-backtest/acceptance/accept_observed_capture.py --checkout engine --capture captured --provider-run provider-run.json --verified-capture capture-verification.json --output gate-result.json
+      - name: Save acceptance evidence, never a fabricated successful backtest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-acceptance-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
+          path: |
+            provider-run.json
+            artifact.json
+            capture-verification.json
+            gate-result.json
+            acceptance-records/
+          if-no-files-found: warn
+          retention-days: 30

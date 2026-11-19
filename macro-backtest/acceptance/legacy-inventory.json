@@ -1,0 +1,295 @@
+{
+  "artifacts": [
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-current-portfolio/current_portfolio_results.json",
+      "sha256": "a5e2a8d9a38c4322613813367c44b049f618a4da2cba94af10711359e46e20f6",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-current-portfolio/current_portfolio_summary.csv",
+      "sha256": "3697bb3c29830c083585dde92de1658dea54c9c9bddfbc156d1eaa6e5329f08e",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-current-portfolio/current_portfolio_trades.csv",
+      "sha256": "de9b2d2de5a51b1aee99bf2c5bfe2e52bfa236e6158067de807d8a262f8aaf68",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/correlation_stress_monthly_returns.csv",
+      "sha256": "80eacea00ae64049ae83d3d5e9849cd116ade07c5a5e5817d4d4944cb0712557",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/correlation_stress_portfolio_monthly.csv",
+      "sha256": "44a5f3b575e35be6bf67a3ae292cd285f3201242df93e004deca0d6d8c693ad4",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/correlation_stress_results.json",
+      "sha256": "79989be2f5e6811ca42cb0939e679dc808522d3f12cbfad5ec1bac127d5f53b0",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/defense_mix_results.json",
+      "sha256": "02e03f009615fe1b1ea4116c066ae826e3cbd3d0aa14bd6c7b9f687c517dc346",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/defense_mix_summary.csv",
+      "sha256": "02a181f731aba94501b332941038b0ba6ef5d40ddaf8f5044bb7c768c47905ea",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/defense_mix_targets.csv",
+      "sha256": "e33e7027910ceba7e94324763a16c00a110a86872d6ed161072ac4a0fd9c6c26",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/defense_mix_trades.csv",
+      "sha256": "ad96c333ffb1f6306395eb53e139b9318e13577b27e0e16fe227a3bbd04fc09a",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/fn_allocation_results.json",
+      "sha256": "e94d824564600c03370c203e090bdbe640579170118c60c7176262698a285d38",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/fn_allocation_summary.csv",
+      "sha256": "eadfc52b27d10d04847bbb1621dc50e27a6c03ed353f39fa1c927a08521a85cc",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/fn_allocation_targets.csv",
+      "sha256": "6e5a6267509353c21f4353cbf7004f38730ba8a48bc0621c5a5e328f9c792be4",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/fn_allocation_trades.csv",
+      "sha256": "4d81e9d776bb1e1e7c233fadee8056587e93fe23fb79895dd8ff07f22cbdc626",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/fractional_diversifier_results.json",
+      "sha256": "eeb7fa903b2b3c82729cf0af990099d24651f307de4f7d66da878503d4ddc5ca",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/fractional_diversifier_summary.csv",
+      "sha256": "48b2189a13645c0a5ea12db0cf508ea643b9b88cc41e3b493d5fd326d9be90ed",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/rsp_replacement_results.json",
+      "sha256": "99319e1d2de85c7195283eb2c56056803bf1bcbfc1b89c3b27970cc07a664193",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/rsp_replacement_summary.csv",
+      "sha256": "4261111a6b1a289ccb017be4daba91221d5ea06876149bd49be0f760bb158493",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/rsp_replacement_targets.csv",
+      "sha256": "4c95891413382e335e491d071c370f8cc45dfeaa551d5689a7af444b4779480e",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-defense-mix/rsp_replacement_trades.csv",
+      "sha256": "9775b50ca92a0a437176688883321390f8b2f143a98552c8a2a5132e4ed6b8a5",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/controlled_three_config.html",
+      "sha256": "c61ff69189f5ddf7f482c673c4714d5ad4574a4c4fbc901faa0a3ffe13ee6225",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/controlled_three_config_results.json",
+      "sha256": "20f845508937b8640426c8a03605ce29d213ff6154117ef5e4d7dade49d3d029",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/controlled_three_config_summary.csv",
+      "sha256": "0ab81bb72420523e3fbb1fa74e50673248d2b9819f7afc998beeef111db87a9c",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/controlled_three_config_targets.csv",
+      "sha256": "5c334fd234ffc21c1f8cf130d4053fddcf98ac26dd6ec4e2db6376eb0ccfc3f4",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/controlled_three_config_trades.csv",
+      "sha256": "8551a6b3781c29d6a0855c5f8b220c5909cb66f188e350e08e097339f044779d",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/index.html",
+      "sha256": "317a90b41a29fa6c9dde5eec70238cb9ccabf507535560cd47780680ebb6e2e9",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/results.json",
+      "sha256": "b441aea84eb835d70dad0aa6d130249b5979aadbdeaed849225f5d9aad1c8b0e",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/satellite_weight_grid_full.csv",
+      "sha256": "3a3b51a0c1286ba89bb171cb70171cea732643a58b5cddf3fe65d248ce4d996e",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/satellite_weight_grid_trades.csv",
+      "sha256": "98c651e09f0a575f3378e5be94bee6f0615a563b8be237583af2f68e2f5d7527",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/satellite_weight_test_results.json",
+      "sha256": "fa448ab6a908fdb7cdfb50bb13bdb6a56e1840190fa7292ad8df81edf8944091",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/satellite_weight_top12_return.csv",
+      "sha256": "2ccc4cbfa666adecefe67e33ce17ba3441668771da72592da9c47a6da8ddeaf7",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/summary.csv",
+      "sha256": "504388109401f755ddd2e8772e32e7439c9d2e6245a6d53703c04fa296ea5ae2",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/trades.csv",
+      "sha256": "d0ad0496bbed218ecfc54e949688b5079db9bfb1d8b36c2e2370cce889dd0d36",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-dependency-caps/v10_5_targets.csv",
+      "sha256": "c23ab53284216beb45d636f3866ea170204f1b91ab7405eb98fac361d4a92bde",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-historical-validation/march_2026_anchor_benchmarks.json",
+      "sha256": "3c3a6725c3093d97027202df5a97cebb692f5debdf3bc0e464baaa4257d12f2e",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-historical-validation/march_2026_anchor_results.json",
+      "sha256": "cad8de35140249b1c6cd436d11bf26689f67954cdd4b412a72ab5049aa13332b",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-orchestration/orchestration_split_results.json",
+      "sha256": "3c680728ff6fc4e57251715017a5092f41829f3f7935a05f7cc238bb89ba46ed",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-orchestration/orchestration_split_summary.csv",
+      "sha256": "6e33acdc7d614fc2d6463dabbc7b2d756ff60648f5b800fa04bbbd03d95c3139",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-orchestration/orchestration_split_targets.csv",
+      "sha256": "3644dcd2fbd09635970077825cae757cd248abf2a1f782a1bdba3e51636f03e7",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-orchestration/orchestration_split_trades.csv",
+      "sha256": "41285ddb49952b72d7750b24264bd1df2a28950c6f54fed8daf4f1ceee5cedba",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-weighting/index.html",
+      "sha256": "006c6db306ea94db1540a4739e745d78ce8b71f8354f25bb8275ff17afeefe06",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-weighting/results.json",
+      "sha256": "e7728beffe3684f75ab38c45aa707bb7b56833cefbf292047b70e8c336bb7310",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-weighting/summary.csv",
+      "sha256": "2ac9dad0f0db9194cf1d32d7983a2da1be266ba513352fd900fc1fcae90cf204",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results-weighting/trades.csv",
+      "sha256": "6db3c33a8fcb9579ab52701c53e46847f501937aa38e6207c4e1ef164f14e09c",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results/index.html",
+      "sha256": "ef45f46adf8ed12268f2004202e471241057492e5c3d0c362a7384b9bf793534",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results/results.json",
+      "sha256": "cd6be62325275fa32d212fc0bf126ef1454c3d4533d8763fee6aa1b3d2ca6695",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results/summary.csv",
+      "sha256": "190d3e4e9986e8da9d7a8ba0873890274426ee46746c7f08af04822c68549fe1",
+      "status": "LEGACY_NOT_REVALIDATED"
+    },
+    {
+      "current_acceptance": false,
+      "path": "macro-backtest/results/trades.csv",
+      "sha256": "49b2062d5ff72bf66e54158cb1343d8e3201ed35bd393a95ac83db918433e5a9",
+      "status": "LEGACY_NOT_REVALIDATED"
+    }
+  ],
+  "inventory_version": "1.4",
+  "policy": "Inventory only, not a determination that old results are false. No recalculation, deletion, migration or execution. Current acceptance requires explicit current-contract revalidation with original evidence or separately authorized rerun.",
+  "source_commit": "e8f29f16cd6891c943c1c3f81666dd329755b1ed"
+}

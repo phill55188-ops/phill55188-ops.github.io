@@ -1,0 +1,44 @@
+name: MACRO v08 Weighting Test
+
+on:
+  push:
+    branches: [macro-backtest-v08]
+    paths:
+      - 'macro-backtest/backtest.py'
+      - 'macro-backtest/performance_metrics.py'
+      - 'macro-backtest/persist_results.py'
+      - 'macro-backtest/requirements.txt'
+      - 'macro-backtest/weighting_test.py'
+      - '.github/workflows/macro-weighting-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: macro-backtest-v08-results-writer
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  weighting-test:
+    if: github.actor != 'github-actions[bot]' && github.ref == 'refs/heads/macro-backtest-v08'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r macro-backtest/requirements.txt
+      - name: Run weighting comparison
+        run: python macro-backtest/weighting_test.py
+      - name: Save weighting results to branch
+        run: >-
+          python macro-backtest/persist_results.py
+          macro-backtest/results-weighting
+          "Run MACRO v08 weighting comparison"

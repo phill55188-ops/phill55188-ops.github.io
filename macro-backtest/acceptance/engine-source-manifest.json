@@ -1,0 +1,51 @@
+{
+  "repository": "phill55188-ops/phill55188-ops.github.io",
+  "branch": "macro-backtest-v08",
+  "commit": "e57e26ef1258cba162471f8e6ba6f2eb9f41efee",
+  "inspected_at": "2026-10-25T05:13:41Z",
+  "scope": "seven files read-only; no live run or workflow dispatch",
+  "files": [
+    {
+      "path": "macro-backtest/backtest.py",
+      "git_blob_sha": "473e50cde965743a71a8e5be2ac8e64cf390d762",
+      "sha256": "91eac92d9ee6c4262572c00fc4752a98e338f4750f4c11285b63d00ea9d4b418",
+      "bytes": 9739
+    },
+    {
+      "path": "macro-backtest/historical_validation.py",
+      "git_blob_sha": "e17483f83ba8a3a4a368e3d4d7ac37bcc41a766a",
+      "sha256": "36ac46ebd36481472dcf9b8ee98fb97c9e7cb3d95a2bf8e247e83e8ab339de72",
+      "bytes": 13760
+    },
+    {
+      "path": "macro-backtest/defense_mix_test.py",
+      "git_blob_sha": "5da2cab5aae1672743336f75b7b4a5edc30f291c",
+      "sha256": "6312d97c0bc23a27daa04fdd80cbcfe7d5574544308a7c519c4c19f9f91620c5",
+      "bytes": 13737
+    },
+    {
+      "path": "macro-backtest/orchestration_split_test.py",
+      "git_blob_sha": "beb44c977e239e231458a85292f90efdeccdcb89",
+      "sha256": "49b25c7b3db958356e42cc6016b5d1129669dc8b9fd9f3268b02ea81209337df",
+      "bytes": 6741
+    },
+    {
+      "path": ".github/workflows/macro-historical-validation.yml",
+      "git_blob_sha": "9ccb99f554cbab401399d3e847cdb2282e24a00b",
+      "sha256": "38f10c9d0557028a0631bace64a100f46f26e72ed5ed46d4ca4349b3971cd682",
+      "bytes": 1861
+    },
+    {
+      "path": ".github/workflows/macro-defense-mix-test.yml",
+      "git_blob_sha": "8038d07a9a49049cd5c533864895b78639f044f0",
+      "sha256": "346c5cbc0b22d106543c8b4c76b933e5bb6fd0a040e65c4d39215845081143d6",
+      "bytes": 1474
+    },
+    {
+      "path": "macro-backtest/configs/2026-03-27_pre_bull_run_anchor.json",
+      "git_blob_sha": "c89732901a6902213464931673b1552fdc54563f",
+      "sha256": "967e4f1b38ddb2154452b5d5920dcda92f78b08ed56e6e384aab914bceb6cb25",
+      "bytes": 724
+    }
+  ]
+}
