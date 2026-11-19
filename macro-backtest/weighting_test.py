@@ -15,19 +15,26 @@ def equal_growth():
 
 def capped_growth(cap=0.10):
     """Cap any growth holding at 10%, redistribute excess proportionally to uncapped names."""
-    g = dict(GROWTH)
-    excess = 0.0
-    uncapped = []
-    for t, w in list(g.items()):
-        if w > cap:
-            excess += w - cap
+    total = sum(GROWTH.values())
+    if not 0 < cap or cap * len(GROWTH) < total - 1e-12:
+        raise ValueError("Cap is infeasible for the growth sleeve")
+
+    # Redistribute among surviving names in their original proportions. Each
+    # pass either fixes at least one new weight at the cap or finishes.
+    remaining = dict(GROWTH)
+    g = {}
+    while remaining:
+        budget = total - sum(g.values())
+        base = sum(remaining.values())
+        proposed = {t: budget * w / base if base else budget / len(remaining)
+                    for t, w in remaining.items()}
+        above = [t for t, w in proposed.items() if w > cap]
+        if not above:
+            g.update(proposed)
+            break
+        for t in above:
             g[t] = cap
-        else:
-            uncapped.append(t)
-    base = sum(g[t] for t in uncapped)
-    for t in uncapped:
-        g[t] += excess * (g[t] / base)
-    assert abs(sum(g.values()) - 0.81) < 1e-9
+            del remaining[t]
     return {**DEFENSE, **g}
 
 
