@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yfinance as yf
+import exchange_calendars as xc
 
 from backtest import DEFENSE, CASH, GROWTH, load_earnings, run
 
@@ -52,7 +53,32 @@ def load_prices(active_growth):
         series[t] = c
     p = pd.DataFrame(series)
     p.index = pd.to_datetime(p.index).tz_localize(None)
-    return p.resample('ME').last().ffill()
+    return completed_session_prices(p)
+
+
+def completed_session_prices(prices, as_of=None):
+    """Use observed final-session closes; never label unfinished months as complete."""
+    today = pd.Timestamp.now(tz="America/New_York").date() if as_of is None else as_of
+    cutoff = pd.Timestamp(today).to_period("M").start_time
+    prices = prices.sort_index().loc[lambda frame: frame.index < cutoff]
+    if prices.empty:
+        raise ValueError("No completed month of stress-test prices")
+
+    start = prices.index[0].to_period("M").start_time
+    end = prices.index[-1] + pd.offsets.MonthEnd(0)
+    calendar = xc.get_calendar("XNYS", start=start - pd.Timedelta(days=31),
+                               end=end + pd.Timedelta(days=31))
+    sessions = calendar.sessions_in_range(start, end).tz_localize(None)
+    last_sessions = sessions.to_series().resample("ME").last()
+    monthly = prices.reindex(pd.DatetimeIndex(last_sessions))
+    monthly.index = last_sessions.index
+    # Leading missing prices before inception are handled by the common-window
+    # selection. A missing final quote inside an asset's history is not usable.
+    for ticker in monthly:
+        first = prices[ticker].first_valid_index()
+        if first is None or monthly.loc[first:, ticker].isna().any():
+            raise ValueError(f"Missing final-session close for {ticker}")
+    return monthly
 
 
 def normalize_current(active_growth):

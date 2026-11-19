@@ -4,6 +4,10 @@ on:
   push:
     branches: [macro-backtest-v08]
     paths:
+      - 'macro-backtest/backtest.py'
+      - 'macro-backtest/performance_metrics.py'
+      - 'macro-backtest/persist_results.py'
+      - 'macro-backtest/requirements.txt'
       - 'macro-backtest/dependency_cap_test.py'
       - 'macro-backtest/satellite_weight_test.py'
       - '.github/workflows/macro-dependency-cap-test.yml'
@@ -12,15 +16,21 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: macro-backtest-v08-results-writer
+  queue: max
+  cancel-in-progress: false
+
 jobs:
   dependency-cap-test:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && github.ref == 'refs/heads/macro-backtest-v08'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: macro-backtest-v08
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -31,14 +41,7 @@ jobs:
       - name: Run ADBE TSM SNPS satellite weight sensitivity
         run: python macro-backtest/satellite_weight_test.py
       - name: Save dependency cap results to branch
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add macro-backtest/results-dependency-caps
-          if git diff --cached --quiet; then
-            echo "No result changes"
-          else
-            git commit -m "Run dependency and satellite weight comparisons"
-            git pull --rebase origin macro-backtest-v08
-            git push origin HEAD:macro-backtest-v08
-          fi
+        run: >-
+          python macro-backtest/persist_results.py
+          macro-backtest/results-dependency-caps
+          "Run dependency and satellite weight comparisons"

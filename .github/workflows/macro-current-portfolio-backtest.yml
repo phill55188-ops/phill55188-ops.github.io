@@ -4,6 +4,9 @@ on:
   push:
     branches: [macro-backtest-v08]
     paths:
+      - 'macro-backtest/performance_metrics.py'
+      - 'macro-backtest/persist_results.py'
+      - 'macro-backtest/requirements.txt'
       - 'macro-backtest/backtest.py'
       - 'macro-backtest/defense_mix_test.py'
       - 'macro-backtest/current_portfolio_backtest.py'
@@ -13,15 +16,21 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: macro-backtest-v08-results-writer
+  queue: max
+  cancel-in-progress: false
+
 jobs:
   current-portfolio-backtest:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && github.ref == 'refs/heads/macro-backtest-v08'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: macro-backtest-v08
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -30,14 +39,7 @@ jobs:
       - name: Run current portfolio backtest
         run: python macro-backtest/current_portfolio_backtest.py
       - name: Persist current portfolio results
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add macro-backtest/results-current-portfolio
-          if git diff --cached --quiet; then
-            echo "No result changes"
-          else
-            git commit -m "Run v10.37 current portfolio backtest"
-            git pull --rebase origin macro-backtest-v08
-            git push origin HEAD:macro-backtest-v08
-          fi
+        run: >-
+          python macro-backtest/persist_results.py
+          macro-backtest/results-current-portfolio
+          "Run v10.37 current portfolio backtest"

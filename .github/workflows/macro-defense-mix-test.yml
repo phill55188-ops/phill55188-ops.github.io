@@ -4,6 +4,10 @@ on:
   push:
     branches: [macro-backtest-v08]
     paths:
+      - 'macro-backtest/acceptance/acceptance_runtime.py'
+      - 'macro-backtest/performance_metrics.py'
+      - 'macro-backtest/persist_results.py'
+      - 'macro-backtest/requirements.txt'
       - 'macro-backtest/backtest.py'
       - 'macro-backtest/defense_mix_test.py'
       - 'macro-backtest/fractional_diversifier_test.py'
@@ -13,15 +17,21 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: macro-backtest-v08-results-writer
+  queue: max
+  cancel-in-progress: false
+
 jobs:
   defense-mix-test:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && github.ref == 'refs/heads/macro-backtest-v08'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -37,17 +47,10 @@ jobs:
       - name: Run fractionable diversifier comparison
         run: python macro-backtest/fractional_diversifier_test.py
       - name: Save defensive mix results
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add macro-backtest/results-defense-mix macro-backtest/results-provenance/${{ github.run_id }}-${{ github.run_attempt }}/defense
-          if git diff --cached --quiet; then
-            echo "No result changes"
-          else
-            git commit -m "Run defensive mix comparison"
-            git pull --rebase origin macro-backtest-v08
-            git push origin HEAD:macro-backtest-v08
-          fi
+        run: >-
+          python macro-backtest/persist_results.py
+          macro-backtest/results-defense-mix macro-backtest/results-provenance/${{ github.run_id }}-${{ github.run_attempt }}/defense
+          "Run defensive mix comparison"
       - name: Seal immutable captured evidence (not acceptance)
         env:
           CAPTURE_KIND: defense

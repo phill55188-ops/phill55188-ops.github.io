@@ -238,28 +238,52 @@ def run_event_dated(prices, cfg):
             if ticker not in shares or pd.isna(p.loc[d, ticker]):
                 raise RuntimeError(f"RUN INVALID — missing price for event ticker {ticker} on {d.date()}")
             px = float(p.loc[d, ticker])
-            if kind == "BUY_DOLLARS":
-                amt = min(float(e["dollars"]), cash)
-                shares[ticker] += amt * (1 - fee) / px
-                cash -= amt
-            elif kind == "SELL_DOLLARS":
-                amt = min(float(e["dollars"]), shares[ticker] * px)
-                shares[ticker] -= amt / px
-                cash += amt * (1 - fee)
-            elif kind == "BUY_SHARES":
-                qty = float(e["shares"])
-                cost = qty * px
-                if cost > cash + 1e-8:
-                    raise RuntimeError(f"RUN INVALID — insufficient cash for {ticker} buy on {d.date()}")
-                shares[ticker] += qty * (1 - fee)
-                cash -= cost
-            elif kind == "SELL_SHARES":
-                qty = min(float(e["shares"]), shares[ticker])
-                shares[ticker] -= qty
-                cash += qty * px * (1 - fee)
-            else:
+            if not math.isfinite(px) or px <= 0:
+                raise RuntimeError(f"RUN INVALID — invalid price for {ticker} on {d.date()}")
+            if kind not in {"BUY_DOLLARS", "SELL_DOLLARS", "BUY_SHARES", "SELL_SHARES"}:
                 raise RuntimeError(f"RUN INVALID — unknown event type {kind}")
-            applied.append({**e, "status": "APPLIED", "execution_date": str(d.date())})
+            unit = "dollars" if kind.endswith("_DOLLARS") else "shares"
+            requested = float(e[unit])
+            if not math.isfinite(requested) or requested < 0:
+                raise RuntimeError(f"RUN INVALID — invalid {kind} quantity")
+
+            if kind == "BUY_DOLLARS":
+                executed = min(requested, max(0.0, cash))
+                fee_paid = executed * fee
+                cash_change = -executed
+                share_change = (executed - fee_paid) / px
+            elif kind == "BUY_SHARES":
+                executed = requested
+                gross = executed * px
+                fee_paid = gross * fee
+                cash_change = -(gross + fee_paid)
+                if -cash_change > cash + 1e-8:
+                    raise RuntimeError(f"RUN INVALID — insufficient cash for {ticker} buy on {d.date()}")
+                share_change = executed
+            else:
+                available = max(0.0, shares[ticker])
+                if unit == "dollars":
+                    executed = min(requested, available * px)
+                    gross = executed
+                    share_change = -min(available, executed / px)
+                else:
+                    executed = min(requested, available)
+                    gross = executed * px
+                    share_change = -executed
+                fee_paid = gross * fee
+                cash_change = gross - fee_paid
+
+            cash += cash_change
+            shares[ticker] += share_change
+            status = "APPLIED"
+            if executed < requested:
+                status = "PARTIAL" if executed > 0 else "NOT_EXECUTED"
+            applied.append({
+                **e, "status": status, "execution_date": str(d.date()),
+                f"requested_{unit}": requested, f"executed_{unit}": executed,
+                f"unfilled_{unit}": requested - executed, "fee_dollars": fee_paid,
+                "net_cash_change": cash_change, "net_share_change": share_change,
+            })
 
         total = cash + sum(shares[t] * p.loc[d, t] for t in tickers if pd.notna(p.loc[d, t]))
         values[d] = total
